@@ -1,0 +1,81 @@
+.brand-header {
+  background-color: #000000;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 20px 5vw;
+  width: 100%;
+}
+
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand-logo {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 5px;
+  cursor: pointer;
+  color: var(--white);
+}
+
+.logo-accent {
+  color: var(--orange);
+}
+
+.header-nav {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+}
+
+.header-nav li {
+  color: var(--gray-medium);
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.header-nav li:hover,
+.header-nav li.active {
+  color: var(--orange);
+}
+
+.header-actions {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-action-btn {
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: color 0.2s ease;
+}
+
+.nav-action-btn:hover {
+  color: var(--orange);
+}
+
+.signup-btn {
+  background-color: var(--orange);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  transition: background-color 0.2s ease;
+}
+
+.signup-btn:hover {
+  background-color: #e55a00;
+}

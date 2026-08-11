@@ -1,0 +1,579 @@
+.contact-page {
+  width: 100%;
+  background: #0a0b0d;
+  color: #fff;
+}
+
+/* HERO */
+.ct-hero {
+  position: relative;
+  height: 50vh;
+  min-height: 380px;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 6vw 3.5rem; /* Reduced from 6rem */
+  overflow: hidden;
+}
+
+.ct-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(10, 11, 13, 0.4) 0%,
+      rgba(10, 11, 13, 0.95) 100%
+    ),
+    url("./cars/mclaren-3.jpeg") center/cover no-repeat;
+  z-index: 0;
+}
+
+.ct-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.ct-eyebrow {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #ff5500;
+  margin-bottom: 0.5rem; /* Reduced from 1rem */
+}
+
+.ct-hero-content h1 {
+  font-size: clamp(2.5rem, 6vw, 4.8rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+}
+
+.ct-hero-content h1 em {
+  font-style: italic;
+  color: #ff5500;
+  font-weight: 300;
+}
+
+/* SECTION LABEL */
+.ct-section-label {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #ff5500;
+  margin-bottom: 0.4rem; /* Reduced from 0.75rem */
+}
+
+/* MAIN CONTACT GRID */
+.ct-main-section {
+  padding: 3.5rem 6vw; /* Reduced from 6rem 6vw */
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.ct-main-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2.5rem; /* Reduced from 5rem */
+  align-items: start;
+}
+
+/* FORM SIDE */
+.ct-form-side h2 {
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem; /* Reduced from 2rem */
+  line-height: 1.15;
+}
+
+.ct-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Reduced from 1.25rem */
+}
+
+.ct-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.ct-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.ct-field label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.ct-field input,
+.ct-field select,
+.ct-field textarea {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 0.75rem 0.9rem; /* Slightly tighter input padding */
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+  resize: none;
+}
+
+.ct-field input::placeholder,
+.ct-field textarea::placeholder {
+  color: #334155;
+}
+
+.ct-field select option {
+  background: #111317;
+  color: #fff;
+}
+
+.ct-field input:focus,
+.ct-field select:focus,
+.ct-field textarea:focus {
+  border-color: #ff5500;
+  background: rgba(255, 85, 0, 0.04);
+}
+
+.ct-submit-btn {
+  background: #ff5500;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+  box-shadow: 0 4px 15px rgba(255, 85, 0, 0.25);
+  margin-top: 0.25rem;
+}
+
+.ct-submit-btn:hover {
+  background: #ff7733;
+  transform: translateY(-2px);
+}
+
+.ct-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ct-error {
+  font-size: 0.85rem;
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.08);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  border-radius: 4px;
+  padding: 0.6rem 0.85rem;
+}
+
+/* SUCCESS */
+.ct-success {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 2rem;
+  background: rgba(255, 85, 0, 0.05);
+  border: 1px solid rgba(255, 85, 0, 0.2);
+  border-radius: 8px;
+}
+
+.ct-success-icon {
+  font-size: 1.75rem;
+  color: #ff5500;
+  font-weight: 700;
+}
+
+.ct-success h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.ct-success p {
+  color: #94a3b8;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* INFO SIDE */
+.ct-info-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* Reduced from 2rem */
+  padding-top: 0; /* Removed 3.5rem top offset */
+}
+
+.ct-info-block {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1rem; /* Reduced from 1.5rem */
+}
+
+.ct-info-block h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.ct-info-block p {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.ct-hours {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ct-hours-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ct-contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.ct-contact-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.ct-contact-links a:hover {
+  color: #ff5500;
+}
+
+/* SOCIALS */
+.ct-socials {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.ct-social-icon {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 0.9rem;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.ct-social-icon:hover {
+  transform: translateY(-2px);
+  opacity: 0.85;
+}
+
+.ct-social-instagram {
+  background: radial-gradient(
+    circle at 30% 107%,
+    #fdf497 0%,
+    #fdf497 5%,
+    #fd5949 45%,
+    #d6249f 60%,
+    #285aeb 90%
+  );
+}
+.ct-social-youtube {
+  background-color: #ff0000;
+}
+.ct-social-facebook {
+  background-color: #1877f2;
+}
+.ct-social-linkedin {
+  background-color: #0077b5;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SERVICES — TIGHT, COMPACT & REFINED LUXURY SECTION
+───────────────────────────────────────────────────────────── */
+.ct-services-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #07080a;
+  padding-bottom: 3.5rem; /* Reduced from 5rem */
+}
+
+/* INTRO HEADER */
+.ct-services-intro {
+  padding: 2.5rem 6vw 1.5rem; /* Reduced from 4.5rem 6vw 2.5rem */
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.ct-services-intro h2 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+  margin-bottom: 0.4rem; /* Reduced from 0.75rem */
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.ct-services-intro p {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 580px;
+}
+
+/* SERVICE CARDS CONTAINER */
+.ct-services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* Reduced from 2rem */
+  /* max-width: 1320px; */
+  margin: 0 auto;
+  padding: 0 6vw;
+}
+
+/* SERVICE ITEM ROW */
+.ct-service-row {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  background: rgba(18, 20, 26, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.ct-service-row:hover {
+  border-color: rgba(255, 85, 0, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+.ct-service-row--reverse {
+  direction: rtl;
+}
+
+.ct-service-row--reverse > * {
+  direction: ltr;
+}
+
+/* SERVICE MEDIA */
+.ct-service-media {
+  position: relative;
+  overflow: hidden;
+  min-height: 280px; /* Reduced from 340px */
+}
+
+.ct-service-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s ease;
+}
+
+.ct-service-row:hover .ct-service-media img {
+  transform: scale(1.04);
+}
+
+/* NUMBER WATERMARK */
+.ct-service-num {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  font-size: 2.8rem; /* Scaled down slightly */
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -2px;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+  z-index: 2;
+  transition: -webkit-text-stroke 0.3s ease;
+}
+
+.ct-service-row:hover .ct-service-num {
+  -webkit-text-stroke: 1px rgba(255, 85, 0, 0.7);
+}
+
+/* SERVICE CONTENT */
+.ct-service-text {
+  padding: 1.5rem 1.75rem; /* Reduced from 2.25rem 2.5rem */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.6rem; /* Tightened internal spacing */
+}
+
+.ct-service-text h3 {
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1.15;
+  color: #fff;
+}
+
+.ct-service-desc {
+  font-size: 0.88rem;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+/* DETAILS SPEC GRID */
+.ct-service-details {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem 0.8rem;
+  padding: 0.75rem 0 0 0; /* Reduced from 1rem */
+  margin-top: 0.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ct-service-details li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.ct-detail-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255, 85, 0, 0.15);
+  color: #ff5500;
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+/* ENQUIRE BUTTON */
+.ct-enquire-btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: transparent;
+  color: #ff5500;
+  border: 1px solid #ff5500;
+  padding: 0.55rem 1.15rem; /* Tighter padding */
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  margin-top: 0.35rem;
+}
+
+.ct-enquire-btn:hover {
+  background: #ff5500;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3);
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+  .ct-main-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .ct-service-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ct-service-row--reverse {
+    direction: ltr;
+  }
+
+  .ct-service-media {
+    min-height: 220px;
+    height: 220px;
+  }
+
+  .ct-service-text {
+    padding: 1.25rem 1.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .ct-hero {
+    padding: 0 1.25rem 2.5rem;
+  }
+
+  .ct-main-section {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .ct-services-intro {
+    padding: 2.5rem 1.25rem 1.25rem;
+  }
+
+  .ct-services-list {
+    padding: 0 1.25rem;
+    gap: 1rem;
+  }
+
+  .ct-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ct-submit-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .ct-service-details {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+
+  .ct-service-text {
+    padding: 1.25rem 1rem;
+  }
+
+  .ct-enquire-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,471 @@
+/* ==========================================================================
+   About Page — Editorial Magazine Style
+   ========================================================================== */
+
+.about-page {
+  width: 100%;
+  background: #0a0b0d;
+  color: #fff;
+}
+
+/* ── HERO ── */
+.ab-hero {
+  position: relative;
+  height: 100vh;
+  min-height: 650px;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 6vw 8rem;
+  overflow: hidden;
+}
+
+.ab-hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(10, 11, 13, 0.3) 0%,
+      rgba(10, 11, 13, 0.95) 100%
+    ),
+    url("./cars/mclaren-12.jpg") center/cover no-repeat;
+  z-index: 0;
+}
+
+.ab-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.ab-est {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #ff5500;
+  margin-bottom: 1.5rem;
+  display: block;
+}
+
+.ab-hero-title {
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+}
+
+.ab-hero-title em {
+  font-style: italic;
+  color: #ff5500;
+  font-weight: 300;
+  letter-spacing: -1px;
+}
+
+.ab-hero-scroll {
+  position: absolute;
+  bottom: 3rem;
+  right: 6vw;
+  z-index: 1;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #64748b;
+  writing-mode: vertical-rl;
+}
+
+/* ── PULL QUOTE ── */
+.ab-quote-section {
+  padding: 8rem 6vw;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: #0d0e11;
+}
+
+.ab-quote-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  padding-left: 3rem;
+  border-left: 3px solid #ff5500;
+}
+
+.ab-quote-mark {
+  position: absolute;
+  top: -2rem;
+  left: 2.5rem;
+  font-size: 8rem;
+  color: #ff5500;
+  opacity: 0.15;
+  line-height: 1;
+  font-family: Georgia, serif;
+}
+
+.ab-quote-text {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.5;
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+
+.ab-quote-author {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ff5500;
+  font-style: normal;
+}
+
+/* ── TAG ── */
+.ab-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #ff5500;
+  margin-bottom: 1rem;
+}
+
+/* ── FOUNDER ── */
+.ab-founder-section {
+  padding: 8rem 6vw;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.ab-founder-grid {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 7rem;
+  align-items: start;
+}
+
+.ab-founder-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  filter: grayscale(30%);
+}
+
+.ab-founder-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.ab-founder-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+  padding: 2rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ab-founder-label span:first-child {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.ab-founder-label span:last-child {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  letter-spacing: 1px;
+}
+
+.ab-founder-text h2 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+}
+
+.ab-founder-text p {
+  font-size: 1.05rem;
+  color: #94a3b8;
+  line-height: 1.9;
+  margin-bottom: 1.5rem;
+}
+
+.ab-founder-divider {
+  width: 60px;
+  height: 2px;
+  background: #ff5500;
+  margin: 2rem 0;
+}
+
+.ab-founder-note {
+  font-size: 0.9rem !important;
+  color: #64748b !important;
+  font-style: italic;
+}
+
+/* ── FULL WIDTH IMAGE ── */
+.ab-fullwidth-image {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  overflow: hidden;
+}
+
+.ab-fullwidth-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ab-fullwidth-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 11, 13, 0.8) 0%,
+    transparent 60%
+  );
+  display: flex;
+  align-items: flex-end;
+  padding: 2.5rem 6vw;
+}
+
+.ab-fullwidth-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+/* ── TIMELINE ── */
+.ab-timeline-section {
+  padding: 8rem 6vw;
+  background: #0d0e11;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ab-timeline-header {
+  margin-bottom: 4rem;
+}
+
+.ab-timeline-header h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+.ab-timeline-scroll {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.ab-timeline-card {
+  padding: 2rem 2rem 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 2rem;
+}
+
+.ab-timeline-year {
+  display: block;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #ff5500;
+  margin-bottom: 1rem;
+  letter-spacing: -1px;
+}
+
+.ab-timeline-line {
+  width: 30px;
+  height: 2px;
+  background: #ff5500;
+  margin-bottom: 1rem;
+}
+
+.ab-timeline-event {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  line-height: 1.7;
+  padding-right: 1.5rem;
+}
+
+/* ── BIG NUMBERS ── */
+.ab-numbers-section {
+  padding: 8rem 6vw;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ab-numbers-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.ab-number {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 2px solid #ff5500;
+  padding-top: 2rem;
+}
+
+.ab-number-val {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.ab-number-lbl {
+  font-size: 0.8rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+/* ── PHILOSOPHY ── */
+.ab-philosophy-section {
+  padding: 8rem 6vw;
+  background: #0d0e11;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ab-philosophy-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ab-philosophy-inner h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 4rem;
+  margin-top: 0.5rem;
+}
+
+.ab-philosophy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ab-philosophy-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 3rem;
+  padding: 3rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  align-items: start;
+}
+
+.ab-phil-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ff5500;
+  padding-top: 0.4rem;
+}
+
+.ab-philosophy-item h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #fff;
+}
+
+.ab-philosophy-item p {
+  font-size: 1rem;
+  color: #94a3b8;
+  line-height: 1.8;
+}
+
+/* ── CTA ── */
+.ab-cta-section {
+  padding: 8rem 6vw;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ab-cta-section h2 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+}
+
+.ab-cta-btn {
+  background: #ff5500;
+  color: #fff;
+  border: none;
+  padding: 1.1rem 2.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 85, 0, 0.25);
+}
+
+.ab-cta-btn:hover {
+  background: #ff7733;
+  transform: translateY(-2px);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .ab-founder-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .ab-founder-image {
+    aspect-ratio: 16/9;
+  }
+  .ab-timeline-scroll {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ab-numbers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ab-hero {
+    padding: 0 1.5rem 5rem;
+  }
+  .ab-quote-section,
+  .ab-founder-section,
+  .ab-timeline-section,
+  .ab-numbers-section,
+  .ab-philosophy-section,
+  .ab-cta-section {
+    padding: 5rem 1.5rem;
+  }
+  .ab-timeline-scroll {
+    grid-template-columns: 1fr;
+  }
+  .ab-numbers-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ab-philosophy-item {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
