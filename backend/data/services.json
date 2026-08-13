@@ -1,0 +1,55 @@
+[
+  {
+    "id": "srv-01",
+    "number": "01",
+    "title": "Test Drive Experience",
+    "subtitle": "Feel the performance firsthand",
+    "description": "A McLaren is not understood through specification sheets. It must be felt — the immediacy of the throttle response, the precision of the steering.",
+    "details": [
+      "Private session — no group drives",
+      "Full model range available",
+      "Specialist on hand throughout",
+      "Available at all McLaren retailers"
+    ],
+    "image": "./cars/mclaren-1.jpg"
+  },
+  {
+    "id": "srv-02",
+    "number": "02",
+    "title": "MSO Bespoke",
+    "subtitle": "McLaren Special Operations",
+    "description": "McLaren Special Operations exists for clients who require something beyond the standard range. MSO's team of designers work directly with you.",
+    "details": [
+      "Unlimited colour & material options",
+      "Dedicated MSO designer assigned",
+      "In-person design consultation"
+    ],
+    "image": "./cars/mclaren-2.jpg"
+  },
+  {
+    "id": "srv-03",
+    "number": "03",
+    "title": "Vehicle Servicing",
+    "subtitle": "Authorised McLaren maintenance",
+    "description": "Every McLaren is a precision instrument. Our authorised service centres employ factory-trained technicians who work exclusively on McLaren vehicles.",
+    "details": [
+      "Factory-trained technicians only",
+      "Genuine McLaren parts guaranteed",
+      "Digital service record maintained"
+    ],
+    "image": "./cars/mclaren-3.jpeg"
+  },
+  {
+    "id": "srv-04",
+    "number": "04",
+    "title": "Track Experience",
+    "subtitle": "Discover the true limit",
+    "description": "The road reveals approximately forty percent of what a McLaren is capable of. The circuit reveals the rest.",
+    "details": [
+      "Professional driver coaching included",
+      "Selection of international circuits",
+      "Full technical briefing before session"
+    ],
+    "image": "./cars/mclaren-12.jpg"
+  }
+]

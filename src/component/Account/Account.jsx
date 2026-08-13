@@ -1,16 +1,9 @@
 import { useState, useEffect } from "react";
-import { auth, db } from "../../firebase/config";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  updateProfile,
-  signOut,
-  sendPasswordResetEmail,
-} from "firebase/auth";
-import { collection, query, where, getDocs } from "firebase/firestore";
 import "./Account.css";
 
-export default function Account({ user, navigateTo }) {
+const API_BASE = "http://localhost:3000/api";
+
+export default function Account({ user, setUser, navigateTo }) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,26 +16,19 @@ export default function Account({ user, navigateTo }) {
 
   useEffect(() => {
     async function loadPurchaseRequests() {
-      if (user.isLoggedIn && user.email) {
-        setRequestsLoading(true);
-        try {
-          const q = query(
-            collection(db, "purchase_requests"),
-            where("clientEmail", "==", user.email),
-          );
-          const snap = await getDocs(q);
-          const list = [];
-          snap.forEach((doc) => list.push({ id: doc.id, ...doc.data() }));
-          list.sort(
-            (a, b) =>
-              (b.submittedAt?.seconds || 0) - (a.submittedAt?.seconds || 0),
-          );
-          setPurchaseRequests(list);
-        } catch (err) {
-          console.error("Error loading purchase requests:", err);
-        } finally {
-          setRequestsLoading(false);
-        }
+      if (!user.isLoggedIn) return;
+      setRequestsLoading(true);
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`${API_BASE}/purchase-requests`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (res.ok) setPurchaseRequests(data);
+      } catch (err) {
+        console.error("Error loading purchase requests:", err);
+      } finally {
+        setRequestsLoading(false);
       }
     }
     loadPurchaseRequests();
@@ -53,17 +39,34 @@ export default function Account({ user, navigateTo }) {
     setError("");
     setSuccessMsg("");
     setLoading(true);
+
     try {
-      if (isRegistering) {
-        const res = await createUserWithEmailAndPassword(auth, email, password);
-        if (fullName.trim()) {
-          await updateProfile(res.user, { displayName: fullName.trim() });
-        }
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
+      const endpoint = isRegistering ? "/auth/signup" : "/auth/login";
+      const body = isRegistering
+        ? { name: fullName, email, password }
+        : { email, password };
+
+      const res = await fetch(`${API_BASE}${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Authentication error. Please try again.");
+        return;
       }
-    } catch (err) {
-      setError(mapAuthError(err.code));
+
+      localStorage.setItem("token", data.token);
+      setUser({
+        isLoggedIn: true,
+        uid: data.user.id,
+        name: data.user.name,
+        email: data.user.email,
+      });
+    } catch {
+      setError("Could not reach the server. Is it running on port 3000?");
     } finally {
       setLoading(false);
     }
@@ -75,7 +78,16 @@ export default function Account({ user, navigateTo }) {
       return;
     }
     try {
-      await sendPasswordResetEmail(auth, email);
+      const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Failed to send reset email.");
+        return;
+      }
       setSuccessMsg("Password reset email sent. Check your inbox.");
       setError("");
     } catch {
@@ -84,20 +96,29 @@ export default function Account({ user, navigateTo }) {
   };
 
   const handleLogout = async () => {
-    await signOut(auth);
+    const token = localStorage.getItem("token");
+    try {
+      await fetch(`${API_BASE}/auth/logout`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch {
+      // ignore network errors on logout
+    }
+    localStorage.removeItem("token");
+    setUser({ isLoggedIn: false, uid: null, name: "", email: "" });
     if (navigateTo) navigateTo("home");
   };
 
   const formatDate = (dateVal) => {
     if (!dateVal) return "—";
-    if (typeof dateVal?.toDate === "function") {
-      return dateVal.toDate().toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-    }
-    return typeof dateVal === "string" ? dateVal : "—";
+    const d = new Date(dateVal);
+    if (isNaN(d)) return typeof dateVal === "string" ? dateVal : "—";
+    return d.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
   };
 
   const getStatusClass = (status) => {
@@ -218,7 +239,6 @@ export default function Account({ user, navigateTo }) {
   // ── LOGGED IN DASHBOARD ──
   return (
     <div className="dashboard-layout">
-      {/* HEADER */}
       <div className="dashboard-header">
         <div className="dashboard-header-title">
           <span className="account-eyebrow">McLAREN COLLECTOR PORTAL</span>
@@ -237,7 +257,6 @@ export default function Account({ user, navigateTo }) {
         </div>
       </div>
 
-      {/* METRICS BAR */}
       <div className="collector-metrics-bar">
         <div className="metric-card">
           <span className="metric-label">Registered Name</span>
@@ -259,9 +278,7 @@ export default function Account({ user, navigateTo }) {
         </div>
       </div>
 
-      {/* TWO COLUMN GRID */}
       <div className="dashboard-columns">
-        {/* LEFT: PROFILE */}
         <div className="profile-details-column">
           <h2>COLLECTOR PROFILE</h2>
           <div className="profile-card">
@@ -289,7 +306,6 @@ export default function Account({ user, navigateTo }) {
               </div>
             </div>
 
-            {/* QUICK ACTIONS */}
             <div className="profile-actions">
               <button
                 className="profile-action-btn"
@@ -307,7 +323,6 @@ export default function Account({ user, navigateTo }) {
           </div>
         </div>
 
-        {/* RIGHT: PURCHASE REQUESTS */}
         <div className="allocations-column">
           <div className="allocations-header">
             <h2>YOUR PURCHASE REQUESTS</h2>
@@ -393,22 +408,4 @@ export default function Account({ user, navigateTo }) {
       </div>
     </div>
   );
-}
-
-function mapAuthError(code) {
-  switch (code) {
-    case "auth/email-already-in-use":
-      return "An account with this email already exists.";
-    case "auth/invalid-email":
-      return "Invalid email address format.";
-    case "auth/weak-password":
-      return "Password should be at least 6 characters.";
-    case "auth/user-not-found":
-      return "No account found with that email.";
-    case "auth/wrong-password":
-    case "auth/invalid-credential":
-      return "Incorrect email or password.";
-    default:
-      return "Authentication error. Please try again.";
-  }
 }

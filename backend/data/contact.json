@@ -1,0 +1,98 @@
+{
+  "services": [
+    {
+      "number": "01",
+      "title": "Test Drive Experience",
+      "subtitle": "Feel the performance firsthand",
+      "description": "A McLaren is not understood through specification sheets. It must be felt — the immediacy of the throttle response, the precision of the steering, the way the carbon chassis communicates every surface beneath you. Our private test drive programme offers an unrushed session with a dedicated product specialist.",
+      "details": [
+        "Private session — no group drives",
+        "Full model range available",
+        "Specialist on hand throughout",
+        "Available at all McLaren retailers"
+      ],
+      "image": "./cars/mclaren-1.jpg"
+    },
+    {
+      "number": "02",
+      "title": "MSO Bespoke",
+      "subtitle": "McLaren Special Operations",
+      "description": "McLaren Special Operations exists for clients who require something beyond the standard range. MSO's team of designers and craftspeople work directly with you to specify a car that is entirely your own — from paint colours mixed to match a personal reference, to hand-stitched interior trims.",
+      "details": [
+        "Unlimited colour & material options",
+        "Dedicated MSO designer assigned",
+        "In-person design consultation",
+        "Delivery timeline confirmed at order"
+      ],
+      "image": "./cars/mclaren-2.jpg"
+    },
+    {
+      "number": "03",
+      "title": "Vehicle Servicing",
+      "subtitle": "Authorised McLaren maintenance",
+      "description": "Every McLaren is a precision instrument. Our authorised service centres employ factory-trained technicians who work exclusively on McLaren vehicles, using only genuine McLaren parts and proprietary diagnostic equipment.",
+      "details": [
+        "Factory-trained technicians only",
+        "Genuine McLaren parts guaranteed",
+        "Courtesy vehicle provided",
+        "Digital service record maintained"
+      ],
+      "image": "./cars/mclaren-3.jpeg"
+    },
+    {
+      "number": "04",
+      "title": "Track Experience",
+      "subtitle": "Discover the true limit",
+      "description": "The road reveals approximately forty percent of what a McLaren is capable of. The circuit reveals the rest. Our track experience programme places you behind the wheel at some of the world's most celebrated circuits, guided by professional drivers.",
+      "details": [
+        "Professional driver coaching included",
+        "Selection of international circuits",
+        "Full technical briefing before session",
+        "In-car video analysis available"
+      ],
+      "image": "./cars/mclaren-12.jpg"
+    }
+  ],
+  "socials": [
+    {
+      "icon": "fa-brands fa-instagram",
+      "label": "Instagram",
+      "url": "https://www.instagram.com/mclarenautomotive",
+      "cls": "ct-social-instagram"
+    },
+    {
+      "icon": "fa-brands fa-youtube",
+      "label": "YouTube",
+      "url": "https://www.youtube.com/user/McLarenAutomotiveTV",
+      "cls": "ct-social-youtube"
+    },
+    {
+      "icon": "fa-brands fa-facebook",
+      "label": "Facebook",
+      "url": "https://www.facebook.com/McLarenAutomotive",
+      "cls": "ct-social-facebook"
+    },
+    {
+      "icon": "fa-brands fa-linkedin",
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/company/mclaren",
+      "cls": "ct-social-linkedin"
+    }
+  ],
+  "info": {
+    "address": {
+      "title": "McLaren Production Centre",
+      "lines": ["Chertsey Road, Woking", "Surrey, GU21 4YH", "United Kingdom"]
+    },
+    "hours": [
+      { "day": "Monday — Friday", "time": "9:00 AM — 6:00 PM" },
+      { "day": "Saturday", "time": "10:00 AM — 4:00 PM" },
+      { "day": "Sunday", "time": "Closed" }
+    ],
+    "contact": {
+      "phone": "+44 (0) 1483 261900",
+      "phoneRaw": "+441483261900",
+      "email": "sales@mclaren.com"
+    }
+  }
+}

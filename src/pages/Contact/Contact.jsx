@@ -1,95 +1,10 @@
-import { useState } from "react";
-import { db } from "../../firebase/config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useState, useEffect } from "react";
 import "./Contact.css";
 
-const SERVICES = [
-  {
-    number: "01",
-    title: "Test Drive Experience",
-    subtitle: "Feel the performance firsthand",
-    description:
-      "A McLaren is not understood through specification sheets. It must be felt — the immediacy of the throttle response, the precision of the steering, the way the carbon chassis communicates every surface beneath you. Our private test drive programme offers an unrushed session with a dedicated product specialist.",
-    details: [
-      "Private session — no group drives",
-      "Full model range available",
-      "Specialist on hand throughout",
-      "Available at all McLaren retailers",
-    ],
-    image: "./cars/mclaren-1.jpg",
-  },
-  {
-    number: "02",
-    title: "MSO Bespoke",
-    subtitle: "McLaren Special Operations",
-    description:
-      "McLaren Special Operations exists for clients who require something beyond the standard range. MSO's team of designers and craftspeople work directly with you to specify a car that is entirely your own — from paint colours mixed to match a personal reference, to hand-stitched interior trims.",
-    details: [
-      "Unlimited colour & material options",
-      "Dedicated MSO designer assigned",
-      "In-person design consultation",
-      "Delivery timeline confirmed at order",
-    ],
-    image: "./cars/mclaren-2.jpg",
-  },
-  {
-    number: "03",
-    title: "Vehicle Servicing",
-    subtitle: "Authorised McLaren maintenance",
-    description:
-      "Every McLaren is a precision instrument. Our authorised service centres employ factory-trained technicians who work exclusively on McLaren vehicles, using only genuine McLaren parts and proprietary diagnostic equipment.",
-    details: [
-      "Factory-trained technicians only",
-      "Genuine McLaren parts guaranteed",
-      "Courtesy vehicle provided",
-      "Digital service record maintained",
-    ],
-    image: "./cars/mclaren-3.jpeg",
-  },
-  {
-    number: "04",
-    title: "Track Experience",
-    subtitle: "Discover the true limit",
-    description:
-      "The road reveals approximately forty percent of what a McLaren is capable of. The circuit reveals the rest. Our track experience programme places you behind the wheel at some of the world's most celebrated circuits, guided by professional drivers.",
-    details: [
-      "Professional driver coaching included",
-      "Selection of international circuits",
-      "Full technical briefing before session",
-      "In-car video analysis available",
-    ],
-    image: "./cars/mclaren-12.jpg",
-  },
-];
-
-const SOCIALS = [
-  {
-    icon: "fa-brands fa-instagram",
-    label: "Instagram",
-    url: "https://www.instagram.com/mclarenautomotive",
-    cls: "ct-social-instagram",
-  },
-  {
-    icon: "fa-brands fa-youtube",
-    label: "YouTube",
-    url: "https://www.youtube.com/user/McLarenAutomotiveTV",
-    cls: "ct-social-youtube",
-  },
-  {
-    icon: "fa-brands fa-facebook",
-    label: "Facebook",
-    url: "https://www.facebook.com/McLarenAutomotive",
-    cls: "ct-social-facebook",
-  },
-  {
-    icon: "fa-brands fa-linkedin",
-    label: "LinkedIn",
-    url: "https://www.linkedin.com/company/mclaren",
-    cls: "ct-social-linkedin",
-  },
-];
-
 export default function Contact() {
+  const [pageData, setPageData] = useState(null);
+  const [pageLoading, setPageLoading] = useState(true);
+
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -101,31 +16,99 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    let mounted = true;
+
+    async function fetchContactData() {
+      try {
+        const res = await fetch("http://localhost:3000/api/contact");
+        if (!res.ok) throw new Error("Failed to load contact data");
+        const data = await res.json();
+        if (mounted) {
+          setPageData(data);
+        }
+      } catch (err) {
+        console.error("Error loading contact data:", err);
+      } finally {
+        if (mounted) {
+          setPageLoading(false);
+        }
+      }
+    }
+
+    fetchContactData();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
+
+  // Map service titles to dropdown subjects
+  const handleServiceEnquire = (serviceTitle) => {
+    let matchedSubject = "General Inquiry";
+    if (serviceTitle.toLowerCase().includes("test drive")) {
+      matchedSubject = "Test Drive Request";
+    } else if (serviceTitle.toLowerCase().includes("servicing")) {
+      matchedSubject = "Servicing & Maintenance";
+    } else if (serviceTitle.toLowerCase().includes("mso")) {
+      matchedSubject = "Purchase Inquiry";
+    }
+
+    setForm((prev) => ({ ...prev, subject: matchedSubject }));
+
+    document
+      .querySelector(".ct-form-side")
+      ?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
     try {
-      await addDoc(collection(db, "contact_inquiries"), {
-        ...form,
-        submittedAt: serverTimestamp(),
+      const res = await fetch("http://localhost:3000/api/contact/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Failed to submit inquiry");
+      }
+
       setSubmitted(true);
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const scrollToForm = () => {
-    document
-      .querySelector(".ct-form-side")
-      ?.scrollIntoView({ behavior: "smooth" });
-  };
+  if (pageLoading) {
+    return (
+      <div
+        className="contact-loading"
+        style={{
+          minHeight: "80vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#8c8c88",
+        }}
+      >
+        <span>LOADING CONTACT CENTRE...</span>
+      </div>
+    );
+  }
+
+  const services = pageData?.services || [];
+  const socials = pageData?.socials || [];
+  const info = pageData?.info || {};
 
   return (
     <div className="contact-page">
@@ -249,108 +232,122 @@ export default function Contact() {
 
           {/* INFO */}
           <div className="ct-info-side">
-            <div className="ct-info-block">
-              <span className="ct-section-label">VISIT US</span>
-              <h3>McLaren Production Centre</h3>
-              <p>
-                Chertsey Road, Woking
-                <br />
-                Surrey, GU21 4YH
-                <br />
-                United Kingdom
-              </p>
-            </div>
-            <div className="ct-info-block">
-              <span className="ct-section-label">OPENING HOURS</span>
-              <div className="ct-hours">
-                <div className="ct-hours-row">
-                  <span>Monday — Friday</span>
-                  <span>9:00 AM — 6:00 PM</span>
-                </div>
-                <div className="ct-hours-row">
-                  <span>Saturday</span>
-                  <span>10:00 AM — 4:00 PM</span>
-                </div>
-                <div className="ct-hours-row">
-                  <span>Sunday</span>
-                  <span>Closed</span>
+            {info.address && (
+              <div className="ct-info-block">
+                <span className="ct-section-label">VISIT US</span>
+                <h3>{info.address.title}</h3>
+                <p>
+                  {info.address.lines?.map((line, idx) => (
+                    <span key={idx}>
+                      {line}
+                      <br />
+                    </span>
+                  ))}
+                </p>
+              </div>
+            )}
+
+            {info.hours && (
+              <div className="ct-info-block">
+                <span className="ct-section-label">OPENING HOURS</span>
+                <div className="ct-hours">
+                  {info.hours.map((h, idx) => (
+                    <div className="ct-hours-row" key={idx}>
+                      <span>{h.day}</span>
+                      <span>{h.time}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
-            <div className="ct-info-block">
-              <span className="ct-section-label">DIRECT CONTACT</span>
-              <div className="ct-contact-links">
-                <a href="tel:+441483261900">+44 (0) 1483 261900</a>
-                <a href="mailto:sales@mclaren.com">sales@mclaren.com</a>
-              </div>
-            </div>
-            <div className="ct-info-block">
-              <span className="ct-section-label">FOLLOW US</span>
-              <div className="ct-socials">
-                {SOCIALS.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={s.label}
-                    className={`ct-social-icon ${s.cls}`}
-                  >
-                    <i className={s.icon}></i>
+            )}
+
+            {info.contact && (
+              <div className="ct-info-block">
+                <span className="ct-section-label">DIRECT CONTACT</span>
+                <div className="ct-contact-links">
+                  <a href={`tel:${info.contact.phoneRaw}`}>
+                    {info.contact.phone}
                   </a>
-                ))}
+                  <a href={`mailto:${info.contact.email}`}>
+                    {info.contact.email}
+                  </a>
+                </div>
               </div>
-            </div>
+            )}
+
+            {socials.length > 0 && (
+              <div className="ct-info-block">
+                <span className="ct-section-label">FOLLOW US</span>
+                <div className="ct-socials">
+                  {socials.map((s) => (
+                    <a
+                      key={s.label}
+                      href={s.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={s.label}
+                      className={`ct-social-icon ${s.cls}`}
+                    >
+                      <i className={s.icon}></i>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* SERVICES — EDITORIAL STYLE */}
-      <section className="ct-services-section">
-        <div className="ct-services-intro">
-          <span className="ct-section-label">WHAT WE OFFER</span>
-          <h2>Our Services</h2>
-          <p>
-            Every McLaren ownership journey is supported by a suite of
-            world-class services — designed around you, not around convenience.
-          </p>
-        </div>
+      {/* SERVICES */}
+      {services.length > 0 && (
+        <section className="ct-services-section">
+          <div className="ct-services-intro">
+            <span className="ct-section-label">WHAT WE OFFER</span>
+            <h2>Our Services</h2>
+            <p>
+              Every McLaren ownership journey is supported by a suite of
+              world-class services — designed around you, not around
+              convenience.
+            </p>
+          </div>
 
-        <div className="ct-services-list">
-          {SERVICES.map((service, idx) => (
-            <div
-              className={`ct-service-row ${
-                idx % 2 !== 0 ? "ct-service-row--reverse" : ""
-              }`}
-              key={service.number}
-            >
-              {/* IMAGE */}
-              <div className="ct-service-media">
-                <img src={service.image} alt={service.title} loading="lazy" />
-                <span className="ct-service-num">{service.number}</span>
-              </div>
+          <div className="ct-services-list">
+            {services.map((service, idx) => (
+              <div
+                className={`ct-service-row ${
+                  idx % 2 !== 0 ? "ct-service-row--reverse" : ""
+                }`}
+                key={service.number || idx}
+              >
+                <div className="ct-service-media">
+                  <img src={service.image} alt={service.title} loading="lazy" />
+                  <span className="ct-service-num">{service.number}</span>
+                </div>
 
-              {/* TEXT */}
-              <div className="ct-service-text">
-                <span className="ct-section-label">{service.subtitle}</span>
-                <h3>{service.title}</h3>
-                <p className="ct-service-desc">{service.description}</p>
-                <ul className="ct-service-details">
-                  {service.details.map((d) => (
-                    <li key={d}>
-                      <span className="ct-detail-icon">✓</span>
-                      {d}
-                    </li>
-                  ))}
-                </ul>
-                <button className="ct-enquire-btn" onClick={scrollToForm}>
-                  Enquire About This Service →
-                </button>
+                <div className="ct-service-text">
+                  <span className="ct-section-label">{service.subtitle}</span>
+                  <h3>{service.title}</h3>
+                  <p className="ct-service-desc">{service.description}</p>
+                  <ul className="ct-service-details">
+                    {service.details?.map((d) => (
+                      <li key={d}>
+                        <span className="ct-detail-icon">✓</span>
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    className="ct-enquire-btn"
+                    onClick={() => handleServiceEnquire(service.title)}
+                  >
+                    Enquire About This Service →
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

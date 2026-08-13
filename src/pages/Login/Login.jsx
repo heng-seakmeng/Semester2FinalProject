@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { auth } from "../../firebase/config";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import "./Login.css";
 
-function Login({ navigateTo }) {
+const API_BASE = "http://localhost:3000/api";
+
+function Login({ navigateTo, setUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -14,22 +14,52 @@ function Login({ navigateTo }) {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // onAuthStateChanged in App.jsx picks this up and updates the header
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Login failed. Please try again.");
+        return;
+      }
+
+      // Save token consistently as "token"
+      localStorage.setItem("token", data.token);
+
+      if (setUser) {
+        setUser({
+          isLoggedIn: true,
+          uid: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+        });
+      }
+
       navigateTo("home");
-    } catch (err) {
-      setError(mapAuthError(err.code));
+    } catch {
+      setError("Could not reach the server. Is it running on port 3000?");
     } finally {
       setLoading(false);
     }
   }
+  setUser({
+    isLoggedIn: true,
+    uid: data.user.id,
+    name: data.user.name,
+    email: data.user.email,
+    role: data.user.role || "client", // <-- Added role
+  });
 
   return (
     <section className="auth-section">
       <div className="auth-card">
         <p className="auth-eyebrow">Welcome Back</p>
-        <h1 className="header">Log In To Account </h1>
+        <h1 className="header">Log In To Account</h1>
         <p className="auth-subtext">
           Access your saved models, orders, and preferences.
         </p>
@@ -98,20 +128,6 @@ function Login({ navigateTo }) {
       </div>
     </section>
   );
-}
-
-function mapAuthError(code) {
-  switch (code) {
-    case "auth/invalid-email":
-      return "Invalid email address.";
-    case "auth/user-not-found":
-      return "No account found with that email.";
-    case "auth/wrong-password":
-    case "auth/invalid-credential":
-      return "Incorrect email or password.";
-    default:
-      return "Login failed. Please try again.";
-  }
 }
 
 export default Login;

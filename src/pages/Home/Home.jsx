@@ -1,121 +1,10 @@
+import { useEffect, useState } from "react";
 import "./Home.css";
 import "./ModelSpotLight.css";
 
-/* ---------------- Data ---------------- */
-
-const STATS = [
-  { value: "212", suffix: " MPH", label: "Top Speed" },
-  { value: "2.8", suffix: " Sec", label: "0-100 km/h" },
-  { value: "740", suffix: " PS", label: "Twin Turbo V8" },
-  { value: "Carbon Fibre", suffix: "", label: "Monocage II" },
-];
-
-// Replace the MODELS data with simpler version
-const MODELS = [
-  {
-    id: "mclaren-720s",
-    name: "720S Spider",
-    series: "Super Series",
-    price: "$315,000",
-    image: "./cars/mclaren-1.jpg",
-  },
-  {
-    id: "mclaren-artura",
-    name: "Artura",
-    series: "High-Performance Hybrid",
-    price: "$237,500",
-    image: "./cars/mclaren-2.jpg",
-  },
-  {
-    id: "mclaren-750s",
-    name: "750S Spider",
-    series: "Super Series",
-    price: "$337,195",
-    image: "./cars/mclaren-3.jpeg",
-  },
-  {
-    id: "mclaren-w1",
-    name: "W1 Hypercar",
-    series: "Ultimate Series",
-    price: "$2,100,000",
-    image: "./cars/W1-hypercar.webp",
-  },
-];
-
-const PILLARS = [
-  {
-    icon: "◈",
-    title: "Carbon Fibre Architecture",
-    text: "Ultra-lightweight Monocage chassis inspired by Formula One technology.",
-  },
-  {
-    icon: "⚡",
-    title: "Twin-Turbocharged V8",
-    text: "Built for relentless acceleration and uncompromising performance.",
-  },
-  {
-    icon: "◎",
-    title: "Aerodynamic Intelligence",
-    text: "Active aerodynamics continuously optimize downforce and stability.",
-  },
-  {
-    icon: "◐",
-    title: "Driver-Centric Cockpit",
-    text: "Luxury craftsmanship focused entirely around the driver.",
-  },
-  {
-    icon: "◇",
-    title: "Onboard Telemetry",
-    text: "Real-time data systems that let drivers analyze and improve every lap.",
-  },
-  {
-    icon: "◑",
-    title: "Driver Assistance",
-    text: "Technology that supports the driver without ever taking control away.",
-  },
-];
-
-const MILESTONES = [
-  { value: "1963", label: "Year Founded" },
-  { value: "15+", label: "Road Car Models" },
-  { value: "190+", label: "Formula One Victories" },
-  { value: "9", label: "Constructors Championships" },
-];
-
-const REVIEWS = [
-  {
-    text: "The 720S is not just a supercar — it's the most complete driving machine I've ever experienced. Nothing else competes at this level.",
-    name: "Chris Harris",
-    role: "Top Gear, BBC",
-    avatar: "./cars/mclaren-1.jpg",
-    featured: false,
-  },
-  {
-    text: "Owning a McLaren is a statement. Every drive feels like the car was built specifically for you — it reads your inputs and responds with pure, unfiltered emotion.",
-    name: "James W.",
-    role: "McLaren Owner, Dubai",
-    avatar: "./cars/mclaren-3.jpeg",
-    featured: true,
-  },
-  {
-    text: "Supercar of the Year. McLaren's engineering philosophy is unmatched — surgical precision at every speed, every corner.",
-    name: "Evo Magazine",
-    role: "Car of the Year",
-    avatar: "./cars/mclaren-12.jpg",
-    featured: false,
-  },
-];
-
-const EXPERIENCES = [
-  { title: "Browse All Models", target: "models" },
-  { title: "About McLaren", target: "about" },
-  { title: "Contact Us", target: "contact" },
-  { title: "Log In to Your Account", target: "login" },
-];
+const API_BASE = "http://localhost:3000"; // Express server URL
 
 /* ---------------- Unified Model Card ---------------- */
-
-// Replace UnifiedModelCard component with this:
 
 function ModelShowcaseCard({ model, navigateTo }) {
   return (
@@ -139,9 +28,35 @@ function ModelShowcaseCard({ model, navigateTo }) {
     </article>
   );
 }
+
 /* ---------------- Page Component ---------------- */
 
 export default function Home({ navigateTo }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/home`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch home data");
+        return res.json();
+      })
+      .then((json) => {
+        setData(json);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div className="home-layout">Loading...</div>;
+  if (error) return <div className="home-layout">Error: {error}</div>;
+
+  const { stats, models, pillars, milestones, reviews, experiences } = data;
+
   return (
     <div className="home-layout">
       {/* Hero */}
@@ -193,23 +108,25 @@ export default function Home({ navigateTo }) {
           Scroll
         </button>
       </section>
+
       {/* Performance Stats */}
       <section className="stats-section">
         <div className="stats-container">
-          {STATS.map((stat, i) => (
+          {stats.map((stat, i) => (
             <div className="stat-card" key={stat.label}>
               <div className="stat-value">
                 {stat.value}
                 <span className="stat-suffix">{stat.suffix}</span>
               </div>
               <div className="stat-label">{stat.label}</div>
-              {i < STATS.length - 1 && (
+              {i < stats.length - 1 && (
                 <span className="stat-divider" aria-hidden="true" />
               )}
             </div>
           ))}
         </div>
       </section>
+
       {/* Featured Models Lineup */}
       <section className="lineup-section">
         <header className="first-intro">
@@ -222,7 +139,7 @@ export default function Home({ navigateTo }) {
         </header>
 
         <div className="lineup-container">
-          {MODELS.map((model) => (
+          {models.map((model) => (
             <ModelShowcaseCard
               key={model.id}
               model={model}
@@ -231,6 +148,7 @@ export default function Home({ navigateTo }) {
           ))}
         </div>
       </section>
+
       {/* Engineering Pillars Bento Grid */}
       <section className="feature-section">
         <header className="first-intro">
@@ -243,7 +161,7 @@ export default function Home({ navigateTo }) {
         </header>
 
         <div className="feature-grid">
-          {PILLARS.map((pillar, idx) => (
+          {pillars.map((pillar, idx) => (
             <div
               className={`feature-box ${idx === 0 || idx === 3 ? "feature-box--wide" : ""}`}
               key={pillar.title}
@@ -260,6 +178,7 @@ export default function Home({ navigateTo }) {
           ))}
         </div>
       </section>
+
       {/* Racing Heritage */}
       <section className="home-grid">
         <div className="grid-info">
@@ -276,7 +195,7 @@ export default function Home({ navigateTo }) {
           </p>
 
           <div className="milestone-row">
-            {MILESTONES.map((m) => (
+            {milestones.map((m) => (
               <div className="milestone" key={m.label}>
                 <span className="milestone-value">{m.value}</span>
                 <span className="milestone-label">{m.label}</span>
@@ -300,6 +219,7 @@ export default function Home({ navigateTo }) {
           />
         </div>
       </section>
+
       {/* Airflow / Engineering Visual */}
       <section className="home-grid reverse">
         <div className="grid-info">
@@ -330,6 +250,7 @@ export default function Home({ navigateTo }) {
           />
         </div>
       </section>
+
       {/* Testimonials */}
       <section className="testimonials-section">
         <header className="testimonials-intro">
@@ -338,7 +259,7 @@ export default function Home({ navigateTo }) {
         </header>
 
         <div className="testimonials-container">
-          {REVIEWS.map((review) => (
+          {reviews.map((review) => (
             <blockquote
               className={
                 review.featured
@@ -371,6 +292,7 @@ export default function Home({ navigateTo }) {
           ))}
         </div>
       </section>
+
       {/* CTA Section */}
       <section className="cta-section">
         <header className="first-intro">
@@ -383,7 +305,7 @@ export default function Home({ navigateTo }) {
         </header>
 
         <div className="cta-container">
-          {EXPERIENCES.map((exp) => (
+          {experiences.map((exp) => (
             <button
               className="cta-card"
               key={exp.title}

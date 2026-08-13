@@ -1,0 +1,86 @@
+{
+  "hero": {
+    "est": "EST. 1963 — WOKING, SURREY",
+    "title": "The Pursuit",
+    "titleSub": "Never Ends.",
+    "scrollText": "SCROLL"
+  },
+  "quote": {
+    "text": "You have to go and find the limit — and then a little bit further.",
+    "author": "— Bruce McLaren, 1963"
+  },
+  "founder": {
+    "tag": "THE FOUNDER",
+    "headline": "A driver who built his own future.",
+    "image": "./cars/Bruce-Mclaren.jpg",
+    "name": "Bruce McLaren",
+    "lifespan": "1937 — 1970",
+    "paragraphs": [
+      "Bruce McLaren was 22 years old when he won the United States Grand Prix in 1959 — the youngest Formula One race winner in history at the time. But winning wasn't enough. He wanted to build the car himself.",
+      "In 1963, working from a small workshop in Feltham, Middlesex, he started what would become one of the most decorated names in motorsport. His philosophy was simple and uncompromising: a lighter car is a faster car. That belief became the foundation of everything McLaren has ever built.",
+      "Bruce died in a testing accident at Goodwood in June 1970, aged 32. The team he created went on to win 8 Constructors' Championships, 12 Drivers' Championships, and produce some of the most revered road cars ever made."
+    ],
+    "note": "Every McLaren built today carries a small plaque bearing his name."
+  },
+  "bannerImage": {
+    "src": "./cars/mclaren-4.jpeg",
+    "label": "McLaren Technology Centre — Woking, Surrey"
+  },
+  "timeline": [
+    {
+      "year": "1963",
+      "event": "Bruce McLaren founds Bruce McLaren Motor Racing in New Zealand."
+    },
+    {
+      "year": "1966",
+      "event": "McLaren enters Formula One as a constructor for the first time."
+    },
+    {
+      "year": "1974",
+      "event": "Emerson Fittipaldi wins McLaren's first F1 Constructors' Championship."
+    },
+    {
+      "year": "1981",
+      "event": "MP4/1 becomes the first F1 car with a full carbon fibre monocoque."
+    },
+    {
+      "year": "1988",
+      "event": "Ayrton Senna and Alain Prost dominate — 15 wins from 16 races."
+    },
+    {
+      "year": "1992",
+      "event": "The McLaren F1 road car debuts — the greatest driver's car ever made."
+    },
+    {
+      "year": "2011",
+      "event": "MP4-12C launches modern McLaren road car era from Woking."
+    },
+    {
+      "year": "2024",
+      "event": "W1 hypercar unveiled — successor to the F1 with ground-effect aero."
+    }
+  ],
+  "stats": [
+    { "value": "1963", "label": "Year Founded" },
+    { "value": "190+", "label": "Formula One Wins" },
+    { "value": "9", "label": "Constructors' Titles" },
+    { "value": "15+", "label": "Road Car Models" }
+  ],
+  "philosophy": [
+    {
+      "num": "01",
+      "title": "Lighter is faster.",
+      "text": "Carbon fibre is not a luxury — it is the only logical choice for a car that must be both safe and swift. Every gram removed is a gram that never has to be accelerated, braked, or cornered."
+    },
+    {
+      "num": "02",
+      "title": "The driver decides.",
+      "text": "Technology exists to extend the driver's ability, never to replace it. Our systems read inputs and respond — they do not intervene, override, or second-guess the person behind the wheel."
+    },
+    {
+      "num": "03",
+      "title": "Nothing is enough.",
+      "text": "Bruce McLaren once said you have to find the limit — and then go a little further. That pursuit has never stopped. Every new McLaren is a reaction to everything that came before it."
+    }
+  ]
+}

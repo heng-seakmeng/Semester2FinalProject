@@ -1,91 +1,12 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect, useMemo } from "react";
-import { db } from "../../firebase/config";
-import { collection, getDocs } from "firebase/firestore";
 import "./Models.css";
-
-/* ---------------- Sample Data (Fallback Showroom) ---------------- */
-const SAMPLE_CARS = [
-  {
-    id: "mclaren-720s",
-    name: "720S Spider",
-    series: "Super Series",
-    price: "$315,000",
-    summary:
-      "An open-top benchmark supercar engineered for relentless power, active downforce, and uncompromised road presence.",
-    image: "./cars/mclaren-1.jpg",
-    performance: {
-      horsepower: "710 PS",
-      acceleration: "2.9 s",
-      topSpeed: "212 MPH",
-      engine: "4.0L Twin-Turbo V8",
-    },
-  },
-  {
-    id: "mclaren-artura",
-    name: "Artura",
-    series: "High-Performance Hybrid",
-    price: "$237,500",
-    summary:
-      "Next-generation electrified hybrid performance blending instant electric torque with a howling twin-turbo V6.",
-    image: "./cars/mclaren-2.jpg",
-    performance: {
-      horsepower: "690 PS",
-      acceleration: "3.0 s",
-      topSpeed: "205 MPH",
-      engine: "3.0L V6 Hybrid",
-    },
-  },
-  {
-    id: "mclaren-750s",
-    name: "750S Spider",
-    series: "Super Series",
-    price: "$337,195",
-    summary:
-      "Lighter, faster, and louder. The purest expression of raw driver engagement with a 13-second folding hardtop.",
-    image: "./cars/mclaren-3.jpeg",
-    performance: {
-      horsepower: "740 PS",
-      acceleration: "2.8 s",
-      topSpeed: "206 MPH",
-      engine: "4.0L Twin-Turbo V8",
-    },
-  },
-  {
-    id: "mclaren-w1",
-    name: "W1 Hypercar",
-    series: "Ultimate Series",
-    price: "$2,100,000",
-    summary:
-      "Our Formula One-inspired ground-effect flagship hypercar redefining aerodynamics and hybrid hypercar performance.",
-    image: "./cars/W1-hypercar.webp",
-    performance: {
-      horsepower: "1,258 PS",
-      acceleration: "2.6 s",
-      topSpeed: "217 MPH",
-      engine: "4.0L V8 Hybrid",
-    },
-  },
-];
-
-const SHOWROOM_PILLARS = [
-  {
-    title: "Carbon Monocage II",
-    text: "Formula 1 derived carbon monocoque cell providing maximum torsional rigidity and lightweight safety.",
-  },
-  {
-    title: "Proactive Chassis Control",
-    text: "Hydraulically interlinked suspension adapting dampers in milliseconds for ultimate cornering grip.",
-  },
-  {
-    title: "Active Aerodynamics",
-    text: "Continuously adjusting active rear wing and front air splitters optimizing downforce and drag.",
-  },
-];
 
 export default function Models({ navigateTo }) {
   const [showroomCars, setShowroomCars] = useState([]);
+  const [showroomPillars, setShowroomPillars] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -93,27 +14,36 @@ export default function Models({ navigateTo }) {
   useEffect(() => {
     let mounted = true;
 
-    async function loadCars() {
+    async function loadShowroomData() {
       try {
-        const snapshot = await getDocs(collection(db, "vehicles"));
+        setLoading(true);
+        setError(null);
 
-        const cars = [];
+        // Fetch data exclusively from backend API endpoints
+        const [carsRes, pillarsRes] = await Promise.all([
+          fetch("http://localhost:3000/api/vehicles"),
+          fetch("http://localhost:3000/api/pillars"),
+        ]);
 
-        snapshot.forEach((doc) => {
-          cars.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-        });
-
-        if (mounted) {
-          setShowroomCars(cars.length ? cars : SAMPLE_CARS);
+        if (!carsRes.ok) {
+          throw new Error(`Server error: ${carsRes.statusText}`);
         }
-      } catch (error) {
-        console.log(error);
+
+        const carsData = await carsRes.json();
+        const pillarsData = pillarsRes.ok ? await pillarsRes.json() : [];
 
         if (mounted) {
-          setShowroomCars(SAMPLE_CARS);
+          setShowroomCars(
+            Array.isArray(carsData) ? carsData : carsData.vehicles || [],
+          );
+          setShowroomPillars(Array.isArray(pillarsData) ? pillarsData : []);
+        }
+      } catch (err) {
+        console.error("Failed to fetch showroom data from backend:", err);
+        if (mounted) {
+          setError(
+            "Unable to load showroom data. Please check backend server.",
+          );
         }
       } finally {
         if (mounted) {
@@ -122,14 +52,14 @@ export default function Models({ navigateTo }) {
       }
     }
 
-    loadCars();
+    loadShowroomData();
 
     return () => {
       mounted = false;
     };
   }, []);
 
-  // Filter cars dynamically
+  // Filter cars dynamically based on category and search query
   const filteredCars = useMemo(() => {
     return showroomCars.filter((car) => {
       const nameMatch = (car?.name || "")
@@ -153,6 +83,7 @@ export default function Models({ navigateTo }) {
     });
   }, [showroomCars, activeCategory, searchQuery]);
 
+  // Reset slider position on filter changes
   useEffect(() => {
     setActiveIndex(0);
   }, [activeCategory, searchQuery]);
@@ -176,6 +107,19 @@ export default function Models({ navigateTo }) {
       <div className="showroom-loading">
         <div className="loading-spinner" aria-hidden="true" />
         <span>ENTERING SHOWROOM...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="no-vehicles">
+        <h3>Backend Server Offline</h3>
+        <p>{error}</p>
+        <p>
+          Ensure your backend server is running on{" "}
+          <code>http://localhost:3000</code>
+        </p>
       </div>
     );
   }
@@ -243,14 +187,10 @@ export default function Models({ navigateTo }) {
       ) : (
         <section className="showcase-section">
           <div className="showcase-card">
-            {/* 1. PHOTO FRAME (With Vertically Centered Arrows) */}
+            {/* 1. PHOTO FRAME */}
             <div className="showcase-photo-frame">
               <img
-                src={
-                  activeCar?.images?.exterior ||
-                  activeCar?.image ||
-                  "./cars/mclaren-1.jpg"
-                }
+                src={activeCar?.images?.exterior || activeCar?.image || ""}
                 alt={activeCar?.name}
                 referrerPolicy="no-referrer"
                 loading="lazy"
@@ -310,7 +250,7 @@ export default function Models({ navigateTo }) {
               </div>
             </div>
 
-            {/* 2. DETAILS & BUTTONS KEPT UNDER THE IMAGE */}
+            {/* 2. DETAILS & BUTTONS */}
             <div className="showcase-under-details">
               <div className="title-price-row">
                 <h2 className="model-name">{activeCar?.name}</h2>
@@ -321,7 +261,6 @@ export default function Models({ navigateTo }) {
 
               <p className="model-summary">
                 {activeCar?.summary ||
-                  activeCar?.overview ||
                   "Engineered without compromise for pure driver engagement."}
               </p>
 
@@ -329,37 +268,31 @@ export default function Models({ navigateTo }) {
               <div className="showcase-specs-strip">
                 <div className="spec-item">
                   <span className="spec-val">
-                    {activeCar?.performance?.horsepower ||
-                      activeCar?.hp ||
-                      "710 PS"}
+                    {activeCar?.performance?.horsepower || "N/A"}
                   </span>
                   <span className="spec-lbl">Power</span>
                 </div>
                 <div className="spec-item">
                   <span className="spec-val">
-                    {activeCar?.performance?.acceleration ||
-                      activeCar?.zeroSixty ||
-                      "2.8 s"}
+                    {activeCar?.performance?.acceleration || "N/A"}
                   </span>
                   <span className="spec-lbl">0-60 MPH</span>
                 </div>
                 <div className="spec-item">
                   <span className="spec-val">
-                    {activeCar?.performance?.topSpeed ||
-                      activeCar?.topSpeed ||
-                      "212 MPH"}
+                    {activeCar?.performance?.topSpeed || "N/A"}
                   </span>
                   <span className="spec-lbl">Top Speed</span>
                 </div>
                 <div className="spec-item">
                   <span className="spec-val">
-                    {activeCar?.performance?.engine || "Twin-Turbo V8"}
+                    {activeCar?.performance?.engine || "N/A"}
                   </span>
                   <span className="spec-lbl">Engine</span>
                 </div>
               </div>
 
-              {/* Single Action: Explore Details (Purchase Request lives on that page) */}
+              {/* Action Button */}
               <div className="showcase-actions">
                 <button
                   className="showroom-btn solid"
@@ -376,8 +309,7 @@ export default function Models({ navigateTo }) {
             <span className="track-title">SELECT MODEL</span>
             <div className="thumbnail-track">
               {filteredCars.map((car, idx) => {
-                const thumbImg =
-                  car?.images?.exterior || car?.image || "./cars/mclaren-1.jpg";
+                const thumbImg = car?.images?.exterior || car?.image || "";
 
                 return (
                   <button
@@ -402,7 +334,7 @@ export default function Models({ navigateTo }) {
         </section>
       )}
 
-      {/* SECTION 2: FULL SHOWROOM LINEUP CATALOG (Makes Page Longer) */}
+      {/* SECTION 2: FULL SHOWROOM LINEUP CATALOG */}
       <section className="showroom-catalog-section">
         <header className="catalog-header">
           <h3>COMPLETE FLEET</h3>
@@ -411,11 +343,9 @@ export default function Models({ navigateTo }) {
 
         <div className="catalog-list">
           {showroomCars.map((car) => {
-            const carImg =
-              car?.images?.exterior || car?.image || "./cars/mclaren-1.jpg";
-            const hp = car?.performance?.horsepower || car?.hp || "710 PS";
-            const zeroSixty =
-              car?.performance?.acceleration || car?.zeroSixty || "2.8 s";
+            const carImg = car?.images?.exterior || car?.image || "";
+            const hp = car?.performance?.horsepower || "N/A";
+            const zeroSixty = car?.performance?.acceleration || "N/A";
 
             return (
               <div
@@ -429,9 +359,7 @@ export default function Models({ navigateTo }) {
                 <div className="catalog-details">
                   <span className="catalog-series">{car.series}</span>
                   <h3 className="catalog-name">{car.name}</h3>
-                  <p className="catalog-summary">
-                    {car.summary || car.overview}
-                  </p>
+                  <p className="catalog-summary">{car.summary}</p>
                 </div>
                 <div className="catalog-specs-col">
                   <span>
@@ -459,21 +387,23 @@ export default function Models({ navigateTo }) {
         </div>
       </section>
 
-      {/* SECTION 3: MCLAREN ENGINEERING HIGHLIGHTS (Makes Page Richer) */}
-      <section className="showroom-pillars-section">
-        <header className="pillars-header">
-          <h3>SUPERCAR DNA</h3>
-          <h2>Hand-Crafted Performance</h2>
-        </header>
-        <div className="pillars-grid">
-          {SHOWROOM_PILLARS.map((p) => (
-            <div className="pillar-card" key={p.title}>
-              <h3>{p.title}</h3>
-              <p>{p.text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* SECTION 3: MCLAREN ENGINEERING HIGHLIGHTS */}
+      {showroomPillars.length > 0 && (
+        <section className="showroom-pillars-section">
+          <header className="pillars-header">
+            <h3>SUPERCAR DNA</h3>
+            <h2>Hand-Crafted Performance</h2>
+          </header>
+          <div className="pillars-grid">
+            {showroomPillars.map((p) => (
+              <div className="pillar-card" key={p.id || p.title}>
+                <h3>{p.title}</h3>
+                <p>{p.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

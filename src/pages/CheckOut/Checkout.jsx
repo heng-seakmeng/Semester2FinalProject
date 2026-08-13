@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { db } from "../../firebase/config";
-import { doc, setDoc } from "firebase/firestore";
+
 import "./Checkout.css";
 
 export default function Checkout({ cart, user, clearCart, navigateTo }) {

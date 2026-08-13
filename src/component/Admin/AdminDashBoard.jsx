@@ -1,32 +1,22 @@
 /* eslint-disable react-hooks/immutability */
 import { useState, useEffect } from "react";
-import { db } from "../../firebase/config";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-  serverTimestamp,
-} from "firebase/firestore";
 import "./AdminDashboard.css";
 
-export default function AdminDashboard({ navigateTo }) {
-  const [activeTab, setActiveTab] = useState("services"); // 'services' | 'products' | 'inquiries'
+const API_BASE = "http://localhost:3000/api";
 
-  // Data States
+export default function AdminDashboard({ navigateTo }) {
+  const [activeTab, setActiveTab] = useState("purchaseRequests");
+
   const [services, setServices] = useState([]);
   const [products, setProducts] = useState([]);
   const [inquiries, setInquiries] = useState([]);
+  const [purchaseRequests, setPurchaseRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
-  // Form Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  // Service Form State
   const [serviceForm, setServiceForm] = useState({
     number: "01",
     title: "",
@@ -36,7 +26,6 @@ export default function AdminDashboard({ navigateTo }) {
     image: "",
   });
 
-  // Product (Car) Form State
   const [productForm, setProductForm] = useState({
     title: "",
     subtitle: "",
@@ -49,7 +38,6 @@ export default function AdminDashboard({ navigateTo }) {
     description: "",
   });
 
-  // Fetch Firestore Data on Mount
   useEffect(() => {
     fetchAllData();
   }, []);
@@ -57,25 +45,22 @@ export default function AdminDashboard({ navigateTo }) {
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      // 1. Fetch Services
-      const servicesSnap = await getDocs(collection(db, "services"));
-      const servicesData = [];
-      servicesSnap.forEach((d) => servicesData.push({ id: d.id, ...d.data() }));
-      setServices(servicesData);
+      const [servRes, prodRes, inqRes, reqRes] = await Promise.all([
+        fetch(`${API_BASE}/services`),
+        fetch(`${API_BASE}/products`),
+        fetch(`${API_BASE}/contact_inquiries`),
+        fetch(`${API_BASE}/admin/purchase-requests`),
+      ]);
 
-      // 2. Fetch Products
-      const productsSnap = await getDocs(collection(db, "products"));
-      const productsData = [];
-      productsSnap.forEach((d) => productsData.push({ id: d.id, ...d.data() }));
-      setProducts(productsData);
+      const servicesData = await servRes.json();
+      const productsData = await prodRes.json();
+      const inquiriesData = await inqRes.json();
+      const requestsData = await reqRes.json();
 
-      // 3. Fetch Contact Inquiries
-      const inquiriesSnap = await getDocs(collection(db, "contact_inquiries"));
-      const inquiriesData = [];
-      inquiriesSnap.forEach((d) =>
-        inquiriesData.push({ id: d.id, ...d.data() }),
-      );
-      setInquiries(inquiriesData);
+      setServices(Array.isArray(servicesData) ? servicesData : []);
+      setProducts(Array.isArray(productsData) ? productsData : []);
+      setInquiries(Array.isArray(inquiriesData) ? inquiriesData : []);
+      setPurchaseRequests(Array.isArray(requestsData) ? requestsData : []);
     } catch (err) {
       console.error("Error fetching admin data:", err);
     } finally {
@@ -83,9 +68,47 @@ export default function AdminDashboard({ navigateTo }) {
     }
   };
 
-  // --------------------------------------------------------------------------
-  // SERVICES CRUD
-  // --------------------------------------------------------------------------
+  /* ---------------- PURCHASE REQUESTS STATUS UPDATE ---------------- */
+  const handleUpdateStatus = async (requestId, newStatus) => {
+    try {
+      const res = await fetch(`${API_BASE}/purchase-requests/${requestId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (res.ok) {
+        setPurchaseRequests((prev) =>
+          prev.map((r) =>
+            r.id === requestId ? { ...r, status: newStatus } : r,
+          ),
+        );
+      }
+    } catch (err) {
+      console.error("Error updating request status:", err);
+    }
+  };
+
+  const handleDeletePurchaseRequest = async (requestId) => {
+    if (
+      !window.confirm("Are you sure you want to delete this purchase request?")
+    )
+      return;
+
+    try {
+      const res = await fetch(`${API_BASE}/purchase-requests/${requestId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setPurchaseRequests((prev) => prev.filter((r) => r.id !== requestId));
+      }
+    } catch (err) {
+      console.error("Error deleting purchase request:", err);
+    }
+  };
+
+  /* ---------------- SERVICES CRUD ---------------- */
   const handleOpenServiceModal = (item = null) => {
     if (item) {
       setEditingId(item.id);
@@ -124,17 +147,20 @@ export default function AdminDashboard({ navigateTo }) {
       const payload = {
         ...serviceForm,
         details: detailsArray,
-        updatedAt: serverTimestamp(),
       };
 
-      if (editingId) {
-        await updateDoc(doc(db, "services", editingId), payload);
-      } else {
-        await addDoc(collection(db, "services"), {
-          ...payload,
-          createdAt: serverTimestamp(),
-        });
-      }
+      const url = editingId
+        ? `${API_BASE}/services/${editingId}`
+        : `${API_BASE}/services`;
+
+      const method = editingId ? "PUT" : "POST";
+
+      await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
       setIsModalOpen(false);
       fetchAllData();
     } catch (err) {
@@ -149,29 +175,28 @@ export default function AdminDashboard({ navigateTo }) {
     if (!window.confirm("Are you sure you want to delete this service?"))
       return;
     try {
-      await deleteDoc(doc(db, "services", id));
+      await fetch(`${API_BASE}/services/${id}`, { method: "DELETE" });
       fetchAllData();
     } catch (err) {
       console.error("Error deleting service:", err);
     }
   };
 
-  // --------------------------------------------------------------------------
-  // PRODUCTS CRUD
-  // --------------------------------------------------------------------------
+  /* ---------------- PRODUCTS CRUD ---------------- */
   const handleOpenProductModal = (item = null) => {
     if (item) {
       setEditingId(item.id);
       setProductForm({
-        title: item.title || "",
-        subtitle: item.subtitle || "",
+        title: item.title || item.name || "",
+        subtitle: item.subtitle || item.series || "",
         price: item.price || "",
-        category: item.category || "Supercars",
-        acceleration: item.acceleration || "",
-        topSpeed: item.topSpeed || "",
-        power: item.power || "",
-        image: item.image || "",
-        description: item.description || "",
+        category: item.category || item.series || "Supercars",
+        acceleration:
+          item.acceleration || item.performance?.acceleration || "2.8s",
+        topSpeed: item.topSpeed || item.performance?.topSpeed || "341 km/h",
+        power: item.power || item.performance?.horsepower || "720 PS",
+        image: item.image || item.images?.exterior || "",
+        description: item.description || item.summary || "",
       });
     } else {
       setEditingId(null);
@@ -196,18 +221,26 @@ export default function AdminDashboard({ navigateTo }) {
     try {
       const payload = {
         ...productForm,
-        price: Number(productForm.price) || 0,
-        updatedAt: serverTimestamp(),
+        name: productForm.title,
+        series: productForm.category,
+        price:
+          typeof productForm.price === "number"
+            ? `$${productForm.price.toLocaleString()}`
+            : productForm.price,
       };
 
-      if (editingId) {
-        await updateDoc(doc(db, "products", editingId), payload);
-      } else {
-        await addDoc(collection(db, "products"), {
-          ...payload,
-          createdAt: serverTimestamp(),
-        });
-      }
+      const url = editingId
+        ? `${API_BASE}/products/${editingId}`
+        : `${API_BASE}/products`;
+
+      const method = editingId ? "PUT" : "POST";
+
+      await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
       setIsModalOpen(false);
       fetchAllData();
     } catch (err) {
@@ -222,21 +255,36 @@ export default function AdminDashboard({ navigateTo }) {
     if (!window.confirm("Are you sure you want to delete this vehicle?"))
       return;
     try {
-      await deleteDoc(doc(db, "products", id));
+      await fetch(`${API_BASE}/products/${id}`, { method: "DELETE" });
       fetchAllData();
     } catch (err) {
       console.error("Error deleting product:", err);
     }
   };
 
-  // --------------------------------------------------------------------------
-  // INQUIRIES CRUD
-  // --------------------------------------------------------------------------
-  const handleDeleteInquiry = async (id) => {
+  /* ---------------- INQUIRIES CRUD ---------------- */
+  const handleDeleteInquiry = async (inq) => {
     if (!window.confirm("Delete this inquiry log?")) return;
+
+    const targetIdentifier = inq.id || inq.submittedAt || inq.fullName;
+    if (!targetIdentifier) return;
+
     try {
-      await deleteDoc(doc(db, "contact_inquiries", id));
-      fetchAllData();
+      const res = await fetch(
+        `${API_BASE}/contact_inquiries/${encodeURIComponent(targetIdentifier)}`,
+        { method: "DELETE" },
+      );
+
+      if (res.ok) {
+        setInquiries((prev) =>
+          prev.filter(
+            (item) =>
+              (item.id || item.submittedAt || item.fullName) !==
+              targetIdentifier,
+          ),
+        );
+        fetchAllData();
+      }
     } catch (err) {
       console.error("Error deleting inquiry:", err);
     }
@@ -244,7 +292,6 @@ export default function AdminDashboard({ navigateTo }) {
 
   return (
     <div className="admin-container">
-      {/* HEADER */}
       <div className="admin-header">
         <div>
           <span className="admin-eyebrow">SYSTEM CONTROL PANEL</span>
@@ -265,24 +312,34 @@ export default function AdminDashboard({ navigateTo }) {
         </div>
       </div>
 
-      {/* METRICS OVERVIEW */}
       <div className="admin-stats-grid">
         <div className="admin-stat-card">
-          <span>Active Services</span>
-          <strong>{services.length}</strong>
+          <span>Purchase Requests</span>
+          <strong className="accent-text">
+            {purchaseRequests.length} Orders
+          </strong>
         </div>
         <div className="admin-stat-card">
           <span>Showroom Inventory</span>
           <strong>{products.length} Vehicles</strong>
         </div>
         <div className="admin-stat-card">
-          <span>Client Inquiries</span>
-          <strong className="accent-text">{inquiries.length} Messages</strong>
+          <span>Active Services</span>
+          <strong>{services.length}</strong>
+        </div>
+        <div className="admin-stat-card">
+          <span>Contact Messages</span>
+          <strong>{inquiries.length} Inquiries</strong>
         </div>
       </div>
 
-      {/* TABS NAVIGATION */}
       <div className="admin-tabs">
+        <button
+          className={activeTab === "purchaseRequests" ? "active" : ""}
+          onClick={() => setActiveTab("purchaseRequests")}
+        >
+          Purchase Requests ({purchaseRequests.length})
+        </button>
         <button
           className={activeTab === "services" ? "active" : ""}
           onClick={() => setActiveTab("services")}
@@ -299,25 +356,115 @@ export default function AdminDashboard({ navigateTo }) {
           className={activeTab === "inquiries" ? "active" : ""}
           onClick={() => setActiveTab("inquiries")}
         >
-          Client Inquiries ({inquiries.length})
+          Contact Messages ({inquiries.length})
         </button>
       </div>
 
-      {/* LOADING STATE */}
       {loading ? (
         <div className="admin-loading">
           <div className="spinner"></div>
-          <p>Fetching database collections...</p>
+          <p>Fetching JSON database collections...</p>
         </div>
       ) : (
         <div className="admin-content-area">
-          {/* ================================================================ */}
-          {/* TAB 1: SERVICES MANAGEMENT */}
-          {/* ================================================================ */}
+          {/* TAB 1: PURCHASE REQUESTS / ORDERS FROM DETAIL PAGES */}
+          {activeTab === "purchaseRequests" && (
+            <div className="admin-section">
+              <div className="section-title-bar">
+                <h3>Supercar Purchase Requests & Orders</h3>
+              </div>
+
+              <div className="admin-table-wrapper">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Client Name</th>
+                      <th>Email</th>
+                      <th>Vehicle Requested</th>
+                      <th>Region & Color</th>
+                      <th>Order Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {purchaseRequests.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="empty-td">
+                          No purchase requests found in purchase_requests.json.
+                          Submit a request from any Vehicle Details page.
+                        </td>
+                      </tr>
+                    ) : (
+                      purchaseRequests.map((req) => (
+                        <tr key={req.id}>
+                          <td>
+                            <strong>{req.clientName}</strong>
+                          </td>
+                          <td>{req.clientEmail}</td>
+                          <td>
+                            <strong className="accent-text">
+                              {req.vehicleName || req.carModel}
+                            </strong>
+                          </td>
+                          <td>
+                            <small>{req.deliveryRegion || "N/A"}</small>
+                            <br />
+                            <small className="muted">
+                              {req.exteriorColor || "N/A"}
+                            </small>
+                          </td>
+                          <td>
+                            <select
+                              value={req.status || "Pending Review"}
+                              onChange={(e) =>
+                                handleUpdateStatus(req.id, e.target.value)
+                              }
+                              style={{
+                                background: "#141414",
+                                color: "#f7f6f3",
+                                border: "1px solid #333",
+                                padding: "4px 8px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <option value="Pending Review">
+                                Pending Review
+                              </option>
+                              <option value="Under Review">Under Review</option>
+                              <option value="Confirmed">Confirmed</option>
+                              <option value="In Production">
+                                In Production
+                              </option>
+                              <option value="Out for Delivery">
+                                Out for Delivery
+                              </option>
+                              <option value="Delivered">Delivered</option>
+                            </select>
+                          </td>
+                          <td>
+                            <button
+                              className="btn-delete"
+                              onClick={() =>
+                                handleDeletePurchaseRequest(req.id)
+                              }
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: SERVICES */}
           {activeTab === "services" && (
             <div className="admin-section">
               <div className="section-title-bar">
-                <h3>Services Catalog (Contact Page)</h3>
+                <h3>Services Catalog</h3>
                 <button
                   className="admin-add-btn"
                   onClick={() => handleOpenServiceModal()}
@@ -341,8 +488,8 @@ export default function AdminDashboard({ navigateTo }) {
                     {services.length === 0 ? (
                       <tr>
                         <td colSpan="5" className="empty-td">
-                          No services found in database. Click "+ Add New
-                          Service" to create one.
+                          No services found. Click "+ Add New Service" to create
+                          one.
                         </td>
                       </tr>
                     ) : (
@@ -385,9 +532,7 @@ export default function AdminDashboard({ navigateTo }) {
             </div>
           )}
 
-          {/* ================================================================ */}
-          {/* TAB 2: PRODUCTS / CARS MANAGEMENT */}
-          {/* ================================================================ */}
+          {/* TAB 3: PRODUCTS */}
           {activeTab === "products" && (
             <div className="admin-section">
               <div className="section-title-bar">
@@ -416,7 +561,7 @@ export default function AdminDashboard({ navigateTo }) {
                     {products.length === 0 ? (
                       <tr>
                         <td colSpan="6" className="empty-td">
-                          No vehicle products found in database.
+                          No vehicle products found in vehicles.json.
                         </td>
                       </tr>
                     ) : (
@@ -424,23 +569,33 @@ export default function AdminDashboard({ navigateTo }) {
                         <tr key={car.id}>
                           <td>
                             <img
-                              src={car.image || "./cars/mclaren-1.jpg"}
-                              alt={car.title}
+                              src={
+                                car.image ||
+                                car.images?.exterior ||
+                                "./cars/mclaren-1.jpg"
+                              }
+                              alt={car.title || car.name}
                               className="admin-thumb"
                             />
                           </td>
                           <td>
-                            <strong>{car.title}</strong>
+                            <strong>{car.title || car.name}</strong>
                             <br />
-                            <small className="muted">{car.subtitle}</small>
+                            <small className="muted">
+                              {car.subtitle || car.series}
+                            </small>
                           </td>
                           <td>
-                            <span className="badge">{car.category}</span>
+                            <span className="badge">
+                              {car.category || car.series}
+                            </span>
                           </td>
-                          <td className="accent-text font-bold">
-                            ${Number(car.price || 0).toLocaleString()}
+                          <td className="accent-text font-bold">{car.price}</td>
+                          <td>
+                            {car.acceleration ||
+                              car.performance?.acceleration0100 ||
+                              "2.8s"}
                           </td>
-                          <td>{car.acceleration}</td>
                           <td>
                             <div className="action-buttons">
                               <button
@@ -466,21 +621,22 @@ export default function AdminDashboard({ navigateTo }) {
             </div>
           )}
 
-          {/* ================================================================ */}
-          {/* TAB 3: CONTACT INQUIRIES */}
-          {/* ================================================================ */}
+          {/* TAB 4: CONTACT MESSAGES */}
           {activeTab === "inquiries" && (
             <div className="admin-section">
               <div className="section-title-bar">
-                <h3>Client Form Submissions</h3>
+                <h3>Contact Form Messages</h3>
               </div>
 
               <div className="inquiries-grid">
                 {inquiries.length === 0 ? (
-                  <p className="empty-block">No client inquiries found.</p>
+                  <p className="empty-block">No contact messages found.</p>
                 ) : (
-                  inquiries.map((inq) => (
-                    <div className="inquiry-card" key={inq.id}>
+                  inquiries.map((inq, idx) => (
+                    <div
+                      className="inquiry-card"
+                      key={inq.id || inq.submittedAt || idx}
+                    >
                       <div className="inquiry-header">
                         <div>
                           <h4>{inq.fullName || "Anonymous Client"}</h4>
@@ -493,7 +649,7 @@ export default function AdminDashboard({ navigateTo }) {
                         <span>Phone: {inq.phone || "N/A"}</span>
                         <button
                           className="btn-delete"
-                          onClick={() => handleDeleteInquiry(inq.id)}
+                          onClick={() => handleDeleteInquiry(inq)}
                         >
                           Delete Message
                         </button>
@@ -507,15 +663,13 @@ export default function AdminDashboard({ navigateTo }) {
         </div>
       )}
 
-      {/* ================================================================ */}
-      {/* MODAL FOR SERVICES / PRODUCTS FORM */}
-      {/* ================================================================ */}
+      {/* Modal for Services & Products */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
               <h3>
-                {editingId ? "Edit Document" : "Create New Document"} (
+                {editingId ? "Edit Item" : "Create New Item"} (
                 {activeTab === "services" ? "Service" : "Vehicle"})
               </h3>
               <button
@@ -526,7 +680,6 @@ export default function AdminDashboard({ navigateTo }) {
               </button>
             </div>
 
-            {/* FORM FOR SERVICE */}
             {activeTab === "services" && (
               <form onSubmit={handleSaveService} className="admin-form">
                 <div className="form-row">
@@ -566,7 +719,6 @@ export default function AdminDashboard({ navigateTo }) {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Feel the performance firsthand"
                     value={serviceForm.subtitle}
                     onChange={(e) =>
                       setServiceForm({
@@ -581,7 +733,6 @@ export default function AdminDashboard({ navigateTo }) {
                   <label>Image URL / Path</label>
                   <input
                     type="text"
-                    placeholder="./cars/mclaren-1.jpg"
                     value={serviceForm.image}
                     onChange={(e) =>
                       setServiceForm({ ...serviceForm, image: e.target.value })
@@ -608,7 +759,6 @@ export default function AdminDashboard({ navigateTo }) {
                   <label>Details Bullet Points (One item per line)</label>
                   <textarea
                     rows={4}
-                    placeholder="Private session&#10;Full model range available&#10;Specialist on hand"
                     value={serviceForm.details}
                     onChange={(e) =>
                       setServiceForm({
@@ -638,7 +788,6 @@ export default function AdminDashboard({ navigateTo }) {
               </form>
             )}
 
-            {/* FORM FOR PRODUCT */}
             {activeTab === "products" && (
               <form onSubmit={handleSaveProduct} className="admin-form">
                 <div className="form-row">
@@ -647,7 +796,6 @@ export default function AdminDashboard({ navigateTo }) {
                     <input
                       type="text"
                       required
-                      placeholder="McLaren 750S"
                       value={productForm.title}
                       onChange={(e) =>
                         setProductForm({
@@ -658,11 +806,10 @@ export default function AdminDashboard({ navigateTo }) {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Price ($ USD)</label>
+                    <label>Price (e.g. $337,195)</label>
                     <input
-                      type="number"
+                      type="text"
                       required
-                      placeholder="324000"
                       value={productForm.price}
                       onChange={(e) =>
                         setProductForm({
@@ -676,7 +823,7 @@ export default function AdminDashboard({ navigateTo }) {
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Category</label>
+                    <label>Category / Series</label>
                     <select
                       value={productForm.category}
                       onChange={(e) =>
@@ -687,16 +834,15 @@ export default function AdminDashboard({ navigateTo }) {
                       }
                     >
                       <option>Supercars</option>
+                      <option>Super Series</option>
                       <option>Ultimate Series</option>
-                      <option>GT</option>
-                      <option>Hybrid</option>
+                      <option>High-Performance Hybrid</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label>Acceleration (0-100 km/h)</label>
                     <input
                       type="text"
-                      placeholder="2.8s"
                       value={productForm.acceleration}
                       onChange={(e) =>
                         setProductForm({
@@ -708,46 +854,15 @@ export default function AdminDashboard({ navigateTo }) {
                   </div>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Top Speed</label>
-                    <input
-                      type="text"
-                      placeholder="332 km/h"
-                      value={productForm.topSpeed}
-                      onChange={(e) =>
-                        setProductForm({
-                          ...productForm,
-                          topSpeed: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Image Path / URL</label>
-                    <input
-                      type="text"
-                      placeholder="./cars/mclaren-750s.jpg"
-                      value={productForm.image}
-                      onChange={(e) =>
-                        setProductForm({
-                          ...productForm,
-                          image: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-
                 <div className="form-group">
-                  <label>Description</label>
-                  <textarea
-                    rows={3}
-                    value={productForm.description}
+                  <label>Image Path</label>
+                  <input
+                    type="text"
+                    value={productForm.image}
                     onChange={(e) =>
                       setProductForm({
                         ...productForm,
-                        description: e.target.value,
+                        image: e.target.value,
                       })
                     }
                   />

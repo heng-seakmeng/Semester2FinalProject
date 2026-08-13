@@ -1,190 +1,12 @@
 import { useState, useEffect } from "react";
-import { db } from "../../firebase/config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { doc, getDoc } from "firebase/firestore";
 import "./VehicleDetails.css";
 
-/* ---------------- Dynamic Database per Vehicle ---------------- */
-const VEHICLE_DATABASE = {
-  "mclaren-750s": {
-    id: "mclaren-750s",
-    name: "750S SPIDER",
-    brand: "McLaren",
-    series: "SUPER SERIES",
-    price: "$337,195",
-    image: "./cars/mclaren-3.jpeg",
-    images: {
-      hero: "./cars/mclaren-3.jpeg",
-      overview: "./cars/mclaren-3.jpeg",
-      lightness: "./cars/mclaren-1.jpg",
-      engagement: "./cars/mclaren-4.jpeg",
-      power: "./cars/mclaren-12.jpg",
-      specification: "./cars/mclaren-2.jpg",
-    },
-    performance: {
-      horsepower: "750 PS / 740 HP",
-      topSpeed: "332 km/h / 206 MPH",
-      torque: "800 Nm / 590 lb-ft",
-      acceleration0100: "2.8s",
-      acceleration0200: "7.2s",
-      engine: "M840T 4.0L Twin-Turbocharged V8",
-      weight: "1,281 kg",
-      transmission: "7-Speed Dual-Clutch SSG",
-      chassis: "Carbon Fibre Monocage II",
-      brakes: "Carbon Ceramic Discs (390mm / 380mm)",
-    },
-    overviewHeadline: "RELENTLESS PROGRESS. MORE POWER. MORE CONTROL.",
-    overviewText:
-      "The 750S takes the McLaren ethos to a new apex. True to its DNA, it's the next-level supercar, surpassing benchmarks for performance, engagement and purity of response. Defined by the relentless pursuit of lightness.",
-    lightnessHeadline: "LIGHTWEIGHT COMPOSITE PURSUIT",
-    lightnessText:
-      "30% of components are new or revised compared to the 720S, resulting in an overall 30kg weight reduction down to 1,281 kg dry weight with carbon seats and forged wheels.",
-    engagementHeadline: "SURGICAL STEERING & PROACTIVE CHASSIS CONTROL III",
-    engagementText:
-      "Features a 6mm wider front track, twin-valve hydraulic dampers, faster steering rack ratio, and a 15% shorter final drive ratio for explosive acceleration.",
-    powerHeadline: "MID-MOUNTED 4.0L TWIN-TURBO V8 ENGINE",
-    powerText:
-      "At the heart of the 750S is a 4-litre twin-turbocharged V8 engine mid-mounted for perfect weight distribution generating 750PS and 800Nm of torque.",
-  },
-  "mclaren-720s": {
-    id: "mclaren-720s",
-    name: "720S SPIDER",
-    brand: "McLaren",
-    series: "SUPER SERIES",
-    price: "$315,000",
-    image: "./cars/mclaren-1.jpg",
-    images: {
-      hero: "./cars/mclaren-1.jpg",
-      overview: "./cars/mclaren-1.jpg",
-      lightness: "./cars/mclaren-2.jpg",
-      engagement: "./cars/mclaren-4.jpeg",
-      power: "./cars/mclaren-12.jpg",
-      specification: "./cars/mclaren-3.jpeg",
-    },
-    performance: {
-      horsepower: "710 PS / 700 HP",
-      topSpeed: "341 km/h / 212 MPH",
-      torque: "770 Nm / 568 lb-ft",
-      acceleration0100: "2.9s",
-      acceleration0200: "7.9s",
-      engine: "M840T 4.0L Twin-Turbo V8",
-      weight: "1,332 kg",
-      transmission: "7-Speed Dual-Clutch SSG",
-      chassis: "Carbon Fibre Monocage II-S",
-      brakes: "Carbon Ceramic Discs (390mm / 380mm)",
-    },
-    overviewHeadline: "BENCHMARK PERFORMANCE & OPEN-TOP FEROCITY",
-    overviewText:
-      "The McLaren 720S Spider is the culmination of our pursuit to push the boundaries of open-top supercar performance. Lighter, stronger, and faster than its predecessor.",
-    lightnessHeadline: "CARBON FIBRE MONOCAGE II-S ARCHITECTURE",
-    lightnessText:
-      "Derived from Formula 1 composite technology, it provides immense structural rigidity without requiring additional weight reinforcement when lowering the hardtop roof.",
-    engagementHeadline: "SURGICAL HYDRAULIC STEERING FEEDBACK",
-    engagementText:
-      "Electro-hydraulic steering provides pure, unassisted dynamic feel. Proactive Chassis Control II continuously calculates road surface inputs.",
-    powerHeadline: "FEROCIOUS 710 HP TWIN-TURBOCHARGED V8",
-    powerText:
-      "Generating 710 HP and 770 Nm of torque, the twin-scroll turbocharged V8 engine propels the 720S Spider from 0 to 200 km/h in 7.9 seconds up to 341 km/h.",
-  },
-  "mclaren-artura": {
-    id: "mclaren-artura",
-    name: "ARTURA",
-    brand: "McLaren",
-    series: "HIGH-PERFORMANCE HYBRID",
-    price: "$237,500",
-    image: "./cars/mclaren-2.jpg",
-    images: {
-      hero: "./cars/mclaren-2.jpg",
-      overview: "./cars/mclaren-2.jpg",
-      lightness: "./cars/mclaren-1.jpg",
-      engagement: "./cars/mclaren-4.jpeg",
-      power: "./cars/mclaren-12.jpg",
-      specification: "./cars/mclaren-3.jpeg",
-    },
-    performance: {
-      horsepower: "690 PS / 671 HP",
-      topSpeed: "330 km/h / 205 MPH",
-      torque: "720 Nm / 531 lb-ft",
-      acceleration0100: "3.0s",
-      acceleration0200: "8.3s",
-      engine: "3.0L Twin-Turbo V6 Hybrid",
-      weight: "1,395 kg",
-      transmission: "8-Speed Dual-Clutch with E-Reverse",
-      chassis: "McLaren Carbon Lightweight Architecture",
-      brakes: "Carbon Ceramic Discs (390mm / 380mm)",
-    },
-    overviewHeadline: "REVOLUTIONARY HIGH-PERFORMANCE HYBRID",
-    overviewText:
-      "The McLaren Artura represents a clean-sheet design as our first series-production High-Performance Hybrid (HPH) supercar.",
-    lightnessHeadline: "McLAREN CARBON LIGHTWEIGHT ARCHITECTURE",
-    lightnessText:
-      "The MCLA carbon monocoque is designed specifically to integrate the 7.4kWh hybrid battery system while maintaining a light dry weight of 1,395 kg.",
-    engagementHeadline: "ELECTRONIC DIFFERENTIAL & TORQUE VECTORING",
-    engagementText:
-      "An electronic differential (E-diff) manages torque distribution across the rear axle, complementing electro-hydraulic steering for dynamic turn-in precision.",
-    powerHeadline: "120-DEGREE V6 ENGINE & INSTANT E-TORQUE",
-    powerText:
-      "The wide-angle 120-degree V6 engine houses twin turbochargers inside the 'hot V' producing 585PS plus 95PS from the E-motor.",
-  },
-  "mclaren-w1": {
-    id: "mclaren-w1",
-    name: "W1 HYPERCAR",
-    brand: "McLaren",
-    series: "ULTIMATE SERIES",
-    price: "$2,100,000",
-    image: "./cars/W1-hypercar.webp",
-    images: {
-      hero: "./cars/W1-hypercar.webp",
-      overview: "./cars/mclaren-12.jpg",
-      lightness: "./cars/mclaren-4.jpeg",
-      engagement: "./cars/mclaren-2.jpg",
-      power: "./cars/mclaren-3.jpeg",
-      specification: "./cars/mclaren-1.jpg",
-    },
-    performance: {
-      horsepower: "1,258 PS / 1,241 HP",
-      topSpeed: "350 km/h / 217 MPH",
-      torque: "1,340 Nm / 988 lb-ft",
-      acceleration0100: "2.6s",
-      acceleration0200: "5.8s",
-      engine: "4.0L High-RPM V8 Hybrid",
-      weight: "1,399 kg",
-      transmission: "8-Speed Dual-Clutch SSG",
-      chassis: "Bespoke Aerocell Carbon Monocoque",
-      brakes: "Carbon-Ceramic Racing Discs (390mm)",
-    },
-    overviewHeadline: "FORMULA ONE GROUND-EFFECT FLAGSHIP HYPERCAR",
-    overviewText:
-      "The McLaren W1 is the ground-effect successor to the legendary F1 and P1 hypercars featuring Active Long Tail aerodynamics.",
-    lightnessHeadline: "BESPOKE AEROCELL CARBON MONOCOQUE",
-    lightnessText:
-      "The Aerocell carbon structure incorporates fixed seating positions, shortening wheelbase requirement by 70mm and reducing structural weight.",
-    engagementHeadline: "1,000 KG ACTIVE GROUND-EFFECT DOWNFORCE",
-    engagementText:
-      "Race mode lowers ride height by 37mm at front and 17mm at rear, creating high-downforce ground-effect suction through underbody tunnels.",
-    powerHeadline: "1,258 HP HIGH-RPM HYBRID POWERHOUSE",
-    powerText:
-      "A 9,200 RPM 4.0L V8 engine paired with a Formula 1 E-module produces 1,258 HP and 1,340 Nm torque, launching 0-300 km/h in 12.7s.",
-  },
-};
-
-function resolveVehicleData(id) {
-  if (!id) return VEHICLE_DATABASE["mclaren-750s"];
-  if (VEHICLE_DATABASE[id]) return VEHICLE_DATABASE[id]; // ← add this line
-  const lower = id.toLowerCase();
-  if (lower.includes("720")) return VEHICLE_DATABASE["mclaren-720s"];
-  if (lower.includes("artura")) return VEHICLE_DATABASE["mclaren-artura"];
-  if (lower.includes("750")) return VEHICLE_DATABASE["mclaren-750s"];
-  if (lower.includes("w1")) return VEHICLE_DATABASE["mclaren-w1"];
-  return VEHICLE_DATABASE["mclaren-750s"];
-}
-
-export default function VehicleDetails({ carId }) {
+export default function VehicleDetails({ carId, navigateTo }) {
   const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("overview");
 
-  // Single Modal State
+  // Purchase Request Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
@@ -194,76 +16,62 @@ export default function VehicleDetails({ carId }) {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  // Dynamic Car Fetching
   useEffect(() => {
+    let mounted = true;
+
     async function loadVehicle() {
       setLoading(true);
+
       try {
-        if (carId && db) {
-          const docRef = doc(db, "vehicles", carId);
-          const snap = await getDoc(docRef);
-          if (snap.exists()) {
-            // const data = snap.data();
-            setVehicle(resolveVehicleData(carId)); // ← fixed
+        const idToFetch = carId || "mclaren-750s";
+        const res = await fetch(
+          `http://localhost:3000/api/vehicles/${idToFetch}`,
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          if (mounted) {
+            setVehicle(data);
+            setLoading(false);
+            return;
+          }
+        } else {
+          // Fallback to default vehicle if requested ID is not found
+          const fallbackRes = await fetch(
+            "http://localhost:3000/api/vehicles/mclaren-750s",
+          );
+          if (fallbackRes.ok && mounted) {
+            const fallbackData = await fallbackRes.json();
+            setVehicle(fallbackData);
             setLoading(false);
             return;
           }
         }
       } catch (err) {
-        console.warn("Firestore error, loading fallback: ", err);
+        console.error(
+          "Error fetching vehicle details from Express backend:",
+          err,
+        );
       }
 
-      setVehicle(resolveVehicleData(carId));
-      setLoading(false);
+      if (mounted) {
+        setLoading(false);
+      }
     }
 
     loadVehicle();
     window.scrollTo({ top: 0, behavior: "smooth" });
+
+    return () => {
+      mounted = false;
+    };
   }, [carId]);
 
-  // Scrollspy: Auto-Active Subnav button on scroll
-  useEffect(() => {
-    if (loading || !vehicle) return;
-
-    const sections = [
-      "overview",
-      "lightness",
-      "engagement",
-      "power",
-      "specification",
-    ];
-
-    const observerOptions = {
-      root: null,
-      rootMargin: "-20% 0px -50% 0px",
-      threshold: 0,
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
-      });
-    }, observerOptions);
-
-    sections.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, [loading, vehicle]);
-
-  // Smooth Scroll
-  const scrollToSection = (id) => {
-    setActiveSection(id);
-    const element = document.getElementById(id);
+  const scrollToSection = (sectionId) => {
+    setActiveSection(sectionId);
+    const element = document.getElementById(sectionId);
     if (element) {
-      const yOffset = -70;
-      const y =
-        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: "smooth" });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -272,21 +80,32 @@ export default function VehicleDetails({ carId }) {
     if (!agreedToTerms) return;
 
     try {
-      await addDoc(collection(db, "purchase_requests"), {
-        clientName: clientName,
-        clientEmail: clientEmail,
-        vehicleName: vehicle.name,
-        carModel: vehicle.id,
-        deliveryRegion: deliveryRegion,
-        exteriorColor: exteriorColor,
-        additionalNotes: additionalNotes,
-        status: "Pending Review",
-        submittedAt: serverTimestamp(),
-      });
-      setSubmitted(true);
+      const response = await fetch(
+        "http://localhost:3000/api/purchase-requests",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            clientName,
+            clientEmail,
+            vehicleName: vehicle?.name,
+            carModel: vehicle?.id,
+            deliveryRegion,
+            exteriorColor,
+            additionalNotes,
+            status: "Pending Review",
+          }),
+        },
+      );
+
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        alert("Failed to submit purchase request.");
+      }
     } catch (err) {
       console.error("Error saving purchase request:", err);
-      alert("Something went wrong. Please try again.");
+      alert("Error connecting to http://localhost:3000");
     }
   };
 
@@ -310,17 +129,13 @@ export default function VehicleDetails({ carId }) {
     );
   }
 
-  // Dynamic Car Images
   const heroImg =
     vehicle?.images?.hero || vehicle?.images?.exterior || vehicle?.image;
-  const overviewImg = vehicle?.images?.overview || heroImg;
-  const lightnessImg = vehicle?.images?.lightness || heroImg;
-  const engagementImg = vehicle?.images?.engagement || heroImg;
-  const powerImg = vehicle?.images?.power || heroImg;
+  const p = vehicle?.performance || {};
 
   return (
     <div className="arch-editorial-page">
-      {/* 1. CLEAN WIDESCREEN HERO BANNER */}
+      {/* Editorial Hero Header */}
       <section
         className="arch-hero"
         style={{ backgroundImage: `url(${heroImg})` }}
@@ -332,30 +147,42 @@ export default function VehicleDetails({ carId }) {
         </div>
       </section>
 
-      {/* 2. STICKY SUB-NAV BAR (WITH EXACTLY ONE PURCHASE REQUEST BUTTON) */}
+      {/* Sticky Subnav Bar */}
       <nav className="arch-subnav">
         <div className="subnav-container">
           <div className="subnav-links">
-            {[
-              { id: "overview", label: "OVERVIEW" },
-              { id: "lightness", label: "LIGHTNESS" },
-              { id: "engagement", label: "ENGAGEMENT" },
-              { id: "power", label: "POWER" },
-              { id: "specification", label: "SPECIFICATION" },
-            ].map((navItem) => (
-              <button
-                key={navItem.id}
-                className={`subnav-link ${
-                  activeSection === navItem.id ? "active" : ""
-                }`}
-                onClick={() => scrollToSection(navItem.id)}
-              >
-                {navItem.label}
-              </button>
-            ))}
+            <button
+              className={`subnav-link ${activeSection === "overview" ? "active" : ""}`}
+              onClick={() => scrollToSection("overview")}
+            >
+              OVERVIEW
+            </button>
+            <button
+              className={`subnav-link ${activeSection === "lightness" ? "active" : ""}`}
+              onClick={() => scrollToSection("lightness")}
+            >
+              LIGHTNESS
+            </button>
+            <button
+              className={`subnav-link ${activeSection === "engagement" ? "active" : ""}`}
+              onClick={() => scrollToSection("engagement")}
+            >
+              ENGAGEMENT
+            </button>
+            <button
+              className={`subnav-link ${activeSection === "power" ? "active" : ""}`}
+              onClick={() => scrollToSection("power")}
+            >
+              POWER
+            </button>
+            <button
+              className={`subnav-link ${activeSection === "specification" ? "active" : ""}`}
+              onClick={() => scrollToSection("specification")}
+            >
+              SPECIFICATION
+            </button>
           </div>
 
-          {/* THE ONLY PURCHASE REQUEST BUTTON ON THE PAGE */}
           <button
             className="single-purchase-btn"
             onClick={() => setIsModalOpen(true)}
@@ -365,185 +192,210 @@ export default function VehicleDetails({ carId }) {
         </div>
       </nav>
 
-      {/* 3. ARCHITECTURAL EDITORIAL CONTENT BODY (PURE INFORMATION, NO FORMS) */}
-      <main className="arch-editorial-body">
-        {/* SECTION 01: OVERVIEW */}
+      {/* Main Editorial Body */}
+      <div className="arch-editorial-body">
+        {/* SECTION 01 / OVERVIEW */}
         <section className="arch-section" id="overview">
           <div className="section-split">
             <div className="text-col">
               <span className="section-num">01 / OVERVIEW</span>
-              <h2 className="section-title">{vehicle.overviewHeadline}</h2>
-              <p className="body-text">{vehicle.overviewText}</p>
-
+              <h2 className="section-title">
+                {vehicle.overviewHeadline || "BENCHMARK SUPERCAR PERFORMANCE"}
+              </h2>
+              <p className="body-text">
+                {vehicle.overviewText || vehicle.summary}
+              </p>
               <div className="metric-row">
                 <div className="metric-unit">
-                  <span className="metric-val">
-                    {vehicle.performance?.horsepower}
-                  </span>
-                  <span className="metric-lbl">Power Output</span>
+                  <span className="metric-val">{p.horsepower || "750 PS"}</span>
+                  <span className="metric-lbl">Power</span>
                 </div>
                 <div className="metric-unit">
-                  <span className="metric-val">
-                    {vehicle.performance?.topSpeed}
-                  </span>
+                  <span className="metric-val">{p.topSpeed || "332 km/h"}</span>
                   <span className="metric-lbl">Top Speed</span>
                 </div>
               </div>
             </div>
-
             <div className="media-col">
               <div className="widescreen-frame">
-                <img src={overviewImg} alt={`${vehicle.name} Overview`} />
-                <span className="media-badge">{vehicle.name} Exterior</span>
+                <img
+                  src={vehicle?.images?.overview || heroImg}
+                  alt={vehicle.name}
+                />
+                <span className="media-badge">OVERVIEW</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 02: LIGHTNESS */}
+        {/* SECTION 02 / LIGHTNESS */}
         <section className="arch-section" id="lightness">
           <div className="section-split">
             <div className="text-col">
               <span className="section-num">02 / LIGHTNESS</span>
-              <h2 className="section-title">{vehicle.lightnessHeadline}</h2>
-              <p className="body-text">{vehicle.lightnessText}</p>
-
-              <div className="metric-row">
-                <div className="metric-unit">
-                  <span className="metric-val">
-                    {vehicle.performance?.weight}
-                  </span>
-                  <span className="metric-lbl">Overall Dry Weight</span>
+              <h2 className="section-title">
+                {vehicle.lightnessHeadline || "LIGHTWEIGHT COMPOSITE PURSUIT"}
+              </h2>
+              <p className="body-text">
+                {vehicle.lightnessText ||
+                  "Derived from Formula 1 composite technology, providing immense structural rigidity and lightweight agility."}
+              </p>
+              {p.weight && (
+                <div className="metric-row">
+                  <div className="metric-unit">
+                    <span className="metric-val">{p.weight}</span>
+                    <span className="metric-lbl">Dry Weight</span>
+                  </div>
                 </div>
-                <div className="metric-unit">
-                  <span className="metric-val">
-                    {vehicle.performance?.chassis}
-                  </span>
-                  <span className="metric-lbl">Carbon Monocoque</span>
-                </div>
-              </div>
+              )}
             </div>
-
             <div className="media-col">
               <div className="widescreen-frame">
-                <img src={lightnessImg} alt={`${vehicle.name} Lightness`} />
-                <span className="media-badge">Carbon Fibre Composites</span>
+                <img
+                  src={vehicle?.images?.lightness || heroImg}
+                  alt="Lightness"
+                />
+                <span className="media-badge">LIGHTWEIGHT</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 03: ENGAGEMENT */}
+        {/* SECTION 03 / ENGAGEMENT */}
         <section className="arch-section" id="engagement">
           <div className="section-split">
             <div className="text-col">
               <span className="section-num">03 / ENGAGEMENT</span>
-              <h2 className="section-title">{vehicle.engagementHeadline}</h2>
-              <p className="body-text">{vehicle.engagementText}</p>
-
-              <div className="metric-row">
-                <div className="metric-unit">
-                  <span className="metric-val">
-                    {vehicle.performance?.acceleration0100}
-                  </span>
-                  <span className="metric-lbl">0-100 km/h</span>
+              <h2 className="section-title">
+                {vehicle.engagementHeadline ||
+                  "SURGICAL STEERING & CHASSIS CONTROL"}
+              </h2>
+              <p className="body-text">
+                {vehicle.engagementText ||
+                  "Features electro-hydraulic steering feedback, adaptive dampers, and precision suspension geometry."}
+              </p>
+              {p.chassis && (
+                <div className="metric-row">
+                  <div className="metric-unit">
+                    <span className="metric-val">{p.chassis}</span>
+                    <span className="metric-lbl">Chassis Architecture</span>
+                  </div>
                 </div>
-                <div className="metric-unit">
-                  <span className="metric-val">PCC III</span>
-                  <span className="metric-lbl">Proactive Suspension</span>
-                </div>
-              </div>
+              )}
             </div>
-
             <div className="media-col">
               <div className="widescreen-frame">
-                <img src={engagementImg} alt={`${vehicle.name} Engagement`} />
-                <span className="media-badge">Active Aerodynamics</span>
+                <img
+                  src={vehicle?.images?.engagement || heroImg}
+                  alt="Engagement"
+                />
+                <span className="media-badge">DYNAMICS</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 04: POWER */}
+        {/* SECTION 04 / POWER */}
         <section className="arch-section" id="power">
           <div className="section-split">
             <div className="text-col">
               <span className="section-num">04 / POWER</span>
-              <h2 className="section-title">{vehicle.powerHeadline}</h2>
-              <p className="body-text">{vehicle.powerText}</p>
-
-              <div className="metric-row">
-                <div className="metric-unit">
-                  <span className="metric-val">
-                    {vehicle.performance?.engine}
-                  </span>
-                  <span className="metric-lbl">Engine Configuration</span>
+              <h2 className="section-title">
+                {vehicle.powerHeadline || "TWIN-TURBOCHARGED POWERTRAIN"}
+              </h2>
+              <p className="body-text">
+                {vehicle.powerText ||
+                  "Engineered for relentless power delivery, instantaneous throttle response, and screaming exhaust acoustics."}
+              </p>
+              {p.engine && (
+                <div className="metric-row">
+                  <div className="metric-unit">
+                    <span className="metric-val">{p.engine}</span>
+                    <span className="metric-lbl">Powertrain</span>
+                  </div>
                 </div>
-                <div className="metric-unit">
-                  <span className="metric-val">
-                    {vehicle.performance?.torque}
-                  </span>
-                  <span className="metric-lbl">Peak Torque</span>
-                </div>
-              </div>
+              )}
             </div>
-
             <div className="media-col">
               <div className="widescreen-frame">
-                <img src={powerImg} alt={`${vehicle.name} Powertrain`} />
-                <span className="media-badge">Mid-Mounted V8 Core</span>
+                <img src={vehicle?.images?.power || heroImg} alt="Power" />
+                <span className="media-badge">POWER</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 05: SPECIFICATION */}
+        {/* SECTION 05 / TECHNICAL SPECIFICATIONS */}
         <section className="arch-section" id="specification">
           <span className="section-num">05 / SPECIFICATION</span>
-          <h2 className="section-title">TECHNICAL FACTS &amp; FIGURES</h2>
+          <h2 className="section-title">TECHNICAL SPECIFICATIONS</h2>
 
           <div className="arch-spec-table">
-            <div className="table-line">
-              <span>Engine Configuration</span>
-              <strong>{vehicle.performance?.engine}</strong>
-            </div>
-            <div className="table-line">
-              <span>Horsepower Output</span>
-              <strong>{vehicle.performance?.horsepower}</strong>
-            </div>
-            <div className="table-line">
-              <span>Peak Torque</span>
-              <strong>{vehicle.performance?.torque}</strong>
-            </div>
-            <div className="table-line">
-              <span>0-100 km/h Acceleration</span>
-              <strong>{vehicle.performance?.acceleration0100}</strong>
-            </div>
-            <div className="table-line">
-              <span>Transmission</span>
-              <strong>{vehicle.performance?.transmission}</strong>
-            </div>
-            <div className="table-line">
-              <span>Chassis Structure</span>
-              <strong>{vehicle.performance?.chassis}</strong>
-            </div>
-            <div className="table-line">
-              <span>Braking System</span>
-              <strong>{vehicle.performance?.brakes}</strong>
-            </div>
-            <div className="table-line">
-              <span>Overall Dry Weight</span>
-              <strong>{vehicle.performance?.weight}</strong>
-            </div>
-            <div className="table-line">
-              <span>Starting Retail Price</span>
-              <strong>{vehicle.price}</strong>
-            </div>
+            {p.horsepower && (
+              <div className="table-line">
+                <span>Maximum Power</span>
+                <strong>{p.horsepower}</strong>
+              </div>
+            )}
+            {p.torque && (
+              <div className="table-line">
+                <span>Maximum Torque</span>
+                <strong>{p.torque}</strong>
+              </div>
+            )}
+            {p.acceleration0100 && (
+              <div className="table-line">
+                <span>0-100 km/h (0-60 mph)</span>
+                <strong>{p.acceleration0100}</strong>
+              </div>
+            )}
+            {p.acceleration0200 && (
+              <div className="table-line">
+                <span>0-200 km/h</span>
+                <strong>{p.acceleration0200}</strong>
+              </div>
+            )}
+            {p.topSpeed && (
+              <div className="table-line">
+                <span>Top Speed</span>
+                <strong>{p.topSpeed}</strong>
+              </div>
+            )}
+            {p.engine && (
+              <div className="table-line">
+                <span>Engine Configuration</span>
+                <strong>{p.engine}</strong>
+              </div>
+            )}
+            {p.transmission && (
+              <div className="table-line">
+                <span>Transmission</span>
+                <strong>{p.transmission}</strong>
+              </div>
+            )}
+            {p.chassis && (
+              <div className="table-line">
+                <span>Chassis Architecture</span>
+                <strong>{p.chassis}</strong>
+              </div>
+            )}
+            {p.weight && (
+              <div className="table-line">
+                <span>DIN Kerb / Dry Weight</span>
+                <strong>{p.weight}</strong>
+              </div>
+            )}
+            {p.brakes && (
+              <div className="table-line">
+                <span>Braking System</span>
+                <strong>{p.brakes}</strong>
+              </div>
+            )}
           </div>
         </section>
-      </main>
+      </div>
 
-      {/* 4. PURCHASE REQUEST MODAL DRAWER (OPENS WHEN BUTTON IS CLICKED) */}
+      {/* Minimal Luxury Purchase Request Modal Overlay */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()}>
@@ -554,7 +406,7 @@ export default function VehicleDetails({ carId }) {
               ✕
             </button>
 
-            <span className="modal-brand">McLAREN CLIENT CONCIERGE</span>
+            <span className="modal-brand">{vehicle.brand || "MCLAREN"}</span>
             <h2>PURCHASE REQUEST: {vehicle.name}</h2>
             <p className="modal-subtitle">Starting Price: {vehicle.price}</p>
 
@@ -563,8 +415,8 @@ export default function VehicleDetails({ carId }) {
                 <span className="check-mark">✓</span>
                 <h3>PURCHASE REQUEST RECEIVED</h3>
                 <p>
-                  Thank you, <strong>{clientName}</strong>. A McLaren Client
-                  Specialist will contact you at <strong>{clientEmail}</strong>.
+                  Thank you, <strong>{clientName}</strong>. A McLaren Specialist
+                  will contact you at <strong>{clientEmail}</strong>.
                 </p>
                 <button className="modal-submit-btn" onClick={resetModal}>
                   Close Window
@@ -576,9 +428,9 @@ export default function VehicleDetails({ carId }) {
                   <label>Full Name *</label>
                   <input
                     type="text"
-                    // placeholder="e.g. James W."
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
+                    placeholder="Enter your full name"
                     required
                   />
                 </div>
@@ -587,9 +439,9 @@ export default function VehicleDetails({ carId }) {
                   <label>Email Address *</label>
                   <input
                     type="email"
-                    // placeholder="client@mclaren.com"
                     value={clientEmail}
                     onChange={(e) => setClientEmail(e.target.value)}
+                    placeholder="email@example.com"
                     required
                   />
                 </div>
@@ -608,29 +460,22 @@ export default function VehicleDetails({ carId }) {
                 </div>
 
                 <div className="modal-field">
-                  <label>Preferred Exterior Color</label>
-                  <select
+                  <label>Exterior Color Preference</label>
+                  <input
+                    type="text"
                     value={exteriorColor}
                     onChange={(e) => setExteriorColor(e.target.value)}
-                  >
-                    <option value="Signature Papaya Spark">
-                      Signature Papaya Spark
-                    </option>
-                    <option value="McLaren Orange">McLaren Orange</option>
-                    <option value="Borealis Green">Borealis Green</option>
-                    <option value="MSO Bespoke Tinted Carbon">
-                      MSO Bespoke Tinted Carbon
-                    </option>
-                  </select>
+                    placeholder="Signature Papaya Spark"
+                  />
                 </div>
 
                 <div className="modal-field">
-                  <label>Additional Notes (Optional)</label>
+                  <label>Additional Specification Notes</label>
                   <textarea
-                    placeholder="Any specific requests or questions..."
+                    rows="3"
                     value={additionalNotes}
                     onChange={(e) => setAdditionalNotes(e.target.value)}
-                    rows={3}
+                    placeholder="Specify interior trim, track pack options, etc."
                   />
                 </div>
 

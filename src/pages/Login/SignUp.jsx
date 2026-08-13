@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { auth } from "../../firebase/config";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import "./Login.css";
 
-function SignUp({ navigateTo }) {
+const API_BASE = "http://localhost:3000/api";
+
+function SignUp({ navigateTo, setUser }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,13 +21,37 @@ function SignUp({ navigateTo }) {
 
     setError("");
     setLoading(true);
+
     try {
-      const cred = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(cred.user, { displayName: name });
-      // onAuthStateChanged in App.jsx picks this up and updates the header
+      const res = await fetch(`${API_BASE}/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Sign up failed. Please try again.");
+        return;
+      }
+
+      // Store token consistently as "token"
+      localStorage.setItem("token", data.token);
+
+      // Update global user state immediately upon signup
+      if (setUser) {
+        setUser({
+          isLoggedIn: true,
+          uid: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+        });
+      }
+
       navigateTo("home");
-    } catch (err) {
-      setError(mapAuthError(err.code));
+    } catch {
+      setError("Sign up failed. Could not reach the server.");
     } finally {
       setLoading(false);
     }
@@ -43,12 +67,14 @@ function SignUp({ navigateTo }) {
         </p>
 
         <form className="auth-form" onSubmit={handleSubmit}>
+          {error && <p className="auth-error">{error}</p>}
+
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
             <input
               id="name"
               type="text"
-              placeholder="John Doe"
+              placeholder="Bruce McLaren"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -92,8 +118,6 @@ function SignUp({ navigateTo }) {
             />
           </div>
 
-          {error && <p className="auth-error">{error}</p>}
-
           <button type="submit" className="auth-btn" disabled={loading}>
             {loading ? "Creating Account..." : "Create Account"}
           </button>
@@ -112,19 +136,6 @@ function SignUp({ navigateTo }) {
       </div>
     </section>
   );
-}
-
-function mapAuthError(code) {
-  switch (code) {
-    case "auth/email-already-in-use":
-      return "An account with this email already exists.";
-    case "auth/invalid-email":
-      return "Invalid email address.";
-    case "auth/weak-password":
-      return "Password should be at least 6 characters.";
-    default:
-      return "Sign up failed. Please try again.";
-  }
 }
 
 export default SignUp;

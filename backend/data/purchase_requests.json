@@ -1,0 +1,38 @@
+[
+  {
+    "id": "dd41f531-cab7-4e65-a048-f04aaa0eaa18",
+    "clientName": "painsjdwij",
+    "clientEmail": "ronalheng832@gmail.com",
+    "vehicleName": "750S SPIDER",
+    "carModel": "mclaren-750s",
+    "deliveryRegion": "North America",
+    "exteriorColor": "Signature Papaya Spark",
+    "additionalNotes": "100hp only",
+    "status": "Pending Review",
+    "submittedAt": "2026-08-13T16:18:56.715Z"
+  },
+  {
+    "id": "77f2fba0-5751-4229-b8d6-3e785ff5e72e",
+    "clientName": "Seak Meng",
+    "clientEmail": "ronalheng832@gmail.com",
+    "vehicleName": "750S SPIDER",
+    "carModel": "mclaren-750s",
+    "deliveryRegion": "North America",
+    "exteriorColor": "Signature Papaya Spark",
+    "additionalNotes": "123",
+    "status": "Pending Review",
+    "submittedAt": "2026-08-13T16:24:08.771Z"
+  },
+  {
+    "id": "7db29700-4340-4e94-a90e-900bb44294eb",
+    "clientName": "Seak Meng",
+    "clientEmail": "ronalheng832@gmail.com",
+    "vehicleName": "720S SPIDER",
+    "carModel": "mclaren-720s",
+    "deliveryRegion": "Asia Pacific",
+    "exteriorColor": "Signature Papaya Sparkk",
+    "additionalNotes": "3000hp",
+    "status": "Pending Review",
+    "submittedAt": "2026-08-13T16:54:14.030Z"
+  }
+]

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { auth } from "../../firebase/config";
-import { sendPasswordResetEmail } from "firebase/auth";
 import "./ForgotPassword.css";
+
+const API_BASE = "http://localhost:3000/api";
 
 export default function ForgotPassword({ onBackToLogin }) {
   const [email, setEmail] = useState("");
@@ -16,17 +16,24 @@ export default function ForgotPassword({ onBackToLogin }) {
     setLoading(true);
 
     try {
-      await sendPasswordResetEmail(auth, email);
-      setMessage("A password reset link has been sent to your email address.");
-      setEmail("");
-    } catch (err) {
-      if (err.code === "auth/user-not-found") {
-        setError("No account registered with this email.");
-      } else if (err.code === "auth/invalid-email") {
-        setError("Invalid email address format.");
-      } else {
-        setError("Failed to send reset email. Please try again.");
+      const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Failed to send reset email. Please try again.");
+        return;
       }
+
+      setMessage(
+        "If an account exists with that email, a reset link has been sent.",
+      );
+      setEmail("");
+    } catch {
+      setError("Could not reach the server. Is it running on port 3000?");
     } finally {
       setLoading(false);
     }

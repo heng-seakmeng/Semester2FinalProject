@@ -1,0 +1,105 @@
+{
+  "stats": [
+    { "value": "212", "suffix": " MPH", "label": "Top Speed" },
+    { "value": "2.8", "suffix": " Sec", "label": "0-100 km/h" },
+    { "value": "740", "suffix": " PS", "label": "Twin Turbo V8" },
+    { "value": "Carbon Fibre", "suffix": "", "label": "Monocage II" }
+  ],
+  "models": [
+    {
+      "id": "mclaren-720s",
+      "name": "720S Spider",
+      "series": "Super Series",
+      "price": "$315,000",
+      "image": "./cars/mclaren-1.jpg"
+    },
+    {
+      "id": "mclaren-artura",
+      "name": "Artura",
+      "series": "High-Performance Hybrid",
+      "price": "$237,500",
+      "image": "./cars/mclaren-2.jpg"
+    },
+    {
+      "id": "mclaren-750s",
+      "name": "750S Spider",
+      "series": "Super Series",
+      "price": "$337,195",
+      "image": "./cars/mclaren-750s.jpg"
+    },
+    {
+      "id": "mclaren-w1",
+      "name": "W1 Hypercar",
+      "series": "Ultimate Series",
+      "price": "$2,100,000",
+      "image": "./cars/mclaren-w1.jpg"
+    }
+  ],
+  "pillars": [
+    {
+      "icon": "◈",
+      "title": "Carbon Fibre Architecture",
+      "text": "Ultra-lightweight Monocage chassis inspired by Formula One technology."
+    },
+    {
+      "icon": "⚡",
+      "title": "Twin-Turbocharged V8",
+      "text": "Built for relentless acceleration and uncompromising performance."
+    },
+    {
+      "icon": "◎",
+      "title": "Aerodynamic Intelligence",
+      "text": "Active aerodynamics continuously optimize downforce and stability."
+    },
+    {
+      "icon": "◐",
+      "title": "Driver-Centric Cockpit",
+      "text": "Luxury craftsmanship focused entirely around the driver."
+    },
+    {
+      "icon": "◇",
+      "title": "Onboard Telemetry",
+      "text": "Real-time data systems that let drivers analyze and improve every lap."
+    },
+    {
+      "icon": "◑",
+      "title": "Driver Assistance",
+      "text": "Technology that supports the driver without ever taking control away."
+    }
+  ],
+  "milestones": [
+    { "value": "1963", "label": "Year Founded" },
+    { "value": "15+", "label": "Road Car Models" },
+    { "value": "190+", "label": "Formula One Victories" },
+    { "value": "9", "label": "Constructors Championships" }
+  ],
+  "reviews": [
+    {
+      "text": "The 720S is not just a supercar — it's the most complete driving machine I've ever experienced. Nothing else competes at this level.",
+      "name": "Chris Harris",
+      "role": "Top Gear, BBC",
+      "avatar": "./cars/mclaren-1.jpg",
+      "featured": false
+    },
+    {
+      "text": "Owning a McLaren is a statement. Every drive feels like the car was built specifically for you — it reads your inputs and responds with pure, unfiltered emotion.",
+      "name": "James W.",
+      "role": "McLaren Owner, Dubai",
+      "avatar": "./cars/mclaren-750s.jpeg",
+      "featured": true
+    },
+    {
+      "text": "Supercar of the Year. McLaren's engineering philosophy is unmatched — surgical precision at every speed, every corner.",
+      "name": "Evo Magazine",
+      "role": "Car of the Year",
+      "avatar": "./cars/mclaren-12.jpg",
+      "featured": false
+    }
+  ],
+  "experiences": [
+    { "title": "Browse All Models", "target": "models" },
+    { "title": "About McLaren", "target": "about" },
+    { "title": "Contact Us", "target": "contact" },
+    { "title": "Log In to Your Account", "target": "login" }
+  ]
+}

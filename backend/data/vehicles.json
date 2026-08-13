@@ -1,0 +1,173 @@
+{
+  "vehicles": [
+    {
+      "id": "mclaren-750s",
+      "name": "750S SPIDER",
+      "brand": "McLaren",
+      "series": "SUPER SERIES",
+      "price": "$337,195",
+      "summary": "Lighter, faster, and louder. The purest expression of raw driver engagement with a 13-second folding hardtop.",
+      "image": "./cars/mclaren-750s.jpg",
+      "images": {
+        "hero": "./cars/mclaren-750s.jpeg",
+        "overview": "./cars/mclaren-750s.jpg",
+        "lightness": "./cars/mclaren-1.jpg",
+        "engagement": "./cars/mclaren-4.jpeg",
+        "power": "./cars/mclaren-12.jpg",
+        "specification": "./cars/mclaren-2.jpg",
+        "exterior": "./cars/mclaren-750s.jpg"
+      },
+      "performance": {
+        "horsepower": "750 PS / 740 HP",
+        "topSpeed": "332 km/h / 206 MPH",
+        "torque": "800 Nm / 590 lb-ft",
+        "acceleration0100": "2.8s",
+        "acceleration0200": "7.2s",
+        "engine": "M840T 4.0L Twin-Turbocharged V8",
+        "weight": "1,281 kg",
+        "transmission": "7-Speed Dual-Clutch SSG",
+        "chassis": "Carbon Fibre Monocage II",
+        "brakes": "Carbon Ceramic Discs (390mm / 380mm)"
+      },
+      "overviewHeadline": "RELENTLESS PROGRESS. MORE POWER. MORE CONTROL.",
+      "overviewText": "The 750S takes the McLaren ethos to a new apex. True to its DNA, it's the next-level supercar, surpassing benchmarks for performance.",
+      "lightnessHeadline": "LIGHTWEIGHT COMPOSITE PURSUIT",
+      "lightnessText": "30% of components are new or revised compared to the 720S, resulting in an overall 30kg weight reduction.",
+      "engagementHeadline": "SURGICAL STEERING & PROACTIVE CHASSIS CONTROL III",
+      "engagementText": "Features a 6mm wider front track, twin-valve hydraulic dampers, and a faster steering rack ratio.",
+      "powerHeadline": "MID-MOUNTED 4.0L TWIN-TURBO V8 ENGINE",
+      "powerText": "At the heart of the 750S is a 4-litre twin-turbocharged V8 engine mid-mounted for perfect weight distribution."
+    },
+    {
+      "id": "mclaren-720s",
+      "name": "720S SPIDER",
+      "brand": "McLaren",
+      "series": "SUPER SERIES",
+      "price": "$315,000",
+      "summary": "An open-top benchmark supercar engineered for relentless power, active downforce, and uncompromised road presence.",
+      "image": "./cars/mclaren-1.jpg",
+      "images": {
+        "hero": "./cars/mclaren-1.jpg",
+        "overview": "./cars/mclaren-1.jpg",
+        "lightness": "./cars/mclaren-2.jpg",
+        "engagement": "./cars/mclaren-4.jpeg",
+        "power": "./cars/mclaren-12.jpg",
+        "specification": "./cars/.mclaren-750s.jpg",
+        "exterior": "./cars/mclaren-1.jpg"
+      },
+      "performance": {
+        "horsepower": "710 PS / 700 HP",
+        "topSpeed": "341 km/h / 212 MPH",
+        "torque": "770 Nm / 568 lb-ft",
+        "acceleration0100": "2.9s",
+        "acceleration0200": "7.9s",
+        "engine": "M840T 4.0L Twin-Turbo V8",
+        "weight": "1,332 kg",
+        "transmission": "7-Speed Dual-Clutch SSG",
+        "chassis": "Carbon Fibre Monocage II-S",
+        "brakes": "Carbon Ceramic Discs (390mm / 380mm)"
+      },
+      "overviewHeadline": "BENCHMARK PERFORMANCE & OPEN-TOP FEROCITY",
+      "overviewText": "The McLaren 720S Spider is the culmination of our pursuit to push the boundaries of open-top supercar performance.",
+      "lightnessHeadline": "CARBON FIBRE MONOCAGE II-S ARCHITECTURE",
+      "lightnessText": "Derived from Formula 1 composite technology, it provides immense structural rigidity.",
+      "engagementHeadline": "SURGICAL HYDRAULIC STEERING FEEDBACK",
+      "engagementText": "Electro-hydraulic steering provides pure, unassisted dynamic feel.",
+      "powerHeadline": "FEROCIOUS 710 HP TWIN-TURBOCHARGED V8",
+      "powerText": "Generating 710 HP and 770 Nm of torque, propels from 0 to 200 km/h in 7.9 seconds."
+    },
+    {
+      "id": "mclaren-artura",
+      "name": "ARTURA",
+      "brand": "McLaren",
+      "series": "High-Performance Hybrid",
+      "price": "$237,500",
+      "summary": "Next-generation electrified hybrid performance blending instant electric torque with a howling twin-turbo V6.",
+      "image": "./cars/mclaren-2.jpg",
+      "images": {
+        "hero": "./cars/mclaren-2.jpg",
+        "overview": "./cars/mclaren-2.jpg",
+        "lightness": "./cars/mclaren-1.jpg",
+        "engagement": "./cars/mclaren-4.jpeg",
+        "power": "./cars/mclaren-12.jpg",
+        "specification": "./cars/mclaren-750s.jpg",
+        "exterior": "./cars/mclaren-2.jpg"
+      },
+      "performance": {
+        "horsepower": "690 PS / 671 HP",
+        "topSpeed": "330 km/h / 205 MPH",
+        "torque": "720 Nm / 531 lb-ft",
+        "acceleration0100": "3.0s",
+        "acceleration0200": "8.3s",
+        "engine": "3.0L V6 Twin-Turbo Hybrid",
+        "weight": "1,395 kg",
+        "transmission": "8-Speed Dual-Clutch SSG",
+        "chassis": "McLaren Carbon Lightweight Architecture (MCLA)",
+        "brakes": "Carbon Ceramic Discs (390mm / 380mm)"
+      },
+      "overviewHeadline": "NEXT-GENERATION ELECTRIFIED HYBRID PERFORMANCE",
+      "overviewText": "Artura combines ultralight engineering with instant electric torque response and relentless twin-turbocharged V6 power.",
+      "lightnessHeadline": "MCLA CARBON ARCHITECTURE",
+      "lightnessText": "Bespoke carbon fibre monocoque optimized specifically for hybrid powertrain integration.",
+      "engagementHeadline": "ELECTRONIC DIFFERENTIAL & E-PARK CONTROL",
+      "engagementText": "First McLaren to feature an Ethernet electrical architecture and electronically controlled differential.",
+      "powerHeadline": "3.0L V6 TWIN-TURBO & AXIAL FLUX E-MOTOR",
+      "powerText": "Blends instant 95PS electric torque with 585PS twin-turbo V6 combustion power."
+    },
+    {
+      "id": "mclaren-w1",
+      "name": "W1 HYPERCAR",
+      "brand": "McLaren",
+      "series": "Ultimate Series",
+      "price": "$2,100,000",
+      "summary": "Our Formula One-inspired ground-effect flagship hypercar redefining aerodynamics and hybrid hypercar performance.",
+      "image": "./cars/W1-hypercar.webp",
+      "images": {
+        "hero": "./cars/W1-hypercar.webp",
+        "overview": "./cars/W1-hypercar.webp",
+        "lightness": "./cars/W1-hypercar.webp",
+        "engagement": "./cars/W1-hypercar.webp",
+        "power": "./cars/W1-hypercar.webp",
+        "specification": "./cars/W1-hypercar.webp",
+        "exterior": "./cars/W1-hypercar.webp"
+      },
+      "performance": {
+        "horsepower": "1,258 PS / 1,241 HP",
+        "topSpeed": "350 km/h / 217 MPH",
+        "torque": "1,340 Nm / 988 lb-ft",
+        "acceleration0100": "2.6s",
+        "acceleration0200": "5.8s",
+        "engine": "MHP-8 4.0L V8 Twin-Turbo Hybrid",
+        "weight": "1,399 kg",
+        "transmission": "8-Speed Dual-Clutch with E-Reverse",
+        "chassis": "McLaren Aerocell Carbon Monocoque",
+        "brakes": "McLaren Carbon Ceramic Racing (390mm / 380mm)"
+      },
+      "overviewHeadline": "THE ULTIMATE GROUND-EFFECT HYPERCAR FLAGSHIP",
+      "overviewText": "Inspired by Formula 1 ground-effect aerodynamics, the McLaren W1 stands as the ultimate expression of extreme hypercar performance.",
+      "lightnessHeadline": "MCLAREN AEROCELL CARBON ARCHITECTURE",
+      "lightnessText": "Integrated structural seating reduces wheelbase requirements for optimum aerodynamics.",
+      "engagementHeadline": "ACTIVE LONG TAIL AERO & RACE ACTIVE CHASSIS CONTROL",
+      "engagementText": "Rear wing extends 300mm backwards in Race Mode, generating up to 1,000kg of downforce.",
+      "powerHeadline": "1,258 PS V8 HYBRID POWERHOUSE",
+      "powerText": "High-rpm all-new V8 combined with lightweight E-module produces unprecedented power-to-weight ratio."
+    }
+  ],
+  "pillars": [
+    {
+      "id": "carbon-monocage",
+      "title": "Carbon Monocage II",
+      "text": "Formula 1 derived carbon monocoque cell providing maximum torsional rigidity and lightweight safety."
+    },
+    {
+      "id": "proactive-chassis",
+      "title": "Proactive Chassis Control",
+      "text": "Hydraulically interlinked suspension adapting dampers in milliseconds for ultimate cornering grip."
+    },
+    {
+      "id": "active-aero",
+      "title": "Active Aerodynamics",
+      "text": "Continuously adjusting active rear wing and front air splitters optimizing downforce and drag."
+    }
+  ]
+}
