@@ -64,6 +64,7 @@ export default function Account({ user, setUser, navigateTo }) {
         uid: data.user.id,
         name: data.user.name,
         email: data.user.email,
+        role: data.user.role || "client", // ✅ Fixed: role now saved
       });
     } catch {
       setError("Could not reach the server. Is it running on port 3000?");
@@ -106,7 +107,13 @@ export default function Account({ user, setUser, navigateTo }) {
       // ignore network errors on logout
     }
     localStorage.removeItem("token");
-    setUser({ isLoggedIn: false, uid: null, name: "", email: "" });
+    setUser({
+      isLoggedIn: false,
+      uid: null,
+      name: "",
+      email: "",
+      role: "client",
+    });
     if (navigateTo) navigateTo("home");
   };
 
@@ -297,7 +304,7 @@ export default function Account({ user, setUser, navigateTo }) {
               <div className="profile-info-row">
                 <span>Account ID</span>
                 <strong className="code-font">
-                  {user.uid ? `${user.uid.slice(0, 12)}...` : "—"}
+                  {user.uid ? `${String(user.uid).slice(0, 12)}...` : "—"}
                 </strong>
               </div>
               <div className="profile-info-row">

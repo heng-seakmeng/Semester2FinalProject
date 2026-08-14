@@ -31,12 +31,14 @@ function Login({ navigateTo, setUser }) {
       // Save token consistently as "token"
       localStorage.setItem("token", data.token);
 
+      // Update user state inside handleSubmit where 'data' exists
       if (setUser) {
         setUser({
           isLoggedIn: true,
           uid: data.user.id,
           name: data.user.name,
           email: data.user.email,
+          role: data.user.role || "client", // Role properly saved
         });
       }
 
@@ -47,13 +49,6 @@ function Login({ navigateTo, setUser }) {
       setLoading(false);
     }
   }
-  setUser({
-    isLoggedIn: true,
-    uid: data.user.id,
-    name: data.user.name,
-    email: data.user.email,
-    role: data.user.role || "client", // <-- Added role
-  });
 
   return (
     <section className="auth-section">

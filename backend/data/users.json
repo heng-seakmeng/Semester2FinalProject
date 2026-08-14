@@ -1,9 +1,10 @@
 [
   {
-    "id": "ea7480b6-d2cb-41bd-9b63-76e0159281af",
+    "id": "f57a721c-b3b9-424f-95a3-5f35888af4c6",
     "name": "Seak Meng",
     "email": "ronalheng832@gmail.com",
-    "passwordHash": "$2b$10$vKXsekvLhIn2TmnfOKWu.u/mDdalPShSUdRyyYFMxmAHsk/6wOQ1C",
-    "createdAt": "2026-08-13T15:48:29.752Z"
+    "passwordHash": "$2b$10$NQ8BEPGUJRR.OFjyLL5N8e8i1oVXIKT8QlLsgo4fxgEN3lVX1qKp.",
+    "role": "admin",
+    "createdAt": "2026-08-14T06:49:29.202Z"
   }
 ]

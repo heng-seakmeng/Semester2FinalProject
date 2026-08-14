@@ -7,15 +7,13 @@
       "series": "SUPER SERIES",
       "price": "$337,195",
       "summary": "Lighter, faster, and louder. The purest expression of raw driver engagement with a 13-second folding hardtop.",
-      "image": "./cars/mclaren-750s.jpg",
+      "image": "./images/mclaren750s/mclaren-750s.jpg",
       "images": {
-        "hero": "./cars/mclaren-750s.jpeg",
-        "overview": "./cars/mclaren-750s.jpg",
-        "lightness": "./cars/mclaren-1.jpg",
-        "engagement": "./cars/mclaren-4.jpeg",
-        "power": "./cars/mclaren-12.jpg",
-        "specification": "./cars/mclaren-2.jpg",
-        "exterior": "./cars/mclaren-750s.jpg"
+        "hero": "./images/mclaren750s/mclaren-750s.jpg",
+        "overview": "./images/mclaren750s/Overview.jpg",
+        "lightness": "./images/mclaren750s/Lightness.jpg",
+        "engagement": "./images/mclaren750s/Engagement.jpg",
+        "power": "./images/mclaren750s/Power.jpg"
       },
       "performance": {
         "horsepower": "750 PS / 740 HP",
@@ -45,15 +43,13 @@
       "series": "SUPER SERIES",
       "price": "$315,000",
       "summary": "An open-top benchmark supercar engineered for relentless power, active downforce, and uncompromised road presence.",
-      "image": "./cars/mclaren-1.jpg",
+      "image": "./images/mclaren720s/Mclaren720sHero.jpg",
       "images": {
-        "hero": "./cars/mclaren-1.jpg",
-        "overview": "./cars/mclaren-1.jpg",
-        "lightness": "./cars/mclaren-2.jpg",
-        "engagement": "./cars/mclaren-4.jpeg",
-        "power": "./cars/mclaren-12.jpg",
-        "specification": "./cars/.mclaren-750s.jpg",
-        "exterior": "./cars/mclaren-1.jpg"
+        "hero": "./images/mclaren720s/Mclaren720sHero.jpg",
+        "overview": "./images/mclaren720s/Overview.png",
+        "lightness": "./images/mclaren720s/Lightness.png",
+        "engagement": "./images/mclaren720s/720sEngagment.png",
+        "power": "./images/mclaren720s/Power.jpg"
       },
       "performance": {
         "horsepower": "710 PS / 700 HP",
@@ -83,15 +79,13 @@
       "series": "High-Performance Hybrid",
       "price": "$237,500",
       "summary": "Next-generation electrified hybrid performance blending instant electric torque with a howling twin-turbo V6.",
-      "image": "./cars/mclaren-2.jpg",
+      "image": "./images/mclarenArtura/Artura.jpg",
       "images": {
-        "hero": "./cars/mclaren-2.jpg",
-        "overview": "./cars/mclaren-2.jpg",
-        "lightness": "./cars/mclaren-1.jpg",
-        "engagement": "./cars/mclaren-4.jpeg",
-        "power": "./cars/mclaren-12.jpg",
-        "specification": "./cars/mclaren-750s.jpg",
-        "exterior": "./cars/mclaren-2.jpg"
+        "hero": "./images/mclarenArtura/Artura.jpg",
+        "overview": "./images/mclarenArtura/Overview.jpg",
+        "lightness": "./images/mclarenArtura/lightness.jpg",
+        "engagement": "./images/mclarenArtura/Engagement.jpg",
+        "power": "./images/mclarenArtura/Power.jpg"
       },
       "performance": {
         "horsepower": "690 PS / 671 HP",
@@ -121,15 +115,13 @@
       "series": "Ultimate Series",
       "price": "$2,100,000",
       "summary": "Our Formula One-inspired ground-effect flagship hypercar redefining aerodynamics and hybrid hypercar performance.",
-      "image": "./cars/W1-hypercar.webp",
+      "image": "./images/mclarenW1/mclaren-w1.jpg",
       "images": {
-        "hero": "./cars/W1-hypercar.webp",
-        "overview": "./cars/W1-hypercar.webp",
-        "lightness": "./cars/W1-hypercar.webp",
-        "engagement": "./cars/W1-hypercar.webp",
-        "power": "./cars/W1-hypercar.webp",
-        "specification": "./cars/W1-hypercar.webp",
-        "exterior": "./cars/W1-hypercar.webp"
+        "hero": "./images/mclarenW1/mclaren-w1.jpg",
+        "overview": "./images/mclarenW1/Overview.jpg",
+        "lightness": "./images/mclarenW1/Lightness.jpg",
+        "engagement": "./images/mclarenW1/Engagement.jpg",
+        "power": "./images/mclarenW1/power.jpg"
       },
       "performance": {
         "horsepower": "1,258 PS / 1,241 HP",

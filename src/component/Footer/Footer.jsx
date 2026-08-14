@@ -1,6 +1,6 @@
 import "./Footer.css";
 
-export default function Footer({ navigateTo }) {
+export default function Footer({ navigateTo, isAdmin }) {
   const FOOTER_COLUMNS = [
     {
       title: "Explore",
@@ -54,9 +54,13 @@ export default function Footer({ navigateTo }) {
         <span className="footer-copyright">
           © {new Date().getFullYear()} McLaren Automotive. All rights reserved.
         </span>
-        <span onClick={() => navigateTo("admin")} className="footer-link">
-          Admin Control Panel
-        </span>
+
+        {/* Only visible to admin users */}
+        {isAdmin && (
+          <span onClick={() => navigateTo("admin")} className="footer-link">
+            Admin Control Panel
+          </span>
+        )}
       </div>
     </footer>
   );

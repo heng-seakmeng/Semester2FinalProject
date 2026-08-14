@@ -11,7 +11,7 @@
         "Specialist on hand throughout",
         "Available at all McLaren retailers"
       ],
-      "image": "./cars/mclaren-1.jpg"
+      "image": "./images/Character/testDrive.jpg"
     },
     {
       "number": "02",
@@ -24,7 +24,7 @@
         "In-person design consultation",
         "Delivery timeline confirmed at order"
       ],
-      "image": "./cars/mclaren-2.jpg"
+      "image": "./images/Character/operation.jpg"
     },
     {
       "number": "03",
@@ -37,7 +37,7 @@
         "Courtesy vehicle provided",
         "Digital service record maintained"
       ],
-      "image": "./cars/mclaren-3.jpeg"
+      "image": "./images/Character/service.jpg"
     },
     {
       "number": "04",
@@ -50,7 +50,7 @@
         "Full technical briefing before session",
         "In-car video analysis available"
       ],
-      "image": "./cars/mclaren-12.jpg"
+      "image": "./images/Character/track.jpg"
     }
   ],
   "socials": [

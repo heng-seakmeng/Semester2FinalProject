@@ -36,16 +36,15 @@ function SignUp({ navigateTo, setUser }) {
         return;
       }
 
-      // Store token consistently as "token"
       localStorage.setItem("token", data.token);
 
-      // Update global user state immediately upon signup
       if (setUser) {
         setUser({
           isLoggedIn: true,
           uid: data.user.id,
           name: data.user.name,
           email: data.user.email,
+          role: data.user.role || "client", // ✅ Fixed: role now saved
         });
       }
 

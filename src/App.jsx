@@ -15,7 +15,7 @@ import Messages from "./pages/Messages/Messages";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/Login/SignUp";
 import ForgotPassword from "./component/Account/ForgotPassword";
-import AdminDashboard from "./component/Admin/AdminDashboard";
+import AdminDashboard from "./component/Admin/AdminDashBoard"; // ✅ Fixed casing
 
 import "./App.css";
 
@@ -33,7 +33,6 @@ function App() {
   });
   const [authChecked, setAuthChecked] = useState(false);
 
-  // Restore session from stored token on load
   useEffect(() => {
     async function restoreSession() {
       const token = localStorage.getItem("token");
@@ -68,17 +67,13 @@ function App() {
 
   const navigateTo = (page, vehicleId = null) => {
     setCurrentPage(page);
-    if (vehicleId) {
-      setSelectedVehicleId(vehicleId);
-    }
+    if (vehicleId) setSelectedVehicleId(vehicleId);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const hideFooterPages = ["login", "signup", "forgot-password", "admin"];
 
-  if (!authChecked) {
-    return null; // avoids a Login->Account flash while session restores
-  }
+  if (!authChecked) return null;
 
   const isAdmin =
     user.isLoggedIn &&
@@ -92,37 +87,27 @@ function App() {
 
       <main className="view-window">
         {currentPage === "home" && <Home navigateTo={navigateTo} />}
-
         {currentPage === "models" && <Models navigateTo={navigateTo} />}
-
         {currentPage === "vehicle-details" && (
           <VehicleDetails carId={selectedVehicleId} navigateTo={navigateTo} />
         )}
-
         {currentPage === "about" && <About navigateTo={navigateTo} />}
-
         {currentPage === "contact" && <Contact navigateTo={navigateTo} />}
-
         {currentPage === "login" && (
           <Login navigateTo={navigateTo} setUser={setUser} />
         )}
-
         {currentPage === "signup" && (
           <SignUp navigateTo={navigateTo} setUser={setUser} />
         )}
-
         {currentPage === "forgot-password" && (
           <ForgotPassword onBackToLogin={() => navigateTo("login")} />
         )}
-
         {currentPage === "account" && (
           <Account user={user} setUser={setUser} navigateTo={navigateTo} />
         )}
-
         {currentPage === "messages" && (
           <Messages user={user} navigateTo={navigateTo} />
         )}
-
         {currentPage === "admin" &&
           (isAdmin ? (
             <AdminDashboard navigateTo={navigateTo} />
@@ -165,7 +150,7 @@ function App() {
       </main>
 
       {!hideFooterPages.includes(currentPage) && (
-        <Footer navigateTo={navigateTo} />
+        <Footer navigateTo={navigateTo} isAdmin={isAdmin} />
       )}
     </div>
   );

@@ -67,7 +67,7 @@ export default function Home({ navigateTo }) {
           muted
           loop
           playsInline
-          poster="./cars/mclaren-1.jpg"
+          poster="./images/mclaren750s/mclaren-750s.jpg"
         >
           <source src="./video/mclaren-hero.mp4" type="video/mp4" />
         </video>
@@ -212,7 +212,7 @@ export default function Home({ navigateTo }) {
         </div>
         <div className="grid-media">
           <img
-            src="./cars/Bruce-Mclaren.jpg"
+            src="./images/Character/Legacy.jpg"
             alt="McLaren Legacy"
             referrerPolicy="no-referrer"
             loading="lazy"
@@ -243,7 +243,7 @@ export default function Home({ navigateTo }) {
         </div>
         <div className="grid-media">
           <img
-            src="./cars/mclaren-1.jpg"
+            src="./images/Character/airFlow.jpg"
             alt="Engineering Flow"
             referrerPolicy="no-referrer"
             loading="lazy"

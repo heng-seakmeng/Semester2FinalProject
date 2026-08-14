@@ -12,7 +12,7 @@
   "founder": {
     "tag": "THE FOUNDER",
     "headline": "A driver who built his own future.",
-    "image": "./cars/Bruce-Mclaren.jpg",
+    "image": "./images/Character/Bruce-Mclaren.jpg",
     "name": "Bruce McLaren",
     "lifespan": "1937 — 1970",
     "paragraphs": [
@@ -23,7 +23,7 @@
     "note": "Every McLaren built today carries a small plaque bearing his name."
   },
   "bannerImage": {
-    "src": "./cars/mclaren-4.jpeg",
+    "src": "./images/Character/headquarters.jpg",
     "label": "McLaren Technology Centre — Woking, Surrey"
   },
   "timeline": [

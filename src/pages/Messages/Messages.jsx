@@ -38,9 +38,9 @@ export default function Messages({ user, navigateTo }) {
     }
     setLoading(true);
     try {
-      // Fetch purchase requests matching the logged in client's email
+      // ✅ Fixed: use hyphen (purchase-requests) not underscore
       const res = await fetch(
-        `http://localhost:3000/api/purchase_requests?email=${encodeURIComponent(user.email)}`,
+        `http://localhost:3000/api/purchase-requests?email=${encodeURIComponent(user.email)}`,
       );
       const list = await res.json();
       const sorted = Array.isArray(list) ? list : [];
@@ -58,11 +58,10 @@ export default function Messages({ user, navigateTo }) {
     if (!selected) return;
     setDeleting(true);
     try {
+      // ✅ Fixed: use hyphen (purchase-requests) not underscore
       await fetch(
-        `http://localhost:3000/api/purchase_requests/${selected.id}`,
-        {
-          method: "DELETE",
-        },
+        `http://localhost:3000/api/purchase-requests/${selected.id}`,
+        { method: "DELETE" },
       );
       const updated = requests.filter((r) => r.id !== selected.id);
       setRequests(updated);
