@@ -31,7 +31,7 @@
       rgba(10, 10, 10, 0.2) 0%,
       rgba(10, 10, 10, 0.95) 100%
     ),
-    url("./cars/mclaren-3.jpeg") center/cover no-repeat;
+    url("./images/mclaren750s/mclaren-750s.jpg") center/cover no-repeat;
   z-index: 0;
   filter: grayscale(0.15) contrast(1.05);
 }
