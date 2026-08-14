@@ -69,7 +69,7 @@ export default function Home({ navigateTo }) {
           playsInline
           poster="./images/mclaren750s/mclaren-750s.jpg"
         >
-          <source src="./video/mclaren-hero.mp4" type="video/mp4" />
+          {/* <source src="./video/mclaren-hero.mp4" type="video/mp4" /> */}
         </video>
         <div className="hero-video-overlay" aria-hidden="true" />
 
