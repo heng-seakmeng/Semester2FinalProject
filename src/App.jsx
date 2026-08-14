@@ -71,6 +71,7 @@ function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const hideHeaderPages = ["login", "signup", "forgot-password"];
   const hideFooterPages = ["login", "signup", "forgot-password", "admin"];
 
   if (!authChecked) return null;
@@ -83,7 +84,9 @@ function App() {
 
   return (
     <div className="app-frame">
-      <Header currentPage={currentPage} navigateTo={navigateTo} user={user} />
+      {!hideHeaderPages.includes(currentPage) && (
+        <Header currentPage={currentPage} navigateTo={navigateTo} user={user} />
+      )}
 
       <main className="view-window">
         {currentPage === "home" && <Home navigateTo={navigateTo} />}

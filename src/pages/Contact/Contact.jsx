@@ -284,7 +284,7 @@ export default function Contact() {
                       key={s.label}
                       href={s.url}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       aria-label={s.label}
                       className={`ct-social-icon ${s.cls}`}
                     >

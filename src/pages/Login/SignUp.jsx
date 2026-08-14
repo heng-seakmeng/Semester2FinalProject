@@ -44,7 +44,7 @@ function SignUp({ navigateTo, setUser }) {
           uid: data.user.id,
           name: data.user.name,
           email: data.user.email,
-          role: data.user.role || "client", // ✅ Fixed: role now saved
+          role: data.user.role || "client",
         });
       }
 
@@ -58,11 +58,31 @@ function SignUp({ navigateTo, setUser }) {
 
   return (
     <section className="auth-section">
+      {/* Sleek Top-Right Exit Button */}
+      <button
+        type="button"
+        className="auth-screen-exit"
+        onClick={() => navigateTo("home")}
+        aria-label="Close and return home"
+      >
+        <span>Close</span>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        >
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+
       <div className="auth-card">
-        <p className="auth-eyebrow">Join McLaren</p>
+        <span className="auth-eyebrow">Join McLaren</span>
         <h1 className="header">Sign Up</h1>
         <p className="auth-subtext">
-          Sign up to save your favorite models and track your orders.
+          Sign up to save your favorite models and track your allocations.
         </p>
 
         <form className="auth-form" onSubmit={handleSubmit}>

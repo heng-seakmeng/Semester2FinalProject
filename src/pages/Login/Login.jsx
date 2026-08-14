@@ -28,17 +28,15 @@ function Login({ navigateTo, setUser }) {
         return;
       }
 
-      // Save token consistently as "token"
       localStorage.setItem("token", data.token);
 
-      // Update user state inside handleSubmit where 'data' exists
       if (setUser) {
         setUser({
           isLoggedIn: true,
           uid: data.user.id,
           name: data.user.name,
           email: data.user.email,
-          role: data.user.role || "client", // Role properly saved
+          role: data.user.role || "client",
         });
       }
 
@@ -52,11 +50,31 @@ function Login({ navigateTo, setUser }) {
 
   return (
     <section className="auth-section">
+      {/* Sleek Top-Right Exit Button */}
+      <button
+        type="button"
+        className="auth-screen-exit"
+        onClick={() => navigateTo("home")}
+        aria-label="Close and return home"
+      >
+        <span>Close</span>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        >
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+
       <div className="auth-card">
-        <p className="auth-eyebrow">Welcome Back</p>
-        <h1 className="header">Log In To Account</h1>
+        <span className="auth-eyebrow">Welcome Back</span>
+        <h1 className="header">Log In</h1>
         <p className="auth-subtext">
-          Access your saved models, orders, and preferences.
+          Access your saved models, orders, and allocations.
         </p>
 
         <form className="auth-form" onSubmit={handleSubmit}>

@@ -1,12 +1,19 @@
 /* ==========================================================================
-   McLaren Showroom CSS (Buttons Under Photo + Centered Arrows + Full Page)
+   McLaren Showroom CSS (Luxury Editorial Typography Edition)
    ========================================================================== */
-
+* {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+}
 .showroom-layout {
   min-height: 100vh;
   background-color: var(--color-bg-main, #0a0b0d);
   color: var(--color-text-primary, #ffffff);
   padding-bottom: 6rem;
+  /* Added font smoothing for a premium, crisp look */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Loading */
@@ -18,18 +25,20 @@
   justify-content: center;
   gap: 1.5rem;
   color: var(--color-accent, #ff5500);
-  font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: 3px;
+  /* Luxury Typography Applied */
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
 }
 
 .loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(255, 85, 0, 0.2);
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(255, 85, 0, 0.2);
   border-top-color: var(--color-accent, #ff5500);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.9s linear infinite;
 }
 
 @keyframes spin {
@@ -53,24 +62,32 @@
 .brand-label {
   display: inline-block;
   color: var(--color-accent, #ff5500);
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 3px;
+  /* Luxury Typography Applied: Brand Eyebrow */
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 6px;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .showroom-header h1 {
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 900;
-  letter-spacing: -0.5px;
+  /* Luxury Typography Applied: Hero Title */
+  font-size: clamp(2.75rem, 6.5vw, 5.25rem);
+  font-weight: 200;
+  letter-spacing: 3px;
+  line-height: 1;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .showroom-header p {
   color: var(--color-text-secondary, #94a3b8);
+  /* Luxury Typography Applied: Body Text */
   font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.9;
+  max-width: 60ch;
+  margin: 0 auto;
 }
 
 .showroom-filter-bar {
@@ -94,13 +111,14 @@
 
 .tab-btn {
   padding: 0.55rem 1.15rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 1px;
+  /* Luxury Typography Applied: UI Link */
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
   color: var(--color-text-secondary, #94a3b8);
   border-radius: var(--radius-sm, 4px);
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .tab-btn:hover {
@@ -126,9 +144,12 @@
   background-color: var(--color-bg-surface, #0f1117);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
   border-radius: var(--radius-sm, 4px);
-  padding: 0.55rem 2rem 0.55rem 0.85rem;
+  padding: 0.65rem 2rem 0.65rem 0.85rem;
   color: #fff;
-  font-size: 0.85rem;
+  /* Luxury Typography Applied */
+  font-size: 0.8rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
   outline: none;
 }
 
@@ -164,7 +185,7 @@
 .showcase-photo-frame {
   position: relative;
   width: 100%;
-  height: 600px; /* Clean photo proportion */
+  height: 600px;
   background-color: #000;
   overflow: hidden;
 }
@@ -177,7 +198,6 @@
   display: block;
 }
 
-/* Slider Arrows - PERFECTLY CENTERED VERTICALLY IN MIDDLE OF PHOTO */
 .stage-arrow {
   position: absolute;
   top: 50%;
@@ -190,17 +210,14 @@
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
-
-  /* CRITICAL CENTERING FIX */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
   margin: 0;
-  line-height: 0; /* Resets text baseline offset */
+  line-height: 0;
   font-family: Arial, sans-serif;
   font-size: 1.4rem;
-
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -210,10 +227,6 @@
 }
 .stage-arrow.right {
   right: 1.5rem;
-}
-
-.stage-arrow svg {
-  display: block;
 }
 
 .stage-arrow:hover {
@@ -236,11 +249,12 @@
   background: rgba(10, 11, 13, 0.85);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.4rem 0.85rem;
+  padding: 0.4rem 0.9rem;
   border-radius: var(--radius-sm, 4px);
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 2px;
+  /* Luxury Typography Applied */
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--color-accent, #ff5500);
 }
@@ -249,10 +263,12 @@
   background: rgba(10, 11, 13, 0.85);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.4rem 0.85rem;
+  padding: 0.4rem 0.9rem;
   border-radius: var(--radius-sm, 4px);
-  font-size: 0.75rem;
-  font-weight: 700;
+  /* Luxury Typography Applied */
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
   color: var(--color-text-muted, #64748b);
 }
 
@@ -267,26 +283,33 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.5rem;
 }
 
 .model-name {
+  /* Luxury Typography Applied: Section Hero */
   font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 900;
-  letter-spacing: -0.5px;
+  font-weight: 200;
+  letter-spacing: 1px;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .price-tag {
+  /* Luxury Typography Applied: Metric Values */
   font-size: 1.8rem;
-  font-weight: 900;
+  font-weight: 200;
+  letter-spacing: 0.5px;
   color: var(--color-accent, #ff5500);
 }
 
 .model-summary {
+  /* Luxury Typography Applied: Body text */
   font-size: 1rem;
+  font-weight: 300;
   color: var(--color-text-secondary, #94a3b8);
-  line-height: 1.65;
-  margin-bottom: 2rem;
+  line-height: 1.9;
+  margin-bottom: 2.5rem;
   max-width: 900px;
 }
 
@@ -296,10 +319,10 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
   background-color: var(--color-bg-surface, #0f1117);
-  padding: 1.25rem 1.5rem;
+  padding: 1.75rem 1.5rem;
   border-radius: var(--radius-md, 8px);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .spec-item {
@@ -308,16 +331,19 @@
 }
 
 .spec-val {
-  font-size: 1.3rem;
-  font-weight: 900;
+  /* Luxury Typography Applied: Metric Values */
+  font-size: 1.55rem;
+  font-weight: 200;
   color: #fff;
   line-height: 1;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.5px;
 }
 
 .spec-lbl {
-  font-size: 0.7rem;
-  font-weight: 700;
+  /* Luxury Typography Applied: Label */
+  font-size: 0.65rem;
+  font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--color-text-muted, #64748b);
@@ -331,53 +357,54 @@
 }
 
 .showroom-btn {
-  padding: 0.9rem 2rem;
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
+  /* Luxury Typography Applied: Button */
+  padding: 0.7rem 1.6rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2px;
   text-transform: uppercase;
   border-radius: var(--radius-sm, 4px);
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  cursor: pointer;
 }
 
 .showroom-btn.solid {
   background-color: var(--color-accent, #ff5500);
   color: #fff;
+  border: 1px solid var(--color-accent, #ff5500);
   box-shadow: 0 4px 20px rgba(255, 85, 0, 0.3);
 }
 
 .showroom-btn.solid:hover {
-  background-color: #ff7733;
+  background-color: transparent;
+  color: var(--color-accent, #ff5500);
+  box-shadow: none;
   transform: translateY(-2px);
 }
 
 .showroom-btn.outline {
-  background-color: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
 }
 
 .showroom-btn.outline:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: #fff;
-}
-
-.showroom-btn.outline.added {
-  border-color: #10b981;
-  color: #10b981;
+  background-color: #fff;
+  color: #000;
 }
 
 /* Thumbnail Track */
 .thumbnail-track-container {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .track-title {
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 2px;
+  /* Luxury Typography Applied: Section Number / Label */
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 3px;
   color: var(--color-text-muted, #64748b);
   text-transform: uppercase;
 }
@@ -387,6 +414,7 @@
   gap: 1.25rem;
   overflow-x: auto;
   padding-bottom: 0.5rem;
+  scrollbar-width: none; /* Clean scrollbar */
 }
 
 .thumb-card {
@@ -425,6 +453,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: grayscale(0.15) contrast(1.05); /* Added subtle luxury filter */
 }
 
 .thumb-info {
@@ -433,36 +462,48 @@
 }
 
 .thumb-name {
-  font-size: 0.9rem;
-  font-weight: 800;
+  /* Luxury Typography Applied */
+  font-size: 0.85rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   color: #fff;
 }
 .thumb-series {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   color: var(--color-text-muted, #64748b);
 }
 
-/* SECTION 2: SHOWROOM CATALOG LIST (Extends Page Length) */
+/* SECTION 2: SHOWROOM CATALOG LIST */
 .showroom-catalog-section {
   max-width: var(--max-width, 1320px);
-  margin: 6rem auto 0 auto;
+  margin: 8rem auto 0 auto;
   padding: 0 1.5rem;
 }
 
 .catalog-header {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .catalog-header h3 {
+  /* Luxury Typography Applied: Eyebrow */
   color: var(--color-accent, #ff5500);
-  font-size: 0.8rem;
-  letter-spacing: 2.5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 3px;
   text-transform: uppercase;
+  margin-bottom: 0.5rem;
 }
 
 .catalog-header h2 {
-  font-size: 2rem;
-  font-weight: 900;
+  /* Luxury Typography Applied: Section Title */
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  line-height: 1.3;
   text-transform: uppercase;
 }
 
@@ -476,11 +517,11 @@
   display: grid;
   grid-template-columns: 180px 1fr 200px 220px;
   align-items: center;
-  gap: 2rem;
-  padding: 1.75rem 1rem;
+  gap: 3rem;
+  padding: 2.5rem 1rem;
   border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.25s ease;
 }
 
 .catalog-row:hover {
@@ -499,101 +540,129 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: grayscale(0.15) contrast(1.05); /* Added subtle luxury filter */
 }
 
 .catalog-series {
-  font-size: 0.7rem;
-  font-weight: 800;
+  /* Luxury Typography Applied */
+  font-size: 0.65rem;
+  font-weight: 600;
   color: var(--color-accent, #ff5500);
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
+  margin-bottom: 0.25rem;
+  display: block;
 }
 
 .catalog-name {
-  font-size: 1.35rem;
-  font-weight: 900;
+  /* Luxury Typography Applied */
+  font-size: 1.4rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
 }
 
 .catalog-summary {
-  font-size: 0.85rem;
+  /* Luxury Typography Applied: Body Text */
+  font-size: 0.9rem;
+  font-weight: 300;
+  line-height: 1.8;
   color: var(--color-text-secondary, #94a3b8);
 }
 
 .catalog-specs-col {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
   font-size: 0.85rem;
+  font-weight: 300;
   color: var(--color-text-secondary, #94a3b8);
 }
 
 .catalog-specs-col strong {
   color: #fff;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .catalog-actions-col {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .catalog-price {
-  font-size: 1.25rem;
-  font-weight: 900;
+  /* Luxury Typography Applied: Value */
+  font-size: 1.35rem;
+  font-weight: 200;
+  letter-spacing: 0.5px;
   color: var(--color-accent, #ff5500);
 }
 
 .showroom-btn.sm {
   padding: 0.6rem 1.2rem;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
 }
 
-/* SECTION 3: ENGINEERING PILLARS (Extends Page Length) */
+/* SECTION 3: ENGINEERING PILLARS */
 .showroom-pillars-section {
   max-width: var(--max-width, 1320px);
-  margin: 6rem auto 0 auto;
+  margin: 8rem auto 0 auto;
   padding: 0 1.5rem;
 }
 
 .pillars-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
 .pillars-header h3 {
+  /* Luxury Typography Applied: Eyebrow */
   color: var(--color-accent, #ff5500);
-  font-size: 0.8rem;
-  letter-spacing: 2.5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
 }
 .pillars-header h2 {
-  font-size: 2rem;
-  font-weight: 900;
+  /* Luxury Typography Applied: Section Title */
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  line-height: 1.3;
   text-transform: uppercase;
 }
 
 .pillars-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  gap: 3rem;
 }
 
 .pillar-card {
   background-color: var(--color-bg-card, #14171f);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
   border-radius: var(--radius-md, 8px);
-  padding: 2.25rem;
+  padding: 3rem 2.25rem;
 }
 
 .pillar-card h3 {
-  font-size: 1.2rem;
-  font-weight: 800;
-  margin-bottom: 0.75rem;
+  /* Luxury Typography Applied: Card Title */
+  font-size: 1.25rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
 }
 
 .pillar-card p {
+  /* Luxury Typography Applied: Body Text */
   color: var(--color-text-secondary, #94a3b8);
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-size: 0.95rem;
+  font-weight: 300;
+  line-height: 1.9;
 }
 
 /* Responsive */
@@ -625,6 +694,7 @@
   }
   .showcase-specs-strip {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
   .title-price-row {
     flex-direction: column;
@@ -635,5 +705,9 @@
     width: 38px;
     height: 38px;
     font-size: 1.4rem;
+  }
+  .showroom-catalog-section,
+  .showroom-pillars-section {
+    margin-top: 5rem;
   }
 }

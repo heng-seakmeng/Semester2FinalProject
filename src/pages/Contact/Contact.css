@@ -1,17 +1,24 @@
+/* ==========================================================================
+   Contact Page — McLaren Luxury Editorial Edition (With Orange)
+   ========================================================================== */
+
 .contact-page {
   width: 100%;
-  background: #0a0b0d;
-  color: #fff;
+  background: #0a0a0a;
+  color: #f7f6f3;
+  /* Premium crisp font rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* HERO */
 .ct-hero {
   position: relative;
   height: 50vh;
-  min-height: 380px;
+  min-height: 420px;
   display: flex;
   align-items: flex-end;
-  padding: 0 6vw 3.5rem; /* Reduced from 6rem */
+  padding: 0 6vw 4rem;
   overflow: hidden;
 }
 
@@ -21,171 +28,183 @@
   background:
     linear-gradient(
       to bottom,
-      rgba(10, 11, 13, 0.4) 0%,
-      rgba(10, 11, 13, 0.95) 100%
+      rgba(10, 10, 10, 0.2) 0%,
+      rgba(10, 10, 10, 0.95) 100%
     ),
     url("./cars/mclaren-3.jpeg") center/cover no-repeat;
   z-index: 0;
+  filter: grayscale(0.15) contrast(1.05);
 }
 
 .ct-hero-content {
   position: relative;
   z-index: 1;
+  max-width: 1320px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .ct-eyebrow {
+  /* Detail Page Match: Brand Prefix + ORANGE */
   display: block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 6px;
   text-transform: uppercase;
   color: #ff5500;
-  margin-bottom: 0.5rem; /* Reduced from 1rem */
+  margin-bottom: 1.25rem;
 }
 
 .ct-hero-content h1 {
-  font-size: clamp(2.5rem, 6vw, 4.8rem);
-  font-weight: 900;
-  line-height: 1.05;
-  letter-spacing: -2px;
+  /* Detail Page Match: Super Hero */
+  font-size: clamp(2.75rem, 6.5vw, 5.25rem);
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: 3px;
   text-transform: uppercase;
 }
 
 .ct-hero-content h1 em {
   font-style: italic;
-  color: #ff5500;
-  font-weight: 300;
+  color: #ff5500; /* McLaren Accent */
+  font-weight: 200;
+  letter-spacing: 1px;
 }
 
 /* SECTION LABEL */
 .ct-section-label {
+  /* Detail Page Match: Section Num */
   display: inline-block;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: #ff5500;
-  margin-bottom: 0.4rem; /* Reduced from 0.75rem */
+  margin-bottom: 1rem;
 }
 
 /* MAIN CONTACT GRID */
 .ct-main-section {
-  padding: 3.5rem 6vw; /* Reduced from 6rem 6vw */
-  max-width: 100%;
+  padding: 5rem 6vw;
+  max-width: 1320px;
   margin: 0 auto;
 }
 
 .ct-main-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
-  gap: 2.5rem; /* Reduced from 5rem */
+  grid-template-columns: 1.3fr 1fr;
+  gap: 6rem;
   align-items: start;
 }
 
 /* FORM SIDE */
 .ct-form-side h2 {
-  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
-  font-weight: 900;
+  /* Detail Page Match: Section Title */
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 300;
   text-transform: uppercase;
-  margin-bottom: 1.25rem; /* Reduced from 2rem */
-  line-height: 1.15;
+  letter-spacing: 0.5px;
+  margin-bottom: 2.5rem;
+  line-height: 1.3;
 }
 
 .ct-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* Reduced from 1.25rem */
+  gap: 1.75rem;
 }
 
 .ct-form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .ct-field {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.5rem;
 }
 
 .ct-field label {
-  font-size: 0.7rem;
-  font-weight: 700;
+  /* Detail Page Match: Input Label */
+  font-size: 0.68rem;
+  font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #64748b;
+  color: #8c8c88;
 }
 
+/* Minimal Border-Bottom Style */
 .ct-field input,
 .ct-field select,
 .ct-field textarea {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
-  padding: 0.75rem 0.9rem; /* Slightly tighter input padding */
-  color: #fff;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(247, 246, 243, 0.15);
+  border-radius: 0;
+  padding: 0.65rem 0.1rem;
+  color: #f7f6f3;
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 300;
   outline: none;
-  transition:
-    border-color 0.2s ease,
-    background 0.2s ease;
-  resize: none;
+  transition: border-color 0.25s ease;
+  resize: vertical;
 }
 
 .ct-field input::placeholder,
 .ct-field textarea::placeholder {
-  color: #334155;
+  color: rgba(140, 140, 136, 0.5);
 }
 
 .ct-field select option {
-  background: #111317;
-  color: #fff;
+  background: #0a0a0a;
+  color: #f7f6f3;
 }
 
 .ct-field input:focus,
 .ct-field select:focus,
 .ct-field textarea:focus {
-  border-color: #ff5500;
-  background: rgba(255, 85, 0, 0.04);
+  border-color: #ff5500; /* McLaren Accent Focus */
 }
 
 .ct-submit-btn {
+  /* Detail Page Match: Form Submit Button */
   background: #ff5500;
   color: #fff;
-  border: none;
-  padding: 0.8rem 1.75rem;
-  font-size: 0.8rem;
+  border: 1px solid #ff5500;
+  padding: 0.95rem 1.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
+  border-radius: 0;
   cursor: pointer;
-  border-radius: 4px;
   transition: all 0.3s ease;
   align-self: flex-start;
-  box-shadow: 0 4px 15px rgba(255, 85, 0, 0.25);
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
 }
 
 .ct-submit-btn:hover {
-  background: #ff7733;
-  transform: translateY(-2px);
+  background: transparent;
+  color: #ff5500;
 }
 
 .ct-submit-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.4;
   cursor: not-allowed;
-  transform: none;
 }
 
 .ct-error {
   font-size: 0.85rem;
-  color: #ff4d4d;
-  background: rgba(255, 77, 77, 0.08);
-  border: 1px solid rgba(255, 77, 77, 0.2);
-  border-radius: 4px;
-  padding: 0.6rem 0.85rem;
+  font-weight: 300;
+  color: #f7f6f3;
+  background: transparent;
+  border: 1px solid rgba(247, 246, 243, 0.15);
+  border-left: 2px solid #ff5500; /* Orange error line */
+  border-radius: 0;
+  padding: 0.8rem 1rem;
 }
 
 /* SUCCESS */
@@ -193,192 +212,219 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.75rem;
-  padding: 2rem;
-  background: rgba(255, 85, 0, 0.05);
-  border: 1px solid rgba(255, 85, 0, 0.2);
-  border-radius: 8px;
+  gap: 1rem;
+  padding: 2.5rem;
+  background: #141414;
+  border: 1px solid rgba(247, 246, 243, 0.08);
+  border-top: 2px solid #ff5500; /* Orange Success Bar */
+  border-radius: 0;
 }
 
 .ct-success-icon {
   font-size: 1.75rem;
   color: #ff5500;
-  font-weight: 700;
 }
 
 .ct-success h3 {
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .ct-success p {
-  color: #94a3b8;
-  font-size: 0.92rem;
-  line-height: 1.5;
+  /* Detail Page Match: Body Text */
+  color: #8c8c88;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.9;
 }
 
 /* INFO SIDE */
 .ct-info-side {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem; /* Reduced from 2rem */
-  padding-top: 0; /* Removed 3.5rem top offset */
+  gap: 2rem;
+  padding-top: 0;
 }
 
 .ct-info-block {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 1rem; /* Reduced from 1.5rem */
+  border-top: 1px solid rgba(247, 246, 243, 0.08);
+  padding-top: 1.5rem;
 }
 
 .ct-info-block h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 0.35rem;
+  /* Detail Page Match: Sub-label */
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  color: #f7f6f3;
 }
 
 .ct-info-block p {
-  color: #94a3b8;
-  font-size: 0.9rem;
-  line-height: 1.6;
+  color: #8c8c88;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.9;
 }
 
 .ct-hours {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .ct-hours-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.85rem;
-  color: #94a3b8;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: #8c8c88;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(247, 246, 243, 0.08);
 }
 
 .ct-contact-links {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.75rem;
 }
 
 .ct-contact-links a {
-  color: #94a3b8;
+  color: #8c8c88;
   text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.2s ease;
+  font-size: 0.95rem;
+  font-weight: 300;
+  transition: color 0.25s ease;
 }
 
 .ct-contact-links a:hover {
-  color: #ff5500;
+  color: #ff5500; /* McLaren Accent */
 }
 
-/* SOCIALS */
+/* SOCIALS (Orange Accents on Hover) */
+/* ==========================================================================
+   DYNAMIC SOCIAL MEDIA ICONS (Official Brand Hover Colors)
+   ========================================================================== */
+
 .ct-socials {
   display: flex;
-  gap: 0.6rem;
-  margin-top: 0.25rem;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  align-items: center;
 }
 
 .ct-social-icon {
   text-decoration: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  color: #fff;
-  font-size: 0.9rem;
-  transition:
-    transform 0.2s ease,
-    opacity 0.2s ease;
+  width: 44px;
+  height: 44px;
+  border-radius: 0;
+  background: transparent;
+  border: 1px solid rgba(247, 246, 243, 0.15);
+  color: #8c8c88;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  line-height: 1;
 }
 
-.ct-social-icon:hover {
+/* ── Facebook (#1877F2) ── */
+.ct-social-icon.facebook:hover,
+.ct-social-icon.fb:hover {
+  color: #1877f2;
+  border-color: #1877f2;
+  background: rgba(24, 119, 242, 0.08);
   transform: translateY(-2px);
-  opacity: 0.85;
+  box-shadow: 0 4px 15px rgba(24, 119, 242, 0.25);
 }
 
-.ct-social-instagram {
-  background: radial-gradient(
-    circle at 30% 107%,
-    #fdf497 0%,
-    #fdf497 5%,
-    #fd5949 45%,
-    #d6249f 60%,
-    #285aeb 90%
-  );
+/* ── Instagram (#E4405F) ── */
+.ct-social-icon.instagram:hover,
+.ct-social-icon.ig:hover {
+  color: #e4405f;
+  border-color: #e4405f;
+  background: rgba(228, 64, 95, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(228, 64, 95, 0.25);
 }
-.ct-social-youtube {
-  background-color: #ff0000;
+
+/* ── YouTube (#FF0000) ── */
+.ct-social-icon.youtube:hover,
+.ct-social-icon.yt:hover {
+  color: #ff0000;
+  border-color: #ff0000;
+  background: rgba(255, 0, 0, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.25);
 }
-.ct-social-facebook {
-  background-color: #1877f2;
-}
-.ct-social-linkedin {
-  background-color: #0077b5;
+
+/* ── LinkedIn (#0A66C2) ── */
+.ct-social-icon.linkedin:hover,
+.ct-social-icon.li:hover {
+  color: #0a66c2;
+  border-color: #0a66c2;
+  background: rgba(10, 102, 194, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(10, 102, 194, 0.25);
 }
 
 /* ─────────────────────────────────────────────────────────────
    SERVICES — TIGHT, COMPACT & REFINED LUXURY SECTION
 ───────────────────────────────────────────────────────────── */
 .ct-services-section {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: #07080a;
-  padding-bottom: 3.5rem; /* Reduced from 5rem */
+  border-top: 1px solid rgba(247, 246, 243, 0.08);
+  background: #0a0a0a;
+  padding-bottom: 6rem;
 }
 
 /* INTRO HEADER */
 .ct-services-intro {
-  padding: 2.5rem 6vw 1.5rem; /* Reduced from 4.5rem 6vw 2.5rem */
+  padding: 5rem 6vw 3.5rem;
   max-width: 1320px;
   margin: 0 auto;
 }
 
 .ct-services-intro h2 {
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
-  font-weight: 900;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 300;
   text-transform: uppercase;
   margin-top: 0.2rem;
-  margin-bottom: 0.4rem; /* Reduced from 0.75rem */
-  line-height: 1.1;
-  letter-spacing: -1px;
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
+  letter-spacing: 0.5px;
 }
 
 .ct-services-intro p {
-  color: #94a3b8;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  max-width: 580px;
+  color: #8c8c88;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.9;
+  max-width: 60ch;
 }
 
 /* SERVICE CARDS CONTAINER */
 .ct-services-list {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem; /* Reduced from 2rem */
-  /* max-width: 1320px; */
+  gap: 3.5rem;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 0 6vw;
+  height: auto;
 }
 
 /* SERVICE ITEM ROW */
 .ct-service-row {
   display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  background: rgba(18, 20, 26, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 6px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.ct-service-row:hover {
-  border-color: rgba(255, 85, 0, 0.35);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  transform: translateY(-2px);
+  grid-template-columns: 700px 1fr; /* Fixed 700px column for the media */
+  gap: 3rem;
+  align-items: center;
+  background: transparent;
+  border: none; /* Removed outer full-width border */
 }
 
 .ct-service-row--reverse {
@@ -389,66 +435,79 @@
   direction: ltr;
 }
 
-/* SERVICE MEDIA */
+/* SERVICE MEDIA (Fixed 700px x 350px + Border) */
 .ct-service-media {
   position: relative;
   overflow: hidden;
-  min-height: 280px; /* Reduced from 340px */
+  width: 700px;
+  max-width: 100%;
+  height: 350px;
+  background: #000;
+  border: 1px solid rgba(247, 246, 243, 0.08); /* Border isolated to 700x350 box */
+  transition: border-color 0.4s ease;
+}
+
+.ct-service-row:hover .ct-service-media {
+  border-color: rgba(255, 85, 0, 0.5); /* Orange border on hover */
 }
 
 .ct-service-media img {
-  width: 700px;
-  height: 350px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
   transition: transform 0.6s ease;
+  filter: grayscale(0.15) contrast(1.05);
+  display: block;
 }
 
 .ct-service-row:hover .ct-service-media img {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
 /* NUMBER WATERMARK */
 .ct-service-num {
   position: absolute;
-  top: 0.75rem;
-  right: 1rem;
-  font-size: 2.8rem; /* Scaled down slightly */
-  font-weight: 900;
+  top: 1.25rem;
+  right: 1.5rem;
+  font-size: 3rem;
+  font-weight: 200;
   line-height: 1;
-  letter-spacing: -2px;
+  letter-spacing: 1px;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+  -webkit-text-stroke: 1px rgba(247, 246, 243, 0.15);
   pointer-events: none;
   z-index: 2;
-  transition: -webkit-text-stroke 0.3s ease;
+  transition: -webkit-text-stroke 0.4s ease;
 }
 
 .ct-service-row:hover .ct-service-num {
-  -webkit-text-stroke: 1px rgba(255, 85, 0, 0.7);
+  -webkit-text-stroke: 1px #ff5500;
 }
 
 /* SERVICE CONTENT */
 .ct-service-text {
-  padding: 1.5rem 1.75rem; /* Reduced from 2.25rem 2.5rem */
+  padding: 1rem 0; /* Cleaned up padding since outer card is gone */
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 0.6rem; /* Tightened internal spacing */
+  gap: 1.25rem;
 }
 
 .ct-service-text h3 {
-  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
-  font-weight: 900;
+  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  font-weight: 300;
   text-transform: uppercase;
-  line-height: 1.15;
-  color: #fff;
+  letter-spacing: 0.5px;
+  line-height: 1.3;
+  color: #f7f6f3;
 }
 
 .ct-service-desc {
-  font-size: 0.88rem;
-  color: #94a3b8;
-  line-height: 1.6;
+  font-size: 1rem;
+  font-weight: 300;
+  color: #8c8c88;
+  line-height: 1.9;
 }
 
 /* DETAILS SPEC GRID */
@@ -456,29 +515,31 @@
   list-style: none;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.4rem 0.8rem;
-  padding: 0.75rem 0 0 0; /* Reduced from 1rem */
-  margin-top: 0.2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 0.75rem 1rem;
+  padding: 1.25rem 0 0 0;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(247, 246, 243, 0.08);
 }
 
 .ct-service-details li {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.78rem;
-  color: #cbd5e1;
-  font-weight: 500;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: #8c8c88;
+  font-weight: 300;
+  letter-spacing: 0.3px;
 }
 
 .ct-detail-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: rgba(255, 85, 0, 0.15);
+  width: 16px;
+  height: 16px;
+  border-radius: 0;
+  background: rgba(255, 85, 0, 0.05);
+  border: 1px solid rgba(255, 85, 0, 0.3);
   color: #ff5500;
   font-size: 0.6rem;
   flex-shrink: 0;
@@ -489,91 +550,150 @@
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   background: transparent;
   color: #ff5500;
-  border: 1px solid #ff5500;
-  padding: 0.55rem 1.15rem; /* Tighter padding */
-  font-size: 0.72rem;
+  border: 1px solid rgba(255, 85, 0, 0.5);
+  padding: 0.8rem 1.75rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 0;
   transition: all 0.3s ease;
-  margin-top: 0.35rem;
+  margin-top: 1.5rem;
 }
 
 .ct-enquire-btn:hover {
   background: #ff5500;
   color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3);
+  border-color: #ff5500;
+}
+/* ==========================================================================
+   RESPONSIVE LAYOUTS (Tiered Popular Breakpoints)
+   ========================================================================== */
+
+/* 1. Large Laptops / Small Desktops (<= 1200px) */
+@media (max-width: 1200px) {
+  .ct-main-grid {
+    gap: 4rem;
+  }
+  .ct-services-list {
+    gap: 2rem;
+  }
+  .ct-service-text {
+    padding: 2rem 2.5rem;
+  }
 }
 
-/* RESPONSIVE DESIGN */
+/* 2. Landscape Tablets / iPad Pro (<= 1024px) */
 @media (max-width: 1024px) {
   .ct-main-grid {
+    /* Stack Form and Information block */
     grid-template-columns: 1fr;
+    gap: 4.5rem;
+  }
+
+  .ct-info-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Info blocks side-by-side */
     gap: 2rem;
   }
 
   .ct-service-row {
+    /* Stack Media and Service Information */
     grid-template-columns: 1fr;
   }
 
   .ct-service-row--reverse {
-    direction: ltr;
+    direction: ltr; /* Reset direction */
   }
 
   .ct-service-media {
-    min-height: 220px;
-    height: 220px;
+    min-height: 300px;
+    height: 300px;
   }
 
   .ct-service-text {
-    padding: 1.25rem 1.5rem;
+    padding: 2.5rem;
   }
 }
 
-@media (max-width: 600px) {
+/* 3. Portrait Tablets / Standard iPad (<= 768px) */
+@media (max-width: 768px) {
   .ct-hero {
-    padding: 0 1.25rem 2.5rem;
+    padding: 0 1.5rem 3.5rem;
+    min-height: 380px;
+  }
+
+  .ct-main-section,
+  .ct-services-intro,
+  .ct-services-list {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 
   .ct-main-section {
-    padding: 2.5rem 1.25rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .ct-info-side {
+    grid-template-columns: 1fr; /* Stack info blocks again */
   }
 
   .ct-services-intro {
-    padding: 2.5rem 1.25rem 1.25rem;
+    padding-top: 4rem;
+    padding-bottom: 2rem;
   }
+}
 
-  .ct-services-list {
-    padding: 0 1.25rem;
-    gap: 1rem;
-  }
-
+/* 4. Large Mobile / Phablets (<= 600px) */
+@media (max-width: 600px) {
   .ct-form-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Stack First/Last Name inputs */
+    gap: 1.4rem;
   }
 
-  .ct-submit-btn {
-    width: 100%;
-    text-align: center;
-  }
-
-  .ct-service-details {
-    grid-template-columns: 1fr;
-    gap: 0.4rem;
-  }
-
-  .ct-service-text {
-    padding: 1.25rem 1rem;
-  }
-
+  .ct-submit-btn,
   .ct-enquire-btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .ct-service-details {
+    grid-template-columns: 1fr; /* Single column specs */
+  }
+
+  .ct-service-text {
+    padding: 2rem 1.5rem;
+  }
+
+  .ct-service-media {
+    min-height: 240px;
+    height: 240px;
+  }
+}
+
+/* 5. Standard Mobile / Small Phones (<= 480px) */
+@media (max-width: 480px) {
+  .ct-hero {
+    min-height: 320px;
+    padding-bottom: 2.5rem;
+  }
+
+  .ct-hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .ct-success {
+    padding: 1.5rem;
+  }
+
+  .ct-service-num {
+    font-size: 2.2rem;
+    top: 1rem;
+    right: 1rem;
   }
 }

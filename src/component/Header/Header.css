@@ -1,81 +1,322 @@
+/* ==========================================================================
+   Brand Header — McLaren Luxury Editorial Edition
+   ========================================================================== */
+
 .brand-header {
-  background-color: #000000;
-  border-bottom: 1px solid var(--border);
+  /* Premium glass-morphism sticky header */
+  background-color: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(247, 246, 243, 0.08);
   position: sticky;
   top: 0;
   z-index: 1000;
-  padding: 20px 5vw;
+  padding: 0 6vw; /* Aligned with global page margins */
   width: 100%;
+  height: 80px; /* Fixed height for consistent vertical rhythm */
+  display: flex;
+  align-items: center;
 }
 
 .header-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
 }
 
 .brand-logo {
-  font-size: 1.5rem;
-  font-weight: 900;
-  letter-spacing: 5px;
+  display: flex;
+  align-items: center;
   cursor: pointer;
-  color: var(--white);
+}
+
+.brand-logo img {
+  height: 28px; /* Slightly refined size for luxury feel */
+  width: auto;
+  display: block;
+  filter: brightness(0) invert(1);
+  transition: opacity 0.3s ease;
+}
+
+.brand-logo:hover img {
+  opacity: 0.7; /* Removed scale transform; luxury animations are subtle */
 }
 
 .logo-accent {
-  color: var(--orange);
+  color: #ff5500; /* McLaren Accent */
 }
 
 .header-nav {
   display: flex;
   list-style: none;
-  gap: 30px;
+  gap: 2.5rem;
+  margin: 0;
+  padding: 0;
 }
 
 .header-nav li {
-  color: var(--gray-medium);
-  font-size: 0.85rem;
-  font-weight: bold;
+  /* Luxury Typography Applied: UI Navigation */
+  color: #8c8c88;
+  font-size: 0.68rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 2.5px;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 80px; /* Full height for larger click target */
 }
 
-.header-nav li:hover,
+.header-nav li:hover {
+  color: #f7f6f3;
+}
+
 .header-nav li.active {
-  color: var(--orange);
+  color: #f7f6f3;
+}
+
+/* Minimal Orange Active Indicator */
+.header-nav li.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #ff5500;
 }
 
 .header-actions {
   display: flex;
-  gap: 25px;
+  gap: 2rem;
   align-items: center;
 }
 
 .nav-action-btn {
-  font-size: 0.85rem;
-  font-weight: bold;
+  /* Detail Page Match: Action Text */
+  color: #8c8c88;
+  font-size: 0.68rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  transition: color 0.2s ease;
+  letter-spacing: 2.5px;
+  transition: color 0.3s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .nav-action-btn:hover {
-  color: var(--orange);
+  color: #f7f6f3;
 }
 
 .signup-btn {
-  background-color: var(--orange);
-  color: #fff;
-  padding: 8px 18px;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: bold;
-  letter-spacing: 1.5px;
-  transition: background-color 0.2s ease;
+  /* Luxury Typography Applied: Sharp Outline Button */
+  background-color: transparent;
+  color: #ff5500;
+  border: 1px solid rgba(255, 85, 0, 0.5);
+  padding: 0.7rem 1.6rem;
+  border-radius: 0; /* Sharp Architectural Edges */
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .signup-btn:hover {
-  background-color: #e55a00;
+  background-color: #ff5500;
+  color: #fff;
+  border-color: #ff5500;
+}
+
+/* Mobile Hamburger Menu Button */
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #f7f6f3;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.25s ease;
+  line-height: 1;
+}
+
+.mobile-menu-toggle:hover {
+  color: #ff5500;
+}
+
+/* ── MOBILE MENU DRAWER OVERLAY ── */
+.mobile-menu-drawer {
+  position: fixed;
+  top: 80px; /* Aligns right beneath the header */
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 80px);
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  z-index: 999;
+}
+
+.mobile-menu-drawer.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.mobile-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-nav-list li {
+  color: #8c8c88;
+  font-size: 1.1rem;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.mobile-nav-list li:hover,
+.mobile-nav-list li.active {
+  color: #f7f6f3;
+}
+
+.mobile-nav-list li.active {
+  color: #ff5500;
+}
+
+.mobile-actions-divider {
+  width: 40px;
+  height: 1px;
+  background: rgba(247, 246, 243, 0.15);
+  margin: 2rem 0;
+}
+
+.mobile-actions-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.mobile-actions-list .nav-action-btn {
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+}
+
+.mobile-actions-list .signup-btn {
+  padding: 0.75rem 2rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUTS (Tiered Popular Breakpoints)
+   ========================================================================== */
+
+/* 1. Large Laptops / Small Desktops (<= 1200px) */
+@media (max-width: 1200px) {
+  .header-nav {
+    gap: 2rem;
+  }
+  .header-actions {
+    gap: 1.5rem;
+  }
+}
+
+/* 2. Landscape Tablets / iPad Pro (<= 1024px) */
+@media (max-width: 1024px) {
+  .header-nav {
+    gap: 1.5rem;
+  }
+  .header-nav li {
+    font-size: 0.62rem;
+    letter-spacing: 2px;
+  }
+  .nav-action-btn,
+  .signup-btn {
+    font-size: 0.62rem;
+    letter-spacing: 1.5px;
+  }
+  .signup-btn {
+    padding: 0.6rem 1.25rem;
+  }
+}
+
+/* 3. Portrait Tablets / Standard iPad (<= 768px) */
+@media (max-width: 768px) {
+  .brand-header {
+    height: 70px;
+    padding: 0 1.5rem;
+  }
+
+  .mobile-menu-drawer {
+    top: 70px;
+    height: calc(100vh - 70px);
+  }
+
+  .brand-logo img {
+    height: 24px;
+  }
+
+  /* Hide standard desktop nav and action buttons on tablet/mobile */
+  .header-nav {
+    display: none;
+  }
+
+  .header-actions .nav-action-btn,
+  .header-actions .signup-btn {
+    display: none;
+  }
+
+  /* Show mobile toggle button */
+  .mobile-menu-toggle {
+    display: block;
+  }
+}
+
+/* 4. Large Mobile / Phablets (<= 600px) */
+@media (max-width: 600px) {
+  .brand-header {
+    padding: 0 1.25rem;
+  }
+}
+
+/* 5. Standard Mobile / Small Phones (<= 480px) */
+@media (max-width: 480px) {
+  .brand-header {
+    height: 60px;
+    padding: 0 1rem;
+  }
+
+  .mobile-menu-drawer {
+    top: 60px;
+    height: calc(100vh - 60px);
+  }
+
+  .brand-logo img {
+    height: 20px;
+  }
 }

@@ -16,6 +16,18 @@ export default function VehicleDetails({ carId, navigateTo }) {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  // Lock background scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isModalOpen]);
+
   useEffect(() => {
     let mounted = true;
 
@@ -402,6 +414,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
             <button
               className="modal-close-btn"
               onClick={() => setIsModalOpen(false)}
+              aria-label="Close"
             >
               ✕
             </button>

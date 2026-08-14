@@ -55,28 +55,28 @@
   ],
   "socials": [
     {
-      "icon": "fa-brands fa-instagram",
-      "label": "Instagram",
-      "url": "https://www.instagram.com/mclarenautomotive",
-      "cls": "ct-social-instagram"
-    },
-    {
-      "icon": "fa-brands fa-youtube",
-      "label": "YouTube",
-      "url": "https://www.youtube.com/user/McLarenAutomotiveTV",
-      "cls": "ct-social-youtube"
-    },
-    {
-      "icon": "fa-brands fa-facebook",
       "label": "Facebook",
-      "url": "https://www.facebook.com/McLarenAutomotive",
-      "cls": "ct-social-facebook"
+      "url": "https://facebook.com/mclaren",
+      "cls": "facebook",
+      "icon": "fab fa-facebook-f"
     },
     {
-      "icon": "fa-brands fa-linkedin",
+      "label": "Instagram",
+      "url": "https://instagram.com/mclaren",
+      "cls": "instagram",
+      "icon": "fab fa-instagram"
+    },
+    {
+      "label": "YouTube",
+      "url": "https://youtube.com/mclaren",
+      "cls": "youtube",
+      "icon": "fab fa-youtube"
+    },
+    {
       "label": "LinkedIn",
-      "url": "https://www.linkedin.com/company/mclaren",
-      "cls": "ct-social-linkedin"
+      "url": "https://linkedin.com/company/mclaren-automotive-ltd",
+      "cls": "linkedin",
+      "icon": "fab fa-linkedin-in"
     }
   ],
   "info": {
