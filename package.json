@@ -3,10 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://heng-seakmeng.github.io/Semester2FinalProject/",
   "scripts": {
     "dev": "vite",
-    "build": "vite",
-    "preview": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
@@ -26,8 +27,8 @@
     "eslint": "^10.6.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
-    "gh-pages": "^6.3.0",
     "globals": "^17.7.0",
+    "gh-pages": "^6.3.0",
     "vite": "^8.1.1"
   }
 }
