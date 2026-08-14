@@ -30,7 +30,7 @@
       rgba(10, 10, 10, 0.3) 0%,
       rgba(10, 10, 10, 0.95) 100%
     ),
-    url("./cars/mclaren-12.jpg") center/cover no-repeat;
+    url("./images/mclaren720s/Mclaren720sHero.jpg") center/cover no-repeat;
   z-index: 0;
   filter: grayscale(0.15) contrast(1.05); /* Architectural Filter */
 }
