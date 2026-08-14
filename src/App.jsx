@@ -15,11 +15,11 @@ import Messages from "./pages/Messages/Messages";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/Login/SignUp";
 import ForgotPassword from "./component/Account/ForgotPassword";
-import AdminDashboard from "./component/Admin/AdminDashBoard"; // ✅ Fixed casing
+import AdminDashboard from "./component/Admin/AdminDashBoard";
 
 import "./App.css";
 
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");

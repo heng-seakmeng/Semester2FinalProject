@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./Login.css";
 
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
 
 function Login({ navigateTo, setUser }) {
   const [email, setEmail] = useState("");
@@ -42,7 +42,7 @@ function Login({ navigateTo, setUser }) {
 
       navigateTo("home");
     } catch {
-      setError("Could not reach the server. Is it running on port 3000?");
+      setError("Could not reach the server. Is the backend running?");
     } finally {
       setLoading(false);
     }
@@ -50,7 +50,6 @@ function Login({ navigateTo, setUser }) {
 
   return (
     <section className="auth-section">
-      {/* Sleek Top-Right Exit Button */}
       <button
         type="button"
         className="auth-screen-exit"

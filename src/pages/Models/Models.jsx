@@ -1,6 +1,22 @@
 import { useState, useEffect, useMemo } from "react";
 import "./Models.css";
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+// Helper to ensure images load properly on both localhost and GitHub Pages
+const resolveImgUrl = (src) => {
+  if (!src) return "";
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("data:")
+  ) {
+    return src;
+  }
+  const cleanPath = src.replace(/^\.?\//, "");
+  return `${import.meta.env.BASE_URL}${cleanPath}`;
+};
+
 export default function Models({ navigateTo }) {
   const [showroomCars, setShowroomCars] = useState([]);
   const [showroomPillars, setShowroomPillars] = useState([]);
@@ -19,10 +35,9 @@ export default function Models({ navigateTo }) {
         setLoading(true);
         setError(null);
 
-        // Fetch data exclusively from backend API endpoints
         const [carsRes, pillarsRes] = await Promise.all([
-          fetch("http://localhost:3000/api/vehicles"),
-          fetch("http://localhost:3000/api/pillars"),
+          fetch(`${API_BASE}/api/vehicles`),
+          fetch(`${API_BASE}/api/pillars`),
         ]);
 
         if (!carsRes.ok) {
@@ -59,7 +74,6 @@ export default function Models({ navigateTo }) {
     };
   }, []);
 
-  // Filter cars dynamically based on category and search query
   const filteredCars = useMemo(() => {
     return showroomCars.filter((car) => {
       const nameMatch = (car?.name || "")
@@ -83,7 +97,6 @@ export default function Models({ navigateTo }) {
     });
   }, [showroomCars, activeCategory, searchQuery]);
 
-  // Reset slider position on filter changes
   useEffect(() => {
     setActiveIndex(0);
   }, [activeCategory, searchQuery]);
@@ -116,10 +129,6 @@ export default function Models({ navigateTo }) {
       <div className="no-vehicles">
         <h3>Backend Server Offline</h3>
         <p>{error}</p>
-        <p>
-          Ensure your backend server is running on{" "}
-          <code>http://localhost:3000</code>
-        </p>
       </div>
     );
   }
@@ -190,7 +199,9 @@ export default function Models({ navigateTo }) {
             {/* 1. PHOTO FRAME */}
             <div className="showcase-photo-frame">
               <img
-                src={activeCar?.images?.exterior || activeCar?.image || ""}
+                src={resolveImgUrl(
+                  activeCar?.images?.exterior || activeCar?.image || "",
+                )}
                 alt={activeCar?.name}
                 referrerPolicy="no-referrer"
                 loading="lazy"
@@ -320,7 +331,7 @@ export default function Models({ navigateTo }) {
                     onClick={() => setActiveIndex(idx)}
                   >
                     <div className="thumb-img-wrapper">
-                      <img src={thumbImg} alt={car.name} />
+                      <img src={resolveImgUrl(thumbImg)} alt={car.name} />
                     </div>
                     <div className="thumb-info">
                       <span className="thumb-name">{car.name}</span>
@@ -354,7 +365,7 @@ export default function Models({ navigateTo }) {
                 onClick={() => navigateTo("vehicle-details", car.id)}
               >
                 <div className="catalog-thumb">
-                  <img src={carImg} alt={car.name} />
+                  <img src={resolveImgUrl(carImg)} alt={car.name} />
                 </div>
                 <div className="catalog-details">
                   <span className="catalog-series">{car.series}</span>

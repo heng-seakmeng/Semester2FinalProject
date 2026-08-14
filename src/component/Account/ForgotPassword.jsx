@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./ForgotPassword.css";
 
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
 
 export default function ForgotPassword({ onBackToLogin }) {
   const [email, setEmail] = useState("");
@@ -33,7 +33,7 @@ export default function ForgotPassword({ onBackToLogin }) {
       );
       setEmail("");
     } catch {
-      setError("Could not reach the server. Is it running on port 3000?");
+      setError("Could not reach the server. Please check backend connection.");
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,22 @@
 import { useState, useEffect } from "react";
 import "./Contact.css";
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+// Helper to ensure images load properly both on localhost and GitHub Pages
+const resolveImgUrl = (src) => {
+  if (!src) return "";
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("data:")
+  ) {
+    return src;
+  }
+  const cleanPath = src.replace(/^\.?\//, "");
+  return `${import.meta.env.BASE_URL}${cleanPath}`;
+};
+
 export default function Contact() {
   const [pageData, setPageData] = useState(null);
   const [pageLoading, setPageLoading] = useState(true);
@@ -21,7 +37,7 @@ export default function Contact() {
 
     async function fetchContactData() {
       try {
-        const res = await fetch("http://localhost:3000/api/contact");
+        const res = await fetch(`${API_BASE}/api/contact`);
         if (!res.ok) throw new Error("Failed to load contact data");
         const data = await res.json();
         if (mounted) {
@@ -70,7 +86,7 @@ export default function Contact() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:3000/api/contact/submit", {
+      const res = await fetch(`${API_BASE}/api/contact/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -320,7 +336,11 @@ export default function Contact() {
                 key={service.number || idx}
               >
                 <div className="ct-service-media">
-                  <img src={service.image} alt={service.title} loading="lazy" />
+                  <img
+                    src={resolveImgUrl(service.image)}
+                    alt={service.title}
+                    loading="lazy"
+                  />
                   <span className="ct-service-num">{service.number}</span>
                 </div>
 

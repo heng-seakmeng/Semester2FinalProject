@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import "./Messages.css";
 
+const API_BASE = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
+
 const STATUS_STEPS = [
   { key: "submitted", label: "Submitted" },
   { key: "review", label: "Under Review" },
@@ -38,9 +40,8 @@ export default function Messages({ user, navigateTo }) {
     }
     setLoading(true);
     try {
-      // ✅ Fixed: use hyphen (purchase-requests) not underscore
       const res = await fetch(
-        `http://localhost:3000/api/purchase-requests?email=${encodeURIComponent(user.email)}`,
+        `${API_BASE}/purchase-requests?email=${encodeURIComponent(user.email)}`,
       );
       const list = await res.json();
       const sorted = Array.isArray(list) ? list : [];
@@ -58,11 +59,9 @@ export default function Messages({ user, navigateTo }) {
     if (!selected) return;
     setDeleting(true);
     try {
-      // ✅ Fixed: use hyphen (purchase-requests) not underscore
-      await fetch(
-        `http://localhost:3000/api/purchase-requests/${selected.id}`,
-        { method: "DELETE" },
-      );
+      await fetch(`${API_BASE}/purchase-requests/${selected.id}`, {
+        method: "DELETE",
+      });
       const updated = requests.filter((r) => r.id !== selected.id);
       setRequests(updated);
       setSelected(updated.length > 0 ? updated[0] : null);

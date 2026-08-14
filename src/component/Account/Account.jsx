@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./Account.css";
 
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
 
 export default function Account({ user, setUser, navigateTo }) {
   const [fullName, setFullName] = useState("");
@@ -24,7 +24,7 @@ export default function Account({ user, setUser, navigateTo }) {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        if (res.ok) setPurchaseRequests(data);
+        if (res.ok) setPurchaseRequests(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error loading purchase requests:", err);
       } finally {
@@ -64,10 +64,10 @@ export default function Account({ user, setUser, navigateTo }) {
         uid: data.user.id,
         name: data.user.name,
         email: data.user.email,
-        role: data.user.role || "client", // ✅ Fixed: role now saved
+        role: data.user.role || "client",
       });
     } catch {
-      setError("Could not reach the server. Is it running on port 3000?");
+      setError("Could not reach the server. Please check backend connection.");
     } finally {
       setLoading(false);
     }

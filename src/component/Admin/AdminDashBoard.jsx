@@ -2,7 +2,20 @@
 import { useState, useEffect } from "react";
 import "./AdminDashboard.css";
 
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
+
+const resolveImgUrl = (src) => {
+  if (!src) return "";
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("data:")
+  ) {
+    return src;
+  }
+  const cleanPath = src.replace(/^\.?\//, "");
+  return `${import.meta.env.BASE_URL}${cleanPath}`;
+};
 
 export default function AdminDashboard({ navigateTo }) {
   const [activeTab, setActiveTab] = useState("purchaseRequests");
@@ -42,14 +55,23 @@ export default function AdminDashboard({ navigateTo }) {
     fetchAllData();
   }, []);
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+  };
+
   const fetchAllData = async () => {
     setLoading(true);
     try {
+      const headers = getAuthHeaders();
       const [servRes, prodRes, inqRes, reqRes] = await Promise.all([
         fetch(`${API_BASE}/services`),
         fetch(`${API_BASE}/products`),
-        fetch(`${API_BASE}/contact_inquiries`),
-        fetch(`${API_BASE}/admin/purchase-requests`),
+        fetch(`${API_BASE}/contact_inquiries`, { headers }),
+        fetch(`${API_BASE}/admin/purchase-requests`, { headers }),
       ]);
 
       const servicesData = await servRes.json();
@@ -73,7 +95,7 @@ export default function AdminDashboard({ navigateTo }) {
     try {
       const res = await fetch(`${API_BASE}/purchase-requests/${requestId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -98,6 +120,7 @@ export default function AdminDashboard({ navigateTo }) {
     try {
       const res = await fetch(`${API_BASE}/purchase-requests/${requestId}`, {
         method: "DELETE",
+        headers: getAuthHeaders(),
       });
 
       if (res.ok) {
@@ -157,7 +180,7 @@ export default function AdminDashboard({ navigateTo }) {
 
       await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders(),
         body: JSON.stringify(payload),
       });
 
@@ -175,7 +198,10 @@ export default function AdminDashboard({ navigateTo }) {
     if (!window.confirm("Are you sure you want to delete this service?"))
       return;
     try {
-      await fetch(`${API_BASE}/services/${id}`, { method: "DELETE" });
+      await fetch(`${API_BASE}/services/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
       fetchAllData();
     } catch (err) {
       console.error("Error deleting service:", err);
@@ -237,7 +263,7 @@ export default function AdminDashboard({ navigateTo }) {
 
       await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders(),
         body: JSON.stringify(payload),
       });
 
@@ -255,7 +281,10 @@ export default function AdminDashboard({ navigateTo }) {
     if (!window.confirm("Are you sure you want to delete this vehicle?"))
       return;
     try {
-      await fetch(`${API_BASE}/products/${id}`, { method: "DELETE" });
+      await fetch(`${API_BASE}/products/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
       fetchAllData();
     } catch (err) {
       console.error("Error deleting product:", err);
@@ -272,7 +301,10 @@ export default function AdminDashboard({ navigateTo }) {
     try {
       const res = await fetch(
         `${API_BASE}/contact_inquiries/${encodeURIComponent(targetIdentifier)}`,
-        { method: "DELETE" },
+        {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        },
       );
 
       if (res.ok) {
@@ -367,11 +399,11 @@ export default function AdminDashboard({ navigateTo }) {
         </div>
       ) : (
         <div className="admin-content-area">
-          {/* TAB 1: PURCHASE REQUESTS / ORDERS FROM DETAIL PAGES */}
+          {/* TAB 1: PURCHASE REQUESTS */}
           {activeTab === "purchaseRequests" && (
             <div className="admin-section">
               <div className="section-title-bar">
-                <h3>Supercar Purchase Requests & Orders</h3>
+                <h3>Supercar Purchase Requests &amp; Orders</h3>
               </div>
 
               <div className="admin-table-wrapper">
@@ -381,7 +413,7 @@ export default function AdminDashboard({ navigateTo }) {
                       <th>Client Name</th>
                       <th>Email</th>
                       <th>Vehicle Requested</th>
-                      <th>Region & Color</th>
+                      <th>Region &amp; Color</th>
                       <th>Order Status</th>
                       <th>Actions</th>
                     </tr>
@@ -390,8 +422,8 @@ export default function AdminDashboard({ navigateTo }) {
                     {purchaseRequests.length === 0 ? (
                       <tr>
                         <td colSpan="6" className="empty-td">
-                          No purchase requests found in purchase_requests.json.
-                          Submit a request from any Vehicle Details page.
+                          No purchase requests found. Submit a request from any
+                          Vehicle Details page.
                         </td>
                       </tr>
                     ) : (
@@ -569,11 +601,11 @@ export default function AdminDashboard({ navigateTo }) {
                         <tr key={car.id}>
                           <td>
                             <img
-                              src={
+                              src={resolveImgUrl(
                                 car.image ||
-                                car.images?.exterior ||
-                                "./cars/mclaren-1.jpg"
-                              }
+                                  car.images?.exterior ||
+                                  "cars/mclaren-1.jpg",
+                              )}
                               alt={car.title || car.name}
                               className="admin-thumb"
                             />

@@ -1,6 +1,21 @@
 import { useState, useEffect } from "react";
 import "./VehicleDetails.css";
 
+const API_BASE = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
+
+const resolveImgUrl = (src) => {
+  if (!src) return "";
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("data:")
+  ) {
+    return src;
+  }
+  const cleanPath = src.replace(/^\.?\//, "");
+  return `${import.meta.env.BASE_URL}${cleanPath}`;
+};
+
 export default function VehicleDetails({ carId, navigateTo }) {
   const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +31,6 @@ export default function VehicleDetails({ carId, navigateTo }) {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  // Lock background scroll when modal is open
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = "hidden";
@@ -36,9 +50,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
 
       try {
         const idToFetch = carId || "mclaren-750s";
-        const res = await fetch(
-          `http://localhost:3000/api/vehicles/${idToFetch}`,
-        );
+        const res = await fetch(`${API_BASE}/vehicles/${idToFetch}`);
 
         if (res.ok) {
           const data = await res.json();
@@ -48,10 +60,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
             return;
           }
         } else {
-          // Fallback to default vehicle if requested ID is not found
-          const fallbackRes = await fetch(
-            "http://localhost:3000/api/vehicles/mclaren-750s",
-          );
+          const fallbackRes = await fetch(`${API_BASE}/vehicles/mclaren-750s`);
           if (fallbackRes.ok && mounted) {
             const fallbackData = await fallbackRes.json();
             setVehicle(fallbackData);
@@ -60,10 +69,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
           }
         }
       } catch (err) {
-        console.error(
-          "Error fetching vehicle details from Express backend:",
-          err,
-        );
+        console.error("Error fetching vehicle details from backend:", err);
       }
 
       if (mounted) {
@@ -92,23 +98,20 @@ export default function VehicleDetails({ carId, navigateTo }) {
     if (!agreedToTerms) return;
 
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/purchase-requests",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            clientName,
-            clientEmail,
-            vehicleName: vehicle?.name,
-            carModel: vehicle?.id,
-            deliveryRegion,
-            exteriorColor,
-            additionalNotes,
-            status: "Pending Review",
-          }),
-        },
-      );
+      const response = await fetch(`${API_BASE}/purchase-requests`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clientName,
+          clientEmail,
+          vehicleName: vehicle?.name,
+          carModel: vehicle?.id,
+          deliveryRegion,
+          exteriorColor,
+          additionalNotes,
+          status: "Pending Review",
+        }),
+      });
 
       if (response.ok) {
         setSubmitted(true);
@@ -117,7 +120,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
       }
     } catch (err) {
       console.error("Error saving purchase request:", err);
-      alert("Error connecting to http://localhost:3000");
+      alert("Error connecting to backend server.");
     }
   };
 
@@ -141,13 +144,13 @@ export default function VehicleDetails({ carId, navigateTo }) {
     );
   }
 
-  const heroImg =
+  const heroRaw =
     vehicle?.images?.hero || vehicle?.images?.exterior || vehicle?.image;
+  const heroImg = resolveImgUrl(heroRaw);
   const p = vehicle?.performance || {};
 
   return (
     <div className="arch-editorial-page">
-      {/* Editorial Hero Header */}
       <section
         className="arch-hero"
         style={{ backgroundImage: `url(${heroImg})` }}
@@ -159,7 +162,6 @@ export default function VehicleDetails({ carId, navigateTo }) {
         </div>
       </section>
 
-      {/* Sticky Subnav Bar */}
       <nav className="arch-subnav">
         <div className="subnav-container">
           <div className="subnav-links">
@@ -204,9 +206,8 @@ export default function VehicleDetails({ carId, navigateTo }) {
         </div>
       </nav>
 
-      {/* Main Editorial Body */}
       <div className="arch-editorial-body">
-        {/* SECTION 01 / OVERVIEW */}
+        {/* 01 / OVERVIEW */}
         <section className="arch-section" id="overview">
           <div className="section-split">
             <div className="text-col">
@@ -231,7 +232,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
             <div className="media-col">
               <div className="widescreen-frame">
                 <img
-                  src={vehicle?.images?.overview || heroImg}
+                  src={resolveImgUrl(vehicle?.images?.overview || heroRaw)}
                   alt={vehicle.name}
                 />
                 <span className="media-badge">OVERVIEW</span>
@@ -240,7 +241,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
           </div>
         </section>
 
-        {/* SECTION 02 / LIGHTNESS */}
+        {/* 02 / LIGHTNESS */}
         <section className="arch-section" id="lightness">
           <div className="section-split">
             <div className="text-col">
@@ -264,7 +265,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
             <div className="media-col">
               <div className="widescreen-frame">
                 <img
-                  src={vehicle?.images?.lightness || heroImg}
+                  src={resolveImgUrl(vehicle?.images?.lightness || heroRaw)}
                   alt="Lightness"
                 />
                 <span className="media-badge">LIGHTWEIGHT</span>
@@ -273,7 +274,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
           </div>
         </section>
 
-        {/* SECTION 03 / ENGAGEMENT */}
+        {/* 03 / ENGAGEMENT */}
         <section className="arch-section" id="engagement">
           <div className="section-split">
             <div className="text-col">
@@ -298,7 +299,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
             <div className="media-col">
               <div className="widescreen-frame">
                 <img
-                  src={vehicle?.images?.engagement || heroImg}
+                  src={resolveImgUrl(vehicle?.images?.engagement || heroRaw)}
                   alt="Engagement"
                 />
                 <span className="media-badge">DYNAMICS</span>
@@ -307,7 +308,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
           </div>
         </section>
 
-        {/* SECTION 04 / POWER */}
+        {/* 04 / POWER */}
         <section className="arch-section" id="power">
           <div className="section-split">
             <div className="text-col">
@@ -330,14 +331,17 @@ export default function VehicleDetails({ carId, navigateTo }) {
             </div>
             <div className="media-col">
               <div className="widescreen-frame">
-                <img src={vehicle?.images?.power || heroImg} alt="Power" />
+                <img
+                  src={resolveImgUrl(vehicle?.images?.power || heroRaw)}
+                  alt="Power"
+                />
                 <span className="media-badge">POWER</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* SECTION 05 / TECHNICAL SPECIFICATIONS */}
+        {/* 05 / TECHNICAL SPECIFICATIONS */}
         <section className="arch-section" id="specification">
           <span className="section-num">05 / SPECIFICATION</span>
           <h2 className="section-title">TECHNICAL SPECIFICATIONS</h2>
@@ -407,7 +411,6 @@ export default function VehicleDetails({ carId, navigateTo }) {
         </section>
       </div>
 
-      {/* Minimal Luxury Purchase Request Modal Overlay */}
       {isModalOpen && (
         <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()}>

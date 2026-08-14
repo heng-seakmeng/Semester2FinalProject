@@ -1,6 +1,22 @@
 import { useState, useEffect } from "react";
 import "./About.css";
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+// Helper to ensure images load properly both on localhost and GitHub Pages
+const resolveImgUrl = (src) => {
+  if (!src) return "";
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("data:")
+  ) {
+    return src;
+  }
+  const cleanPath = src.replace(/^\.?\//, "");
+  return `${import.meta.env.BASE_URL}${cleanPath}`;
+};
+
 export default function About({ navigateTo }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,7 +28,7 @@ export default function About({ navigateTo }) {
     async function fetchAboutData() {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:3000/api/about");
+        const res = await fetch(`${API_BASE}/api/about`);
         if (!res.ok) {
           throw new Error("Failed to load about data from server");
         }
@@ -92,7 +108,7 @@ export default function About({ navigateTo }) {
         <section className="ab-founder-section">
           <div className="ab-founder-grid">
             <div className="ab-founder-image">
-              <img src={founder.image} alt={founder.name} />
+              <img src={resolveImgUrl(founder.image)} alt={founder.name} />
               <div className="ab-founder-label">
                 <span>{founder.name}</span>
                 <span>{founder.lifespan}</span>
@@ -114,7 +130,7 @@ export default function About({ navigateTo }) {
       {/* FULL WIDTH BANNER */}
       {bannerImage && (
         <section className="ab-fullwidth-image">
-          <img src={bannerImage.src} alt={bannerImage.label} />
+          <img src={resolveImgUrl(bannerImage.src)} alt={bannerImage.label} />
           <div className="ab-fullwidth-overlay">
             <p className="ab-fullwidth-label">{bannerImage.label}</p>
           </div>

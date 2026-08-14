@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import "./Home.css";
 import "./ModelSpotLight.css";
 
-const API_BASE = "http://localhost:3000"; // Express server URL
+// Uses the live backend URL if defined in .env, otherwise defaults to localhost
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 /* ---------------- Unified Model Card ---------------- */
 
@@ -67,9 +68,9 @@ export default function Home({ navigateTo }) {
           muted
           loop
           playsInline
-          poster="./images/mclaren750s/mclaren-750s.jpg"
+          poster={`${import.meta.env.BASE_URL}images/mclaren750s/mclaren-750s.jpg`}
         >
-          {/* <source src="./video/mclaren-hero.mp4" type="video/mp4" /> */}
+          {/* <source src={`${import.meta.env.BASE_URL}video/mclaren-hero.mp4`} type="video/mp4" /> */}
         </video>
         <div className="hero-video-overlay" aria-hidden="true" />
 
@@ -212,7 +213,7 @@ export default function Home({ navigateTo }) {
         </div>
         <div className="grid-media">
           <img
-            src="./images/Character/Legacy.jpg"
+            src={`${import.meta.env.BASE_URL}images/Character/Legacy.jpg`}
             alt="McLaren Legacy"
             referrerPolicy="no-referrer"
             loading="lazy"
@@ -243,7 +244,7 @@ export default function Home({ navigateTo }) {
         </div>
         <div className="grid-media">
           <img
-            src="./images/Character/airFlow.jpg"
+            src={`${import.meta.env.BASE_URL}images/Character/airFlow.jpg`}
             alt="Engineering Flow"
             referrerPolicy="no-referrer"
             loading="lazy"

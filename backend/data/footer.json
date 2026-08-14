@@ -1,0 +1,29 @@
+[
+  {
+    "title": "Explore",
+    "links": [
+      { "label": "Home", "target": "home" },
+      { "label": "Models", "target": "models" },
+      { "label": "About", "target": "about" },
+      { "label": "Contact", "target": "contact" }
+    ]
+  },
+  {
+    "title": "Models",
+    "links": [
+      { "label": "720S Spider", "target": "models" },
+      { "label": "Artura", "target": "models" },
+      { "label": "750S Spider", "target": "models" },
+      { "label": "W1 Hypercar", "target": "models" }
+    ]
+  },
+  {
+    "title": "Account",
+    "links": [
+      { "label": "Log In", "target": "login" },
+      { "label": "Sign Up", "target": "signup" },
+      { "label": "My Account", "target": "account" },
+      { "label": "My Messages", "target": "messages" }
+    ]
+  }
+]
