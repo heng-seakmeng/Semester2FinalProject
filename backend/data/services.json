@@ -11,7 +11,7 @@
       "Specialist on hand throughout",
       "Available at all McLaren retailers"
     ],
-    "image": "/images/Character/testDrive.jpg"
+    "image": "./images/Character/testDrive.jpg"
   },
   {
     "id": "srv-02",
@@ -24,7 +24,7 @@
       "Dedicated MSO designer assigned",
       "In-person design consultation"
     ],
-    "image": "/images/Character/operation.jpg"
+    "image": "./images/Character/operation.jpg"
   },
   {
     "id": "srv-03",
@@ -37,7 +37,7 @@
       "Genuine McLaren parts guaranteed",
       "Digital service record maintained"
     ],
-    "image": "/images/Character/service.jpg"
+    "image": "./images/Character/service.jpg"
   },
   {
     "id": "srv-04",
@@ -50,6 +50,6 @@
       "Selection of international circuits",
       "Full technical briefing before session"
     ],
-    "image": "/images/Character/track.jpg"
+    "image": "./images/Character/track.jpg"
   }
 ]

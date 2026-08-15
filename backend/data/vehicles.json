@@ -7,13 +7,13 @@
       "series": "SUPER SERIES",
       "price": "$337,195",
       "summary": "Lighter, faster, and louder. The purest expression of raw driver engagement with a 13-second folding hardtop.",
-      "image": "/images/mclaren750s/mclaren-750s.jpg",
+      "image": "./images/mclaren750s/mclaren-750s.jpg",
       "images": {
-        "hero": "/images/mclaren750s/mclaren-750s-2.jpg.jpg",
-        "overview": "/images/mclaren750s/Overview.jpg",
-        "lightness": "/images/mclaren750s/Lightness.jpg",
-        "engagement": "/images/mclaren750s/Engagement.jpg",
-        "power": "/images/mclaren750s/Power.jpg"
+        "hero": "./images/mclaren750s/mclaren-750s-2.jpg.jpg",
+        "overview": "./images/mclaren750s/Overview.jpg",
+        "lightness": "./images/mclaren750s/Lightness.jpg",
+        "engagement": "./images/mclaren750s/Engagement.jpg",
+        "power": "./images/mclaren750s/Power.jpg"
       },
       "performance": {
         "horsepower": "750 PS / 740 HP",
@@ -43,13 +43,13 @@
       "series": "SUPER SERIES",
       "price": "$315,000",
       "summary": "An open-top benchmark supercar engineered for relentless power, active downforce, and uncompromised road presence.",
-      "image": "/images/mclaren720s/Mclaren720sHero.jpg",
+      "image": "./images/mclaren720s/Mclaren720sHero.jpg",
       "images": {
-        "hero": "/images/mclaren720s/w.jpg",
-        "overview": "/images/mclaren720s/Overview.png",
-        "lightness": "/images/mclaren720s/Lightness.png",
-        "engagement": "/images/mclaren720s/720sEngagment.png",
-        "power": "/images/mclaren720s/Power.jpg"
+        "hero": "./images/mclaren720s/w.jpg",
+        "overview": "./images/mclaren720s/Overview.png",
+        "lightness": "./images/mclaren720s/Lightness.png",
+        "engagement": "./images/mclaren720s/720sEngagment.png",
+        "power": "./images/mclaren720s/Power.jpg"
       },
       "performance": {
         "horsepower": "710 PS / 700 HP",
@@ -81,11 +81,11 @@
       "summary": "Next-generation electrified hybrid performance blending instant electric torque with a howling twin-turbo V6.",
       "image": "",
       "images": {
-        "hero": "/images/mclarenArtura/Artura-2.jpg.jpg",
-        "overview": "/images/mclarenArtura/Overview.jpg",
-        "lightness": "/images/mclarenArtura/lightness.jpg",
-        "engagement": "/images/mclarenArtura/Engagement.jpg",
-        "power": "/images/mclarenArtura/Power.jpg"
+        "hero": "./images/mclarenArtura/Artura-2.jpg.jpg",
+        "overview": "./images/mclarenArtura/Overview.jpg",
+        "lightness": "./images/mclarenArtura/lightness.jpg",
+        "engagement": "./images/mclarenArtura/Engagement.jpg",
+        "power": "./images/mclarenArtura/Power.jpg"
       },
       "performance": {
         "horsepower": "690 PS / 671 HP",
@@ -115,13 +115,13 @@
       "series": "Ultimate Series",
       "price": "$2,100,000",
       "summary": "Our Formula One-inspired ground-effect flagship hypercar redefining aerodynamics and hybrid hypercar performance.",
-      "image": "/images/mclarenW1/mclaren-w1.jpg",
+      "image": "./images/mclarenW1/mclaren-w1.jpg",
       "images": {
-        "hero": "/images/mclarenW1/mclaren-w1.jpg",
-        "overview": "/images/mclarenW1/Overview.jpg",
-        "lightness": "/images/mclarenW1/Lightness.jpg",
-        "engagement": "/images/mclarenW1/Engagement.jpg",
-        "power": "/images/mclarenW1/power.jpg"
+        "hero": "./images/mclarenW1/mclaren-w1.jpg",
+        "overview": "./images/mclarenW1/Overview.jpg",
+        "lightness": "./images/mclarenW1/Lightness.jpg",
+        "engagement": "./images/mclarenW1/Engagement.jpg",
+        "power": "./images/mclarenW1/power.jpg"
       },
       "performance": {
         "horsepower": "1,258 PS / 1,241 HP",
