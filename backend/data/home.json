@@ -11,28 +11,28 @@
       "name": "720S Spider",
       "series": "Super Series",
       "price": "$315,000",
-      "image": "/images/mclaren720s/Mclaren720sHero.jpg"
+      "image": "./images/mclaren720s/Mclaren720sHero.jpg"
     },
     {
       "id": "mclaren-artura",
       "name": "Artura",
       "series": "High-Performance Hybrid",
       "price": "$237,500",
-      "image": "/images/mclarenArtura/Artura.jpg"
+      "image": "./images/mclarenArtura/Artura.jpg"
     },
     {
       "id": "mclaren-750s",
       "name": "750S Spider",
       "series": "Super Series",
       "price": "$337,195",
-      "image": "/images/mclaren750s/mclaren-750s.jpg"
+      "image": "./images/mclaren750s/mclaren-750s.jpg"
     },
     {
       "id": "mclaren-w1",
       "name": "W1 Hypercar",
       "series": "Ultimate Series",
       "price": "$2,100,000",
-      "image": "/images/mclarenW1/mclaren-w1.jpg"
+      "image": "./images/mclarenW1/mclaren-w1.jpg"
     }
   ],
   "pillars": [
@@ -78,21 +78,21 @@
       "text": "The 720S is not just a supercar — it's the most complete driving machine I've ever experienced. Nothing else competes at this level.",
       "name": "Chris Harris",
       "role": "Top Gear, BBC",
-      "avatar": "/images/Character/ChrisHarris.jpg",
+      "avatar": "./images/Character/ChrisHarris.jpg",
       "featured": false
     },
     {
       "text": "Owning a McLaren is a statement. Every drive feels like the car was built specifically for you — it reads your inputs and responds with pure, unfiltered emotion.",
       "name": "James W.",
       "role": "McLaren Owner, Dubai",
-      "avatar": "/images/Character/James.png",
+      "avatar": "./images/Character/James.png",
       "featured": true
     },
     {
       "text": "Supercar of the Year. McLaren's engineering philosophy is unmatched — surgical precision at every speed, every corner.",
       "name": "Evo Magazine",
       "role": "Car of the Year",
-      "avatar": "/images/Character/Evo.png",
+      "avatar": "./images/Character/Evo.png",
       "featured": false
     }
   ],
