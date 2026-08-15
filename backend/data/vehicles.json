@@ -9,7 +9,7 @@
       "summary": "Lighter, faster, and louder. The purest expression of raw driver engagement with a 13-second folding hardtop.",
       "image": "./images/mclaren750s/mclaren-750s.jpg",
       "images": {
-        "hero": "./images/mclaren750s/mclaren-750s-2.jpg.jpg",
+        "hero": "./images/mclaren750s/mclaren-750s-2.jpg",
         "overview": "./images/mclaren750s/Overview.jpg",
         "lightness": "./images/mclaren750s/Lightness.jpg",
         "engagement": "./images/mclaren750s/Engagement.jpg",
@@ -79,9 +79,9 @@
       "series": "High-Performance Hybrid",
       "price": "$237,500",
       "summary": "Next-generation electrified hybrid performance blending instant electric torque with a howling twin-turbo V6.",
-      "image": "",
+      "image": "./images/mclarenArtura/Artura.jpg",
       "images": {
-        "hero": "./images/mclarenArtura/Artura-2.jpg.jpg",
+        "hero": "./images/mclarenArtura/Artura-2.jpg",
         "overview": "./images/mclarenArtura/Overview.jpg",
         "lightness": "./images/mclarenArtura/lightness.jpg",
         "engagement": "./images/mclarenArtura/Engagement.jpg",
