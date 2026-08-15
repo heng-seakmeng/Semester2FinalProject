@@ -39,7 +39,7 @@
       rgba(10, 10, 10, 0.2) 0%,
       rgba(10, 10, 10, 0.95) 100%
     ),
-    url("./images/mclaren750s/mclaren-750s-2.jpg") center/cover no-repeat; /* <-- Changed ./ to / */
+    url("/images/mclaren750s/mclaren-750s-2.jpg") center/cover no-repeat; /* <-- Changed ./ to / */
   z-index: 0;
   filter: grayscale(0.15) contrast(1.05);
 }
