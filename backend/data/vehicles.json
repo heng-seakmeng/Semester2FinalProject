@@ -9,7 +9,7 @@
       "summary": "Lighter, faster, and louder. The purest expression of raw driver engagement with a 13-second folding hardtop.",
       "image": "./images/mclaren750s/mclaren-750s.jpg",
       "images": {
-        "hero": "./images/mclaren750s/mclaren-750s.jpg",
+        "hero": "./images/mclaren750s/mclaren-750s-2.jpg.jpg",
         "overview": "./images/mclaren750s/Overview.jpg",
         "lightness": "./images/mclaren750s/Lightness.jpg",
         "engagement": "./images/mclaren750s/Engagement.jpg",
@@ -45,7 +45,7 @@
       "summary": "An open-top benchmark supercar engineered for relentless power, active downforce, and uncompromised road presence.",
       "image": "./images/mclaren720s/Mclaren720sHero.jpg",
       "images": {
-        "hero": "./images/mclaren720s/Mclaren720sHero.jpg",
+        "hero": "./images/mclaren720s/wheel.jpg",
         "overview": "./images/mclaren720s/Overview.png",
         "lightness": "./images/mclaren720s/Lightness.png",
         "engagement": "./images/mclaren720s/720sEngagment.png",
@@ -81,7 +81,7 @@
       "summary": "Next-generation electrified hybrid performance blending instant electric torque with a howling twin-turbo V6.",
       "image": "./images/mclarenArtura/Artura.jpg",
       "images": {
-        "hero": "./images/mclarenArtura/Artura.jpg",
+        "hero": "./images/mclarenArtura/Artura-2.jpg.jpg",
         "overview": "./images/mclarenArtura/Overview.jpg",
         "lightness": "./images/mclarenArtura/lightness.jpg",
         "engagement": "./images/mclarenArtura/Engagement.jpg",
