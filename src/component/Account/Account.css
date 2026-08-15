@@ -2,17 +2,28 @@
    AUTHENTICATION & COLLECTOR DASHBOARD — LUXURY EDITORIAL EDITION
    ========================================================================== */
 
+/* Global box-sizing fix — prevents padding/border from adding to width
+   and causing horizontal overflow on mobile */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* ─────────────────────────────────────────────────────────────
    AUTHENTICATION VIEW (LOGGED OUT)
 ───────────────────────────────────────────────────────────── */
 .auth-view-container {
   min-height: 80vh;
+  width: 100%;
+  max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4rem 1.5rem;
   background: #0a0a0a;
   color: #f7f6f3;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -46,6 +57,7 @@
   line-height: 1.3;
   color: #f7f6f3;
   margin-bottom: 0.75rem;
+  word-break: break-word;
 }
 
 .auth-subtext {
@@ -66,6 +78,7 @@
   border-radius: 0;
   padding: 0.8rem 1rem;
   margin-bottom: 1.5rem;
+  word-break: break-word;
 }
 
 .auth-success {
@@ -78,18 +91,21 @@
   border-radius: 0;
   padding: 0.8rem 1rem;
   margin-bottom: 1.5rem;
+  word-break: break-word;
 }
 
 .auth-styled-form {
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
+  width: 100%;
 }
 
 .auth-field {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
 }
 
 .auth-field label {
@@ -112,6 +128,7 @@
   font-weight: 300;
   outline: none;
   transition: border-color 0.25s ease;
+  width: 100%;
 }
 
 .auth-field input::placeholder {
@@ -202,10 +219,12 @@
 ───────────────────────────────────────────────────────────── */
 .dashboard-layout {
   max-width: 1320px;
+  width: 100%;
   margin: 0 auto;
   padding: 5rem 6vw;
   background: #0a0a0a;
   color: #f7f6f3;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -219,6 +238,8 @@
   border-bottom: 1px solid rgba(247, 246, 243, 0.08);
   margin-bottom: 3rem;
   gap: 1.5rem;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .account-eyebrow {
@@ -231,13 +252,19 @@
   margin-bottom: 0.5rem;
 }
 
+.dashboard-header-title {
+  max-width: 100%;
+  min-width: 0;
+}
+
 .dashboard-header-title h1 {
-  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-size: clamp(1.8rem, 4vw, 3.25rem);
   font-weight: 200;
   text-transform: uppercase;
   letter-spacing: 2px;
   line-height: 1.1;
   color: #f7f6f3;
+  word-break: break-word;
 }
 
 .dashboard-header-actions {
@@ -245,6 +272,7 @@
   gap: 1rem;
   align-items: center;
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 .messages-action-btn,
@@ -288,9 +316,10 @@
 /* METRICS STRIP */
 .collector-metrics-bar {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.5rem;
   margin-bottom: 3.5rem;
+  width: 100%;
 }
 
 .metric-card {
@@ -301,6 +330,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .metric-label {
@@ -316,6 +346,7 @@
   font-weight: 200;
   letter-spacing: 0.5px;
   color: #f7f6f3;
+  word-break: break-word;
 }
 
 .metric-value.highlight {
@@ -333,9 +364,10 @@
 /* DASHBOARD COLUMNS SPLIT */
 .dashboard-columns {
   display: grid;
-  grid-template-columns: 1fr 1.8fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr);
   gap: 4.5rem;
   align-items: start;
+  width: 100%;
 }
 
 /* LEFT COLUMN: PROFILE CARD */
@@ -358,6 +390,7 @@
   flex-direction: column;
   align-items: center;
   gap: 1.75rem;
+  width: 100%;
 }
 
 .profile-avatar {
@@ -373,6 +406,7 @@
   font-size: 1.5rem;
   font-weight: 300;
   box-shadow: none;
+  flex-shrink: 0;
 }
 
 .profile-info-list {
@@ -406,6 +440,7 @@
   font-weight: 400;
   text-align: right;
   word-break: break-word;
+  min-width: 0;
 }
 
 .code-font {
@@ -425,6 +460,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
+  display: inline-block;
 }
 
 .profile-actions {
@@ -450,6 +486,7 @@
   background: #ff5500;
   color: #fff;
   border: 1px solid #ff5500;
+  text-align: center;
 }
 
 .profile-action-btn:hover {
@@ -475,6 +512,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .allocation-count-badge {
@@ -487,12 +526,14 @@
   border: 1px solid rgba(255, 85, 0, 0.4);
   padding: 0.25rem 0.65rem;
   border-radius: 0;
+  white-space: nowrap;
 }
 
 .allocations-stack-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
 }
 
 .allocation-item {
@@ -505,6 +546,8 @@
   align-items: center;
   gap: 1.5rem;
   transition: border-color 0.3s ease;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .allocation-item:hover {
@@ -515,12 +558,15 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  min-width: 0;
+  flex: 1 1 240px;
 }
 
 .allocation-meta {
   display: flex;
   align-items: center;
   gap: 1.25rem;
+  flex-wrap: wrap;
 }
 
 .allocation-id {
@@ -529,6 +575,7 @@
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: #f7f6f3;
+  word-break: break-word;
 }
 
 .allocation-date {
@@ -554,6 +601,8 @@
   font-size: 0.82rem;
   font-weight: 300;
   color: #f7f6f3;
+  max-width: 100%;
+  word-break: break-word;
 }
 
 .allocation-model-badge .dot {
@@ -561,6 +610,7 @@
   height: 4px;
   border-radius: 0;
   background: #ff5500;
+  flex-shrink: 0;
 }
 
 .allocation-model-badge .qty {
@@ -595,6 +645,7 @@
   background: transparent;
   border: 1px solid rgba(247, 246, 243, 0.15);
   color: #8c8c88;
+  white-space: nowrap;
 }
 
 .status-confirmed,
@@ -624,6 +675,7 @@
   border-radius: 0;
   transition: all 0.3s ease;
   margin-top: 0.5rem;
+  white-space: nowrap;
 }
 
 .view-message-btn:hover {
@@ -643,6 +695,7 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  width: 100%;
 }
 
 .empty-icon {
@@ -698,6 +751,7 @@
   color: #8c8c88;
   font-size: 0.95rem;
   font-weight: 300;
+  width: 100%;
 }
 
 .spinner {
@@ -738,7 +792,7 @@
   }
 
   .collector-metrics-bar {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .profile-card {
@@ -788,6 +842,11 @@
     gap: 0.75rem;
   }
 
+  .dashboard-header-actions .messages-action-btn,
+  .dashboard-header-actions .signout-action-btn {
+    width: 100%;
+  }
+
   .collector-metrics-bar {
     grid-template-columns: 1fr;
   }
@@ -799,6 +858,11 @@
     padding: 1.5rem;
   }
 
+  .allocation-item-left {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
   .allocation-item-right {
     width: 100%;
     flex-direction: row;
@@ -806,17 +870,18 @@
     align-items: center;
     padding-top: 0.75rem;
     border-top: 1px solid rgba(247, 246, 243, 0.08);
+    flex-wrap: wrap;
   }
 }
 
 /* 5. Standard Mobile / Small Phones (<= 480px) */
 @media (max-width: 480px) {
   .auth-box h2 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .dashboard-header-title h1 {
-    font-size: 2.2rem;
+    font-size: clamp(1.6rem, 7vw, 2rem);
   }
 
   .profile-info-row {
@@ -833,5 +898,9 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.35rem;
+  }
+
+  .allocation-item {
+    padding: 1.25rem 1rem;
   }
 }

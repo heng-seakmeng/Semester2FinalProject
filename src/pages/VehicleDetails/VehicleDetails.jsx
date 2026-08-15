@@ -16,20 +16,19 @@ const resolveImgUrl = (src) => {
   return `${import.meta.env.BASE_URL}${cleanPath}`;
 };
 
-export default function VehicleDetails({ carId, navigateTo }) {
+export default function VehicleDetails({ carId, navigateTo, user }) {
   const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("overview");
 
-  // Purchase Request Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clientName, setClientName] = useState("");
-  const [clientEmail, setClientEmail] = useState("");
   const [deliveryRegion, setDeliveryRegion] = useState("North America");
   const [exteriorColor, setExteriorColor] = useState("Signature Papaya Spark");
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   useEffect(() => {
     if (isModalOpen) {
@@ -47,7 +46,6 @@ export default function VehicleDetails({ carId, navigateTo }) {
 
     async function loadVehicle() {
       setLoading(true);
-
       try {
         const idToFetch = carId || "mclaren-750s";
         const res = await fetch(`${API_BASE}/vehicles/${idToFetch}`);
@@ -93,17 +91,30 @@ export default function VehicleDetails({ carId, navigateTo }) {
     }
   };
 
+  // Gate the purchase flow behind login — this is what guarantees
+  // clientEmail always matches user.email, so Messages.jsx can find it.
+  const handleOpenPurchaseModal = () => {
+    if (!user?.isLoggedIn) {
+      navigateTo("login");
+      return;
+    }
+    setClientName(user.name || "");
+    setSubmitError("");
+    setIsModalOpen(true);
+  };
+
   const handlePurchaseSubmit = async (e) => {
     e.preventDefault();
-    if (!agreedToTerms) return;
+    if (!agreedToTerms || !user?.isLoggedIn) return;
 
+    setSubmitError("");
     try {
       const response = await fetch(`${API_BASE}/purchase-requests`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           clientName,
-          clientEmail,
+          clientEmail: user.email, // locked to the logged-in account, not typed
           vehicleName: vehicle?.name,
           carModel: vehicle?.id,
           deliveryRegion,
@@ -116,11 +127,12 @@ export default function VehicleDetails({ carId, navigateTo }) {
       if (response.ok) {
         setSubmitted(true);
       } else {
-        alert("Failed to submit purchase request.");
+        const data = await response.json().catch(() => ({}));
+        setSubmitError(data.error || "Failed to submit purchase request.");
       }
     } catch (err) {
       console.error("Error saving purchase request:", err);
-      alert("Error connecting to backend server.");
+      setSubmitError("Could not reach the server. Is it running on port 3000?");
     }
   };
 
@@ -128,11 +140,11 @@ export default function VehicleDetails({ carId, navigateTo }) {
     setSubmitted(false);
     setIsModalOpen(false);
     setClientName("");
-    setClientEmail("");
     setDeliveryRegion("North America");
     setExteriorColor("Signature Papaya Spark");
     setAdditionalNotes("");
     setAgreedToTerms(false);
+    setSubmitError("");
   };
 
   if (loading || !vehicle) {
@@ -199,7 +211,7 @@ export default function VehicleDetails({ carId, navigateTo }) {
 
           <button
             className="single-purchase-btn"
-            onClick={() => setIsModalOpen(true)}
+            onClick={handleOpenPurchaseModal}
           >
             PURCHASE REQUEST →
           </button>
@@ -432,14 +444,30 @@ export default function VehicleDetails({ carId, navigateTo }) {
                 <h3>PURCHASE REQUEST RECEIVED</h3>
                 <p>
                   Thank you, <strong>{clientName}</strong>. A McLaren Specialist
-                  will contact you at <strong>{clientEmail}</strong>.
+                  will contact you at <strong>{user.email}</strong>.
                 </p>
-                <button className="modal-submit-btn" onClick={resetModal}>
-                  Close Window
-                </button>
+                <p className="modal-subtitle">
+                  Track its status anytime from your Messages page.
+                </p>
+                <div className="modal-success-actions">
+                  <button
+                    className="modal-submit-btn"
+                    onClick={() => {
+                      resetModal();
+                      navigateTo("messages");
+                    }}
+                  >
+                    View in Messages →
+                  </button>
+                  <button className="modal-cancel-btn" onClick={resetModal}>
+                    Close Window
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handlePurchaseSubmit} className="modal-form">
+                {submitError && <p className="auth-error">{submitError}</p>}
+
                 <div className="modal-field">
                   <label>Full Name *</label>
                   <input
@@ -452,14 +480,12 @@ export default function VehicleDetails({ carId, navigateTo }) {
                 </div>
 
                 <div className="modal-field">
-                  <label>Email Address *</label>
-                  <input
-                    type="email"
-                    value={clientEmail}
-                    onChange={(e) => setClientEmail(e.target.value)}
-                    placeholder="email@example.com"
-                    required
-                  />
+                  <label>Email Address</label>
+                  <input type="email" value={user.email} disabled readOnly />
+                  <span className="modal-field-hint">
+                    Linked to your account — this is how your request shows up
+                    in Messages.
+                  </span>
                 </div>
 
                 <div className="modal-field">

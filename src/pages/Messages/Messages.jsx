@@ -86,6 +86,8 @@ export default function Messages({ user, navigateTo }) {
   };
 
   const stepIndex = selected ? getStepIndex(selected.status) : 0;
+  const isConfirmed = stepIndex >= 2;
+  const hasCheckedOut = !!selected?.hasCheckedOut;
 
   if (!user?.isLoggedIn) {
     return (
@@ -286,6 +288,37 @@ export default function Messages({ user, navigateTo }) {
                     <span className="msg-step-label">{step.label}</span>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* ACTION CARD: Checkout only */}
+            <div className="msg-actions">
+              <div
+                className={`msg-action-card ${!isConfirmed ? "locked" : ""}`}
+              >
+                <div className="msg-action-card-info">
+                  <h4>Proceed to Checkout</h4>
+                  <p>
+                    {hasCheckedOut
+                      ? "Delivery details submitted. Our team will confirm scheduling shortly."
+                      : isConfirmed
+                        ? "Your request is confirmed. Enter your delivery details to continue."
+                        : "Unlocks once our team confirms your request."}
+                  </p>
+                </div>
+                <button
+                  className={`msg-action-btn ${!isConfirmed ? "locked" : ""}`}
+                  disabled={!isConfirmed}
+                  onClick={() =>
+                    isConfirmed && navigateTo("checkout", selected.id)
+                  }
+                >
+                  {!isConfirmed
+                    ? "🔒 Pending Confirmation"
+                    : hasCheckedOut
+                      ? "Edit Delivery Details →"
+                      : "Checkout →"}
+                </button>
               </div>
             </div>
           </div>

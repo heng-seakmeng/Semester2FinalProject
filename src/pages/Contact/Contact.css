@@ -2,6 +2,14 @@
    Contact Page — McLaren Luxury Editorial Edition (With Orange)
    ========================================================================== */
 
+/* Global box-sizing fix — prevents padding/border from adding to width
+   and causing horizontal overflow on mobile */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .contact-page {
   width: 100%;
   background: #0a0a0a;
@@ -9,6 +17,7 @@
   /* Premium crisp font rendering */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 /* HERO */
@@ -31,7 +40,7 @@
       rgba(10, 10, 10, 0.2) 0%,
       rgba(10, 10, 10, 0.95) 100%
     ),
-    url("./images/mclaren750s/mclaren-750s.jpg") center/cover no-repeat;
+    url("./images/mclaren750s/mclaren-750s-2.jpg") center/cover no-repeat;
   z-index: 0;
   filter: grayscale(0.15) contrast(1.05);
 }
@@ -62,6 +71,7 @@
   line-height: 1;
   letter-spacing: 3px;
   text-transform: uppercase;
+  word-break: break-word;
 }
 
 .ct-hero-content h1 em {
@@ -92,7 +102,7 @@
 
 .ct-main-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   gap: 6rem;
   align-items: start;
 }
@@ -116,7 +126,7 @@
 
 .ct-form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1.5rem;
 }
 
@@ -124,6 +134,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .ct-field label {
@@ -151,6 +162,7 @@
   outline: none;
   transition: border-color 0.25s ease;
   resize: vertical;
+  width: 100%;
 }
 
 .ct-field input::placeholder,
@@ -205,6 +217,7 @@
   border-left: 2px solid #ff5500; /* Orange error line */
   border-radius: 0;
   padding: 0.8rem 1rem;
+  word-break: break-word;
 }
 
 /* SUCCESS */
@@ -246,11 +259,13 @@
   flex-direction: column;
   gap: 2rem;
   padding-top: 0;
+  min-width: 0;
 }
 
 .ct-info-block {
   border-top: 1px solid rgba(247, 246, 243, 0.08);
   padding-top: 1.5rem;
+  min-width: 0;
 }
 
 .ct-info-block h3 {
@@ -268,6 +283,7 @@
   font-size: 1rem;
   font-weight: 300;
   line-height: 1.9;
+  word-break: break-word;
 }
 
 .ct-hours {
@@ -284,6 +300,7 @@
   color: #8c8c88;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid rgba(247, 246, 243, 0.08);
+  gap: 0.75rem;
 }
 
 .ct-contact-links {
@@ -298,6 +315,7 @@
   font-size: 0.95rem;
   font-weight: 300;
   transition: color 0.25s ease;
+  word-break: break-word;
 }
 
 .ct-contact-links a:hover {
@@ -314,6 +332,7 @@
   gap: 1rem;
   margin-top: 0.5rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .ct-social-icon {
@@ -330,6 +349,7 @@
   font-size: 1.05rem;
   transition: all 0.3s ease;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 /* ── Facebook (#1877F2) ── */
@@ -420,7 +440,7 @@
 /* SERVICE ITEM ROW */
 .ct-service-row {
   display: grid;
-  grid-template-columns: 700px 1fr; /* Fixed 700px column for the media */
+  grid-template-columns: 700px minmax(0, 1fr); /* Fixed 700px column for the media */
   gap: 3rem;
   align-items: center;
   background: transparent;
@@ -492,6 +512,7 @@
   flex-direction: column;
   justify-content: center;
   gap: 1.25rem;
+  min-width: 0;
 }
 
 .ct-service-text h3 {
@@ -501,6 +522,7 @@
   letter-spacing: 0.5px;
   line-height: 1.3;
   color: #f7f6f3;
+  word-break: break-word;
 }
 
 .ct-service-desc {
@@ -514,7 +536,7 @@
 .ct-service-details {
   list-style: none;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0.75rem 1rem;
   padding: 1.25rem 0 0 0;
   margin-top: 0.5rem;
@@ -529,6 +551,7 @@
   color: #8c8c88;
   font-weight: 300;
   letter-spacing: 0.3px;
+  min-width: 0;
 }
 
 .ct-detail-icon {
@@ -597,7 +620,7 @@
 
   .ct-info-side {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Info blocks side-by-side */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* Info blocks side-by-side */
     gap: 2rem;
   }
 

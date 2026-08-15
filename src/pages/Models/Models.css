@@ -665,7 +665,24 @@
   line-height: 1.9;
 }
 
-/* Responsive */
+/* ==========================================================================
+   RESPONSIVE FIX — Replace the existing @media blocks at the bottom
+   ========================================================================== */
+
+/* Prevent any horizontal overflow globally */
+html,
+body,
+#root {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.showroom-layout {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* ── Tablet ── */
 @media (max-width: 1024px) {
   .catalog-row {
     grid-template-columns: 140px 1fr;
@@ -682,6 +699,163 @@
 
   .pillars-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  /* Fix: all sections flush to edges with safe padding */
+  .showroom-header,
+  .showcase-section,
+  .showroom-catalog-section,
+  .showroom-pillars-section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Fix: header text overflow */
+  .showroom-header h1 {
+    font-size: clamp(2rem, 10vw, 3rem);
+    word-break: break-word;
+  }
+
+  /* Fix: photo frame height */
+  .showcase-photo-frame {
+    height: 240px;
+  }
+
+  /* Fix: details padding */
+  .showcase-under-details {
+    padding: 1.25rem 1rem;
+    box-sizing: border-box;
+  }
+
+  /* Fix: specs grid 2-col on mobile */
+  .showcase-specs-strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    padding: 1.25rem 1rem;
+  }
+
+  /* Fix: title/price stacking */
+  .title-price-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  /* Fix: model name overflow */
+  .model-name {
+    font-size: clamp(1.5rem, 8vw, 2.25rem);
+    word-break: break-word;
+  }
+
+  /* Fix: action buttons full width stack */
+  .showcase-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .showroom-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Fix: arrows smaller on mobile */
+  .stage-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  /* Fix: filter bar wraps cleanly */
+  .showroom-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .search-box {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .category-tabs {
+    justify-content: flex-start;
+  }
+
+  /* Fix: catalog rows stack vertically */
+  .catalog-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.5rem 0.75rem;
+  }
+
+  .catalog-thumb {
+    width: 100%;
+    height: 160px;
+  }
+
+  .catalog-specs-col {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .catalog-actions-col {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* Fix: section spacing reduced */
+  .showroom-catalog-section,
+  .showroom-pillars-section {
+    margin-top: 4rem;
+  }
+
+  /* Fix: pillar cards full width */
+  .pillar-card {
+    padding: 2rem 1.25rem;
+  }
+
+  /* Fix: thumbnail track horizontal scroll */
+  .thumbnail-track {
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .thumb-card {
+    min-width: 180px;
+  }
+}
+
+/* ── Small Mobile (375px and below) ── */
+@media (max-width: 400px) {
+  .showroom-header h1 {
+    font-size: 1.9rem;
+    letter-spacing: 1px;
+  }
+
+  .showcase-specs-strip {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .spec-val {
+    font-size: 1.2rem;
+  }
+
+  .model-name {
+    font-size: 1.5rem;
+  }
+
+  .price-tag {
+    font-size: 1.4rem;
   }
 }
 

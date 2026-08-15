@@ -585,40 +585,170 @@
 /* ==========================================================================
    RESPONSIVE LAYOUTS
    ========================================================================== */
+/* ==========================================================================
+   RESPONSIVE FIX — replace existing @media blocks in showroom CSS
+   ========================================================================== */
 
-@media (max-width: 1024px) {
-  .section-split {
-    grid-template-columns: 1fr;
-    gap: 2.75rem;
-  }
+html,
+body,
+#root {
+  overflow-x: hidden;
+  width: 100%;
 }
 
-@media (max-width: 600px) {
-  .arch-hero {
-    height: 52vh;
-    padding: 2.5rem 1.5rem;
-  }
+.showroom-layout {
+  overflow-x: hidden;
+}
 
-  .widescreen-frame {
-    height: 260px;
-  }
-
-  .metric-row {
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .subnav-links {
+@media (max-width: 1024px) {
+  .catalog-row {
+    grid-template-columns: 140px 1fr;
     gap: 1.5rem;
   }
 
-  .arch-editorial-body {
-    gap: 5rem;
-    padding: 4rem 1.5rem 6rem;
+  .catalog-specs-col,
+  .catalog-actions-col {
+    grid-column: span 2;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .modal-container {
-    padding: 2.5rem 1.5rem 2rem;
-    max-height: 92vh;
+  .pillars-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Fix all sections: safe padding, no overflow */
+  .showroom-header,
+  .showcase-section,
+  .showroom-catalog-section,
+  .showroom-pillars-section {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .showroom-header {
+    padding-top: 2.5rem;
+  }
+
+  .showroom-header h1 {
+    font-size: clamp(1.9rem, 9vw, 3rem);
+    word-break: break-word;
+  }
+
+  .showroom-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .search-box {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .showcase-photo-frame {
+    height: 240px;
+  }
+
+  .showcase-under-details {
+    padding: 1.25rem;
+    box-sizing: border-box;
+  }
+
+  .title-price-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .model-name {
+    font-size: clamp(1.5rem, 8vw, 2.25rem);
+    word-break: break-word;
+  }
+
+  .showcase-specs-strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 1.25rem 1rem;
+  }
+
+  .showcase-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .showroom-btn {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .stage-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  /* Catalog */
+  .catalog-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.5rem 0;
+  }
+
+  .catalog-thumb {
+    width: 100%;
+    height: 150px;
+  }
+
+  .catalog-specs-col {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .catalog-actions-col {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .showroom-catalog-section,
+  .showroom-pillars-section {
+    margin-top: 4rem;
+  }
+
+  .pillar-card {
+    padding: 2rem 1.25rem;
+  }
+
+  .thumb-card {
+    min-width: 175px;
+  }
+}
+
+@media (max-width: 400px) {
+  .showroom-header h1 {
+    font-size: 1.75rem;
+    letter-spacing: 1px;
+  }
+
+  .spec-val {
+    font-size: 1.2rem;
+  }
+
+  .model-name {
+    font-size: 1.4rem;
+  }
+
+  .price-tag {
+    font-size: 1.3rem;
   }
 }
