@@ -30,7 +30,6 @@
   padding: 0 6vw 4rem;
   overflow: hidden;
 }
-
 .ct-hero-bg {
   position: absolute;
   inset: 0;
@@ -40,7 +39,7 @@
       rgba(10, 10, 10, 0.2) 0%,
       rgba(10, 10, 10, 0.95) 100%
     ),
-    url("./images/mclaren750s/mclaren-750s-2.jpg") center/cover no-repeat;
+    url("/images/mclaren750s/mclaren-750s-2.jpg") center/cover no-repeat; /* <-- Changed ./ to / */
   z-index: 0;
   filter: grayscale(0.15) contrast(1.05);
 }
@@ -440,11 +439,12 @@
 /* SERVICE ITEM ROW */
 .ct-service-row {
   display: grid;
-  grid-template-columns: 700px minmax(0, 1fr); /* Fixed 700px column for the media */
+  /* Use minmax instead of a hard 700px to prevent horizontal blowout */
+  grid-template-columns: minmax(0, 700px) minmax(0, 1fr);
   gap: 3rem;
   align-items: center;
   background: transparent;
-  border: none; /* Removed outer full-width border */
+  border: none;
 }
 
 .ct-service-row--reverse {
@@ -455,15 +455,14 @@
   direction: ltr;
 }
 
-/* SERVICE MEDIA (Fixed 700px x 350px + Border) */
+/* SERVICE MEDIA */
 .ct-service-media {
   position: relative;
   overflow: hidden;
-  width: 700px;
-  max-width: 100%;
+  width: 100%; /* Changed from 700px to 100% so the grid controls it */
   height: 350px;
   background: #000;
-  border: 1px solid rgba(247, 246, 243, 0.08); /* Border isolated to 700x350 box */
+  border: 1px solid rgba(247, 246, 243, 0.08);
   transition: border-color 0.4s ease;
 }
 
@@ -592,8 +591,7 @@
   background: #ff5500;
   color: #fff;
   border-color: #ff5500;
-}
-/* ==========================================================================
+} /* ==========================================================================
    RESPONSIVE LAYOUTS (Tiered Popular Breakpoints)
    ========================================================================== */
 
@@ -606,31 +604,30 @@
     gap: 2rem;
   }
   .ct-service-text {
-    padding: 2rem 2.5rem;
+    padding: 1rem 0; /* Kept flush to match the image */
   }
 }
 
 /* 2. Landscape Tablets / iPad Pro (<= 1024px) */
 @media (max-width: 1024px) {
   .ct-main-grid {
-    /* Stack Form and Information block */
     grid-template-columns: 1fr;
     gap: 4.5rem;
   }
 
   .ct-info-side {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* Info blocks side-by-side */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 2rem;
   }
 
   .ct-service-row {
-    /* Stack Media and Service Information */
     grid-template-columns: 1fr;
+    gap: 1.5rem; /* Tighter vertical gap so text belongs to the image */
   }
 
   .ct-service-row--reverse {
-    direction: ltr; /* Reset direction */
+    direction: ltr;
   }
 
   .ct-service-media {
@@ -639,7 +636,7 @@
   }
 
   .ct-service-text {
-    padding: 2.5rem;
+    padding: 0; /* Removed horizontal padding so text edge perfectly aligns with image edge */
   }
 }
 
@@ -663,7 +660,7 @@
   }
 
   .ct-info-side {
-    grid-template-columns: 1fr; /* Stack info blocks again */
+    grid-template-columns: 1fr;
   }
 
   .ct-services-intro {
@@ -675,7 +672,7 @@
 /* 4. Large Mobile / Phablets (<= 600px) */
 @media (max-width: 600px) {
   .ct-form-row {
-    grid-template-columns: 1fr; /* Stack First/Last Name inputs */
+    grid-template-columns: 1fr;
     gap: 1.4rem;
   }
 
@@ -686,16 +683,17 @@
   }
 
   .ct-service-details {
-    grid-template-columns: 1fr; /* Single column specs */
-  }
-
-  .ct-service-text {
-    padding: 2rem 1.5rem;
+    grid-template-columns: 1fr;
   }
 
   .ct-service-media {
     min-height: 240px;
     height: 240px;
+  }
+
+  .ct-service-text {
+    padding: 0; /* Ensured no rogue padding applies on small phones */
+    gap: 1rem;
   }
 }
 
