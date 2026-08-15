@@ -105,9 +105,17 @@ export default function AdminDashboard({ navigateTo }) {
             r.id === requestId ? { ...r, status: newStatus } : r,
           ),
         );
+      } else {
+        // Surface failures instead of silently doing nothing —
+        // e.g. a 403 if you're not logged in with an admin account.
+        const data = await res.json().catch(() => ({}));
+        alert(
+          data.error || "Failed to update status. Are you logged in as admin?",
+        );
       }
     } catch (err) {
       console.error("Error updating request status:", err);
+      alert("Could not reach the server. Is it running on port 3000?");
     }
   };
 
@@ -125,9 +133,13 @@ export default function AdminDashboard({ navigateTo }) {
 
       if (res.ok) {
         setPurchaseRequests((prev) => prev.filter((r) => r.id !== requestId));
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to delete purchase request.");
       }
     } catch (err) {
       console.error("Error deleting purchase request:", err);
+      alert("Could not reach the server. Is it running on port 3000?");
     }
   };
 

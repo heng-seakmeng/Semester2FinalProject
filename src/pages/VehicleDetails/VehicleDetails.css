@@ -498,6 +498,13 @@
   color: var(--lux-white);
 }
 
+.modal-field-hint {
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: rgba(140, 140, 136, 0.7);
+  margin-top: 0.15rem;
+}
+
 .modal-checkbox-row {
   display: flex;
   align-items: center;
@@ -580,6 +587,44 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ==========================================================================
+   MODAL SUCCESS STATE — action buttons
+   ========================================================================== */
+
+.modal-success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.modal-success-actions .modal-submit-btn {
+  width: 100%;
+  margin-top: 0;
+}
+
+.modal-cancel-btn {
+  background: transparent;
+  color: var(--lux-muted);
+  border: 1px solid var(--lux-line);
+  padding: 0.85rem 1.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 0;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.modal-cancel-btn:hover {
+  border-color: var(--lux-accent);
+  color: var(--lux-accent);
 }
 
 /* ==========================================================================

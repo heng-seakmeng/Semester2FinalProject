@@ -12,6 +12,7 @@ import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
 import Account from "./component/Account/Account";
 import Messages from "./pages/Messages/Messages";
+import Checkout from "./pages/Checkout/Checkout";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/Login/SignUp";
 import ForgotPassword from "./component/Account/ForgotPassword";
@@ -92,7 +93,11 @@ function App() {
         {currentPage === "home" && <Home navigateTo={navigateTo} />}
         {currentPage === "models" && <Models navigateTo={navigateTo} />}
         {currentPage === "vehicle-details" && (
-          <VehicleDetails carId={selectedVehicleId} navigateTo={navigateTo} />
+          <VehicleDetails
+            carId={selectedVehicleId}
+            navigateTo={navigateTo}
+            user={user}
+          />
         )}
         {currentPage === "about" && <About navigateTo={navigateTo} />}
         {currentPage === "contact" && <Contact navigateTo={navigateTo} />}
@@ -110,6 +115,9 @@ function App() {
         )}
         {currentPage === "messages" && (
           <Messages user={user} navigateTo={navigateTo} />
+        )}
+        {currentPage === "checkout" && (
+          <Checkout requestId={selectedVehicleId} navigateTo={navigateTo} />
         )}
         {currentPage === "admin" &&
           (isAdmin ? (
