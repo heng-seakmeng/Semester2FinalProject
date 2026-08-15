@@ -13,8 +13,9 @@ const resolveImgUrl = (src) => {
   ) {
     return src;
   }
-  const cleanPath = src.replace(/^\.?\//, "");
-  return `${import.meta.env.BASE_URL}${cleanPath}`;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const path = src.replace(/^\.?\//, "");
+  return `${base}/${path}`;
 };
 
 export default function Models({ navigateTo }) {
