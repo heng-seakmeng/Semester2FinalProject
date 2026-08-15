@@ -5,13 +5,26 @@ import "./ModelSpotLight.css";
 // Uses the live backend URL if defined in .env, otherwise defaults to localhost
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
+const resolveImgUrl = (src) => {
+  if (!src) return "";
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("data:")
+  )
+    return src;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const path = src.replace(/^\.?\//, "");
+  return `${base}/${path}`;
+};
+
 /* ---------------- Unified Model Card ---------------- */
 
 function ModelShowcaseCard({ model, navigateTo }) {
   return (
     <article className="showcase-card">
       <div className="showcase-img-frame">
-        <img src={model.image} alt={model.name} loading="lazy" />
+        <img src={resolveImgUrl(model.image)} alt={model.name} loading="lazy" />
         <span className="showcase-series-tag">{model.series}</span>
       </div>
       <div className="showcase-card-footer">
@@ -279,7 +292,7 @@ export default function Home({ navigateTo }) {
               <footer className="testimonial-author">
                 <img
                   className="author-avatar"
-                  src={review.avatar}
+                  src={resolveImgUrl(review.avatar)}
                   alt={review.name}
                   referrerPolicy="no-referrer"
                   loading="lazy"

@@ -12,8 +12,9 @@ const resolveImgUrl = (src) => {
   ) {
     return src;
   }
-  // Strip leading ./  or  / then re-add clean /
-  return "/" + src.replace(/^\.?\//, "");
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const path = src.replace(/^\.?\//, "");
+  return `${base}/${path}`;
 };
 
 export default function VehicleDetails({ carId, navigateTo, user }) {
