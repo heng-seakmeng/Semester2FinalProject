@@ -2,8 +2,6 @@
    Contact Page — McLaren Luxury Editorial Edition (With Orange)
    ========================================================================== */
 
-/* Global box-sizing fix — prevents padding/border from adding to width
-   and causing horizontal overflow on mobile */
 *,
 *::before,
 *::after {
@@ -14,7 +12,6 @@
   width: 100%;
   background: #0a0a0a;
   color: #f7f6f3;
-  /* Premium crisp font rendering */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -30,18 +27,12 @@
   padding: 0 6vw 4rem;
   overflow: hidden;
 }
+
+/* Background image now set via inline style in JSX — only position/z-index here */
 .ct-hero-bg {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(10, 10, 10, 0.2) 0%,
-      rgba(10, 10, 10, 0.95) 100%
-    ),
-    url("/images/mclaren750s/mclaren-750s-2.jpg") center/cover no-repeat; /* <-- Changed ./ to / */
   z-index: 0;
-  filter: grayscale(0.15) contrast(1.05);
 }
 
 .ct-hero-content {
@@ -53,7 +44,6 @@
 }
 
 .ct-eyebrow {
-  /* Detail Page Match: Brand Prefix + ORANGE */
   display: block;
   font-size: 0.7rem;
   font-weight: 600;
@@ -64,7 +54,6 @@
 }
 
 .ct-hero-content h1 {
-  /* Detail Page Match: Super Hero */
   font-size: clamp(2.75rem, 6.5vw, 5.25rem);
   font-weight: 200;
   line-height: 1;
@@ -75,14 +64,13 @@
 
 .ct-hero-content h1 em {
   font-style: italic;
-  color: #ff5500; /* McLaren Accent */
+  color: #ff5500;
   font-weight: 200;
   letter-spacing: 1px;
 }
 
 /* SECTION LABEL */
 .ct-section-label {
-  /* Detail Page Match: Section Num */
   display: inline-block;
   font-size: 0.68rem;
   font-weight: 700;
@@ -108,7 +96,6 @@
 
 /* FORM SIDE */
 .ct-form-side h2 {
-  /* Detail Page Match: Section Title */
   font-size: clamp(1.5rem, 2.6vw, 2.1rem);
   font-weight: 300;
   text-transform: uppercase;
@@ -137,7 +124,6 @@
 }
 
 .ct-field label {
-  /* Detail Page Match: Input Label */
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 1.5px;
@@ -145,7 +131,6 @@
   color: #8c8c88;
 }
 
-/* Minimal Border-Bottom Style */
 .ct-field input,
 .ct-field select,
 .ct-field textarea {
@@ -177,11 +162,10 @@
 .ct-field input:focus,
 .ct-field select:focus,
 .ct-field textarea:focus {
-  border-color: #ff5500; /* McLaren Accent Focus */
+  border-color: #ff5500;
 }
 
 .ct-submit-btn {
-  /* Detail Page Match: Form Submit Button */
   background: #ff5500;
   color: #fff;
   border: 1px solid #ff5500;
@@ -213,7 +197,7 @@
   color: #f7f6f3;
   background: transparent;
   border: 1px solid rgba(247, 246, 243, 0.15);
-  border-left: 2px solid #ff5500; /* Orange error line */
+  border-left: 2px solid #ff5500;
   border-radius: 0;
   padding: 0.8rem 1rem;
   word-break: break-word;
@@ -228,7 +212,7 @@
   padding: 2.5rem;
   background: #141414;
   border: 1px solid rgba(247, 246, 243, 0.08);
-  border-top: 2px solid #ff5500; /* Orange Success Bar */
+  border-top: 2px solid #ff5500;
   border-radius: 0;
 }
 
@@ -245,7 +229,6 @@
 }
 
 .ct-success p {
-  /* Detail Page Match: Body Text */
   color: #8c8c88;
   font-size: 1rem;
   font-weight: 300;
@@ -268,7 +251,6 @@
 }
 
 .ct-info-block h3 {
-  /* Detail Page Match: Sub-label */
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 1.5px;
@@ -318,14 +300,10 @@
 }
 
 .ct-contact-links a:hover {
-  color: #ff5500; /* McLaren Accent */
+  color: #ff5500;
 }
 
-/* SOCIALS (Orange Accents on Hover) */
-/* ==========================================================================
-   DYNAMIC SOCIAL MEDIA ICONS (Official Brand Hover Colors)
-   ========================================================================== */
-
+/* SOCIALS */
 .ct-socials {
   display: flex;
   gap: 1rem;
@@ -351,7 +329,6 @@
   flex-shrink: 0;
 }
 
-/* ── Facebook (#1877F2) ── */
 .ct-social-icon.facebook:hover,
 .ct-social-icon.fb:hover {
   color: #1877f2;
@@ -361,7 +338,6 @@
   box-shadow: 0 4px 15px rgba(24, 119, 242, 0.25);
 }
 
-/* ── Instagram (#E4405F) ── */
 .ct-social-icon.instagram:hover,
 .ct-social-icon.ig:hover {
   color: #e4405f;
@@ -371,7 +347,6 @@
   box-shadow: 0 4px 15px rgba(228, 64, 95, 0.25);
 }
 
-/* ── YouTube (#FF0000) ── */
 .ct-social-icon.youtube:hover,
 .ct-social-icon.yt:hover {
   color: #ff0000;
@@ -381,7 +356,6 @@
   box-shadow: 0 4px 15px rgba(255, 0, 0, 0.25);
 }
 
-/* ── LinkedIn (#0A66C2) ── */
 .ct-social-icon.linkedin:hover,
 .ct-social-icon.li:hover {
   color: #0a66c2;
@@ -391,16 +365,13 @@
   box-shadow: 0 4px 15px rgba(10, 102, 194, 0.25);
 }
 
-/* ─────────────────────────────────────────────────────────────
-   SERVICES — TIGHT, COMPACT & REFINED LUXURY SECTION
-───────────────────────────────────────────────────────────── */
+/* SERVICES */
 .ct-services-section {
   border-top: 1px solid rgba(247, 246, 243, 0.08);
   background: #0a0a0a;
   padding-bottom: 6rem;
 }
 
-/* INTRO HEADER */
 .ct-services-intro {
   padding: 5rem 6vw 3.5rem;
   max-width: 1320px;
@@ -425,7 +396,6 @@
   max-width: 60ch;
 }
 
-/* SERVICE CARDS CONTAINER */
 .ct-services-list {
   display: flex;
   flex-direction: column;
@@ -436,10 +406,8 @@
   height: auto;
 }
 
-/* SERVICE ITEM ROW */
 .ct-service-row {
   display: grid;
-  /* Use minmax instead of a hard 700px to prevent horizontal blowout */
   grid-template-columns: minmax(0, 700px) minmax(0, 1fr);
   gap: 3rem;
   align-items: center;
@@ -455,11 +423,10 @@
   direction: ltr;
 }
 
-/* SERVICE MEDIA */
 .ct-service-media {
   position: relative;
   overflow: hidden;
-  width: 100%; /* Changed from 700px to 100% so the grid controls it */
+  width: 100%;
   height: 350px;
   background: #000;
   border: 1px solid rgba(247, 246, 243, 0.08);
@@ -467,7 +434,7 @@
 }
 
 .ct-service-row:hover .ct-service-media {
-  border-color: rgba(255, 85, 0, 0.5); /* Orange border on hover */
+  border-color: rgba(255, 85, 0, 0.5);
 }
 
 .ct-service-media img {
@@ -484,7 +451,6 @@
   transform: scale(1.03);
 }
 
-/* NUMBER WATERMARK */
 .ct-service-num {
   position: absolute;
   top: 1.25rem;
@@ -504,9 +470,8 @@
   -webkit-text-stroke: 1px #ff5500;
 }
 
-/* SERVICE CONTENT */
 .ct-service-text {
-  padding: 1rem 0; /* Cleaned up padding since outer card is gone */
+  padding: 1rem 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -531,7 +496,6 @@
   line-height: 1.9;
 }
 
-/* DETAILS SPEC GRID */
 .ct-service-details {
   list-style: none;
   display: grid;
@@ -567,7 +531,6 @@
   flex-shrink: 0;
 }
 
-/* ENQUIRE BUTTON */
 .ct-enquire-btn {
   align-self: flex-start;
   display: inline-flex;
@@ -591,11 +554,9 @@
   background: #ff5500;
   color: #fff;
   border-color: #ff5500;
-} /* ==========================================================================
-   RESPONSIVE LAYOUTS (Tiered Popular Breakpoints)
-   ========================================================================== */
+}
 
-/* 1. Large Laptops / Small Desktops (<= 1200px) */
+/* RESPONSIVE */
 @media (max-width: 1200px) {
   .ct-main-grid {
     gap: 4rem;
@@ -604,11 +565,10 @@
     gap: 2rem;
   }
   .ct-service-text {
-    padding: 1rem 0; /* Kept flush to match the image */
+    padding: 1rem 0;
   }
 }
 
-/* 2. Landscape Tablets / iPad Pro (<= 1024px) */
 @media (max-width: 1024px) {
   .ct-main-grid {
     grid-template-columns: 1fr;
@@ -623,7 +583,7 @@
 
   .ct-service-row {
     grid-template-columns: 1fr;
-    gap: 1.5rem; /* Tighter vertical gap so text belongs to the image */
+    gap: 1.5rem;
   }
 
   .ct-service-row--reverse {
@@ -636,11 +596,10 @@
   }
 
   .ct-service-text {
-    padding: 0; /* Removed horizontal padding so text edge perfectly aligns with image edge */
+    padding: 0;
   }
 }
 
-/* 3. Portrait Tablets / Standard iPad (<= 768px) */
 @media (max-width: 768px) {
   .ct-hero {
     padding: 0 1.5rem 3.5rem;
@@ -669,7 +628,6 @@
   }
 }
 
-/* 4. Large Mobile / Phablets (<= 600px) */
 @media (max-width: 600px) {
   .ct-form-row {
     grid-template-columns: 1fr;
@@ -692,12 +650,11 @@
   }
 
   .ct-service-text {
-    padding: 0; /* Ensured no rogue padding applies on small phones */
+    padding: 0;
     gap: 1rem;
   }
 }
 
-/* 5. Standard Mobile / Small Phones (<= 480px) */
 @media (max-width: 480px) {
   .ct-hero {
     min-height: 320px;
