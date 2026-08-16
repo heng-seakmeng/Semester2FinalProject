@@ -786,7 +786,7 @@ body,
     min-width: 180px;
   }
 
-  /* Catalog rows: stack cleanly */
+  /* Catalog rows: stack cleanly, image on top */
   .catalog-row {
     flex-direction: column;
     align-items: stretch;
@@ -805,9 +805,20 @@ body,
     font-size: 0.85rem;
   }
 
+  /* Fix: specs go back to column layout (Output / 0-60 MPH stacked)
+     instead of the row layout inherited from the 900px block */
   .catalog-specs-col {
-    gap: 0.75rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
     font-size: 0.8rem;
+  }
+
+  .catalog-actions-col {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
   }
 
   .showroom-catalog-section,
