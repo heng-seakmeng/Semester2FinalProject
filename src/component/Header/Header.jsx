@@ -62,8 +62,16 @@ export default function Header({ currentPage, navigateTo, user }) {
         {/* Right Actions */}
         <div className="header-actions">
           {user.isLoggedIn ? (
-            // Logged in: Account + Inbox
+            // Logged in: Admin (if applicable) + Account + Inbox
             <>
+              {user.role === "admin" && (
+                <button
+                  className="nav-action-btn"
+                  onClick={() => handleNav("admin")}
+                >
+                  Admin
+                </button>
+              )}
               <button
                 className="nav-action-btn"
                 onClick={() => handleNav("account")}
@@ -141,6 +149,14 @@ export default function Header({ currentPage, navigateTo, user }) {
         <div className="mobile-actions-list">
           {user.isLoggedIn ? (
             <>
+              {user.role === "admin" && (
+                <button
+                  className="nav-action-btn"
+                  onClick={() => handleNav("admin")}
+                >
+                  Admin
+                </button>
+              )}
               <button
                 className="nav-action-btn"
                 onClick={() => handleNav("account")}
