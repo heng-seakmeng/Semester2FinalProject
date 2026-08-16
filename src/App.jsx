@@ -16,6 +16,7 @@ import Login from "./pages/Login/Login";
 import SignUp from "./pages/Login/SignUp";
 import ForgotPassword from "./component/Account/ForgotPassword";
 import AdminDashboard from "./component/Admin/AdminDashboard";
+import Checkout from "./pages/Checkout/Checkout";
 
 import "./App.css";
 
@@ -83,6 +84,14 @@ function App() {
         )}
 
         {currentPage === "admin" && <AdminDashboard navigateTo={navigateTo} />}
+
+        {currentPage === "checkout" && (
+          <Checkout
+            requestId={selectedVehicleId}
+            user={user}
+            navigateTo={navigateTo}
+          />
+        )}
       </main>
 
       {!hideFooterPages.includes(currentPage) && (
