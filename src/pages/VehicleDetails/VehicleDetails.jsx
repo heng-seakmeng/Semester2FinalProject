@@ -1,550 +1,664 @@
-import { useState, useEffect } from "react";
-import "./VehicleDetails.css";
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
+const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
+const mongoose = require("mongoose");
 
-const API_BASE = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-const resolveImgUrl = (src) => {
-  if (!src) return "";
-  if (
-    src.startsWith("http://") ||
-    src.startsWith("https://") ||
-    src.startsWith("data:")
-  ) {
-    return src;
+/* =========================================================
+   MONGODB CONNECTION
+========================================================= */
+
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("[DB] MongoDB connected"))
+  .catch((err) => console.error("[DB] MongoDB connection error:", err));
+
+/* =========================================================
+   MONGODB SCHEMAS
+========================================================= */
+
+const userSchema = new mongoose.Schema({
+  id: String,
+  name: String,
+  email: { type: String, unique: true },
+  passwordHash: String,
+  role: { type: String, default: "client" },
+  createdAt: String,
+});
+
+const sessionSchema = new mongoose.Schema({
+  token: { type: String, unique: true },
+  userId: String,
+});
+
+const inquirySchema = new mongoose.Schema({
+  id: String,
+  fullName: String,
+  email: String,
+  phone: String,
+  subject: String,
+  message: String,
+  submittedAt: String,
+});
+
+const purchaseRequestSchema = new mongoose.Schema({
+  id: String,
+  clientName: String,
+  clientEmail: String,
+  vehicleName: String,
+  carModel: String,
+  deliveryRegion: String,
+  exteriorColor: String,
+  additionalNotes: String,
+  status: { type: String, default: "Pending Review" },
+  hasCheckedOut: { type: Boolean, default: false },
+  delivery: Object,
+  submittedAt: String,
+});
+
+const User = mongoose.model("User", userSchema);
+const Session = mongoose.model("Session", sessionSchema);
+const Inquiry = mongoose.model("Inquiry", inquirySchema);
+const PurchaseRequest = mongoose.model(
+  "PurchaseRequest",
+  purchaseRequestSchema,
+);
+
+/* =========================================================
+   CORS
+========================================================= */
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3000",
+  "https://heng-seakmeng.github.io",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.startsWith("http://localhost:")
+      ) {
+        return callback(null, true);
+      }
+      console.log("Blocked CORS origin:", origin);
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  }),
+);
+
+app.use(express.json());
+
+/* =========================================================
+   FILE PATHS (static data only)
+========================================================= */
+
+const DATA_DIR = path.join(__dirname, "data");
+const HOME_DATA_PATH = path.join(DATA_DIR, "home.json");
+const CONTACT_DATA_PATH = path.join(DATA_DIR, "contact.json");
+const VEHICLES_DATA_PATH = path.join(DATA_DIR, "vehicles.json");
+const ABOUT_DATA_PATH = path.join(DATA_DIR, "about.json");
+const SERVICES_DATA_PATH = path.join(DATA_DIR, "services.json");
+const FOOTER_DATA_PATH = path.join(DATA_DIR, "footer.json");
+
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function readJSON(filePath, fallback) {
+  try {
+    if (!fs.existsSync(filePath)) return fallback;
+    const data = fs.readFileSync(filePath, "utf-8");
+    if (!data.trim()) return fallback;
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(`Error reading JSON file: ${filePath}`, error.message);
+    return fallback;
   }
-  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-  const path = src.replace(/^\.?\//, "");
-  return `${base}/${path}`;
+}
+
+function writeJSON(filePath, data) {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+    return true;
+  } catch (error) {
+    console.error(`Error writing JSON file: ${filePath}`, error.message);
+    return false;
+  }
+}
+
+/* =========================================================
+   BASIC & HEALTH CHECK ROUTES
+========================================================= */
+
+app.get("/", (req, res) => {
+  res.json({ success: true, message: "McLaren Backend API is running!" });
+});
+
+app.get("/health", (req, res) => {
+  res.json({
+    success: true,
+    status: "OK",
+    message: "Server is healthy",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+/* =========================================================
+   AUTH MIDDLEWARE
+========================================================= */
+
+async function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.replace("Bearer ", "")
+    : null;
+
+  if (!token) {
+    return res.status(401).json({ error: "Not authenticated. No token." });
+  }
+
+  const session = await Session.findOne({ token });
+  if (!session) {
+    return res
+      .status(401)
+      .json({ error: "Not authenticated. Token invalid or expired." });
+  }
+
+  const user = await User.findOne({ id: session.userId });
+  if (!user) {
+    return res
+      .status(401)
+      .json({ error: "Not authenticated. User not found." });
+  }
+
+  req.user = user;
+  req.token = token;
+  next();
+}
+
+async function requireAdmin(req, res, next) {
+  await requireAuth(req, res, () => {
+    const email = req.user?.email?.toLowerCase();
+    const isAdmin =
+      req.user?.role === "admin" ||
+      email === "admin@mclaren.com" ||
+      email === "ronalheng832@gmail.com";
+
+    if (!isAdmin) {
+      return res
+        .status(403)
+        .json({ error: "Access denied. Admin privileges required." });
+    }
+    next();
+  });
+}
+
+/* =========================================================
+   AUTH ROUTES
+========================================================= */
+
+app.post("/api/auth/signup", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    console.log("[SIGNUP] Received:", { name, email });
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "Password should be at least 6 characters." });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const existing = await User.findOne({ email: normalizedEmail });
+    if (existing) {
+      return res
+        .status(409)
+        .json({ error: "An account with this email already exists." });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      id: crypto.randomUUID(),
+      name: name.trim(),
+      email: normalizedEmail,
+      passwordHash,
+      role:
+        normalizedEmail === "admin@mclaren.com" ||
+        normalizedEmail === "ronalheng832@gmail.com"
+          ? "admin"
+          : "client",
+      createdAt: new Date().toISOString(),
+    });
+
+    await newUser.save();
+    console.log("[SIGNUP] User saved to MongoDB:", normalizedEmail);
+
+    const token = crypto.randomBytes(24).toString("hex");
+    await Session.create({ token, userId: newUser.id });
+
+    res.status(201).json({
+      token,
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
+  } catch (error) {
+    console.error("[SIGNUP] Fatal error:", error);
+    res.status(500).json({ error: "Failed to create account." });
+  }
+});
+
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log("[LOGIN] Attempt:", email);
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Missing email or password." });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      console.log("[LOGIN] No user found for:", normalizedEmail);
+      return res.status(401).json({ error: "Invalid email or password." });
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+    if (!passwordMatches) {
+      return res.status(401).json({ error: "Invalid email or password." });
+    }
+
+    const token = crypto.randomBytes(24).toString("hex");
+    await Session.create({ token, userId: user.id });
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role || "client",
+      },
+    });
+  } catch (error) {
+    console.error("[LOGIN] Fatal error:", error);
+    res.status(500).json({ error: "Login failed." });
+  }
+});
+
+app.get("/api/auth/me", requireAuth, (req, res) => {
+  const { id, name, email, role } = req.user;
+  res.json({ user: { id, name, email, role: role || "client" } });
+});
+
+app.post("/api/auth/logout", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.replace("Bearer ", "")
+    : null;
+  if (token) await Session.deleteOne({ token });
+  res.json({ success: true });
+});
+
+app.post("/api/auth/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({
+    email: (email || "").trim().toLowerCase(),
+  });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ error: "No account registered with this email." });
+  }
+  res.json({
+    success: true,
+    message: "If an account exists, a reset link has been sent.",
+  });
+});
+
+/* =========================================================
+   STATIC DATA ROUTES (JSON files)
+========================================================= */
+
+app.get("/api/about", (req, res) => {
+  const data = readJSON(ABOUT_DATA_PATH, null);
+  if (!data)
+    return res.status(500).json({ error: "Failed to read about data" });
+  res.json(data);
+});
+
+app.get("/api/vehicles", (req, res) => {
+  const data = readJSON(VEHICLES_DATA_PATH, { vehicles: [] });
+  res.json(data.vehicles || data);
+});
+
+app.get("/api/vehicles/:id", (req, res) => {
+  const data = readJSON(VEHICLES_DATA_PATH, { vehicles: [] });
+  const vehicles = data.vehicles || data;
+  const vehicle = vehicles.find((v) => String(v.id) === String(req.params.id));
+  if (!vehicle) return res.status(404).json({ error: "Vehicle not found" });
+  res.json(vehicle);
+});
+
+app.get("/api/pillars", (req, res) => {
+  const data = readJSON(VEHICLES_DATA_PATH, { pillars: [] });
+  res.json(data.pillars || []);
+});
+
+app.get("/api/home", (req, res) => {
+  const data = readJSON(HOME_DATA_PATH, null);
+  if (!data) return res.status(500).json({ error: "Failed to read home data" });
+  res.json(data);
+});
+
+app.get("/api/home/:section", (req, res) => {
+  const data = readJSON(HOME_DATA_PATH, null);
+  if (!data) return res.status(500).json({ error: "Failed to read home data" });
+  const section = data[req.params.section];
+  if (!section) return res.status(404).json({ error: "Section not found" });
+  res.json(section);
+});
+
+app.get("/api/contact", (req, res) => {
+  const data = readJSON(CONTACT_DATA_PATH, null);
+  if (!data)
+    return res.status(500).json({ error: "Failed to read contact data" });
+  res.json(data);
+});
+
+app.get("/api/services", (req, res) => {
+  res.json(readJSON(SERVICES_DATA_PATH, []));
+});
+
+app.post("/api/services", requireAdmin, (req, res) => {
+  const services = readJSON(SERVICES_DATA_PATH, []);
+  const newService = { id: crypto.randomUUID(), ...req.body };
+  services.push(newService);
+  writeJSON(SERVICES_DATA_PATH, services);
+  res.status(201).json(newService);
+});
+
+app.put("/api/services/:id", requireAdmin, (req, res) => {
+  const services = readJSON(SERVICES_DATA_PATH, []);
+  const index = services.findIndex(
+    (s) => String(s.id) === String(req.params.id),
+  );
+  if (index === -1) return res.status(404).json({ error: "Service not found" });
+  services[index] = { ...services[index], ...req.body };
+  writeJSON(SERVICES_DATA_PATH, services);
+  res.json(services[index]);
+});
+
+app.delete("/api/services/:id", requireAdmin, (req, res) => {
+  let services = readJSON(SERVICES_DATA_PATH, []);
+  services = services.filter((s) => String(s.id) !== String(req.params.id));
+  writeJSON(SERVICES_DATA_PATH, services);
+  res.json({ success: true });
+});
+
+app.get("/api/products", (req, res) => {
+  const data = readJSON(VEHICLES_DATA_PATH, { vehicles: [] });
+  res.json(data.vehicles || data);
+});
+
+app.post("/api/products", requireAdmin, (req, res) => {
+  const data = readJSON(VEHICLES_DATA_PATH, { vehicles: [] });
+  const vehicles = data.vehicles || data;
+  const newVehicle = { id: crypto.randomUUID(), ...req.body };
+  vehicles.push(newVehicle);
+  data.vehicles = vehicles;
+  writeJSON(VEHICLES_DATA_PATH, data);
+  res.status(201).json(newVehicle);
+});
+
+app.put("/api/products/:id", requireAdmin, (req, res) => {
+  const data = readJSON(VEHICLES_DATA_PATH, { vehicles: [] });
+  const vehicles = data.vehicles || data;
+  const index = vehicles.findIndex(
+    (v) => String(v.id) === String(req.params.id),
+  );
+  if (index === -1) return res.status(404).json({ error: "Vehicle not found" });
+  vehicles[index] = { ...vehicles[index], ...req.body };
+  data.vehicles = vehicles;
+  writeJSON(VEHICLES_DATA_PATH, data);
+  res.json(vehicles[index]);
+});
+
+app.delete("/api/products/:id", requireAdmin, (req, res) => {
+  const data = readJSON(VEHICLES_DATA_PATH, { vehicles: [] });
+  data.vehicles = (data.vehicles || []).filter(
+    (v) => String(v.id) !== String(req.params.id),
+  );
+  writeJSON(VEHICLES_DATA_PATH, data);
+  res.json({ success: true });
+});
+
+app.get("/api/footer", (req, res) => {
+  res.json(readJSON(FOOTER_DATA_PATH, []));
+});
+
+app.put("/api/footer", requireAdmin, (req, res) => {
+  const updatedData = req.body;
+  if (!Array.isArray(updatedData)) {
+    return res.status(400).json({ error: "Footer data must be an array" });
+  }
+  const success = writeJSON(FOOTER_DATA_PATH, updatedData);
+  if (!success)
+    return res.status(500).json({ error: "Failed to write footer data." });
+  res.json({ success: true, footer: updatedData });
+});
+
+/* =========================================================
+   CONTACT INQUIRIES → MongoDB
+========================================================= */
+
+app.post("/api/contact/submit", async (req, res) => {
+  try {
+    const { fullName, email, phone, subject, message } = req.body;
+    if (!fullName || !email || !subject || !message) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    const newInquiry = new Inquiry({
+      id: crypto.randomUUID(),
+      fullName,
+      email,
+      phone: phone || "",
+      subject,
+      message,
+      submittedAt: new Date().toISOString(),
+    });
+    await newInquiry.save();
+    console.log("[CONTACT] Saved to MongoDB:", email);
+    res.status(201).json({ success: true, inquiry: newInquiry });
+  } catch (error) {
+    console.error("[CONTACT] Error:", error);
+    res.status(500).json({ error: "Failed to save inquiry." });
+  }
+});
+
+app.get("/api/contact_inquiries", requireAdmin, async (req, res) => {
+  const inquiries = await Inquiry.find().sort({ submittedAt: -1 });
+  res.json(inquiries);
+});
+
+app.delete("/api/contact_inquiries/:id", requireAdmin, async (req, res) => {
+  await Inquiry.deleteOne({ id: req.params.id });
+  res.json({ success: true });
+});
+
+/* =========================================================
+   PURCHASE REQUESTS → MongoDB
+========================================================= */
+
+async function getUserFromToken(req) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.replace("Bearer ", "")
+    : null;
+  if (!token) return null;
+  const session = await Session.findOne({ token });
+  if (!session) return null;
+  return await User.findOne({ id: session.userId });
+}
+
+const handleGetPurchaseRequests = async (req, res) => {
+  try {
+    const user = await getUserFromToken(req);
+    let email = user ? user.email : req.query.email;
+
+    if (email) {
+      const mine = await PurchaseRequest.find({
+        clientEmail: new RegExp(`^${email}$`, "i"),
+      }).sort({ submittedAt: -1 });
+      return res.json(mine);
+    }
+
+    const all = await PurchaseRequest.find().sort({ submittedAt: -1 });
+    res.json(all);
+  } catch (error) {
+    console.error("[PURCHASE] Get error:", error);
+    res.status(500).json({ error: "Failed to get purchase requests." });
+  }
 };
 
-export default function VehicleDetails({ carId, navigateTo, user }) {
-  const [vehicle, setVehicle] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState("overview");
+const handleDeletePurchaseRequest = async (req, res) => {
+  await PurchaseRequest.deleteOne({ id: req.params.id });
+  res.json({ success: true });
+};
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [clientName, setClientName] = useState("");
-  const [deliveryRegion, setDeliveryRegion] = useState("North America");
-  const [exteriorColor, setExteriorColor] = useState("Signature Papaya Spark");
-  const [additionalNotes, setAdditionalNotes] = useState("");
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+app.get("/api/admin/purchase-requests", requireAdmin, async (req, res) => {
+  const all = await PurchaseRequest.find().sort({ submittedAt: -1 });
+  res.json(all);
+});
 
-  useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [isModalOpen]);
+app.get("/api/purchase-requests/:id", async (req, res) => {
+  const found = await PurchaseRequest.findOne({ id: req.params.id });
+  if (!found)
+    return res.status(404).json({ error: "Purchase request not found." });
+  res.json(found);
+});
 
-  useEffect(() => {
-    let mounted = true;
-
-    async function loadVehicle() {
-      setLoading(true);
-      try {
-        const idToFetch = carId || "mclaren-750s";
-        const res = await fetch(`${API_BASE}/vehicles/${idToFetch}`);
-
-        if (res.ok) {
-          const data = await res.json();
-          if (mounted) {
-            setVehicle(data);
-            setLoading(false);
-            return;
-          }
-        } else {
-          const fallbackRes = await fetch(`${API_BASE}/vehicles/mclaren-750s`);
-          if (fallbackRes.ok && mounted) {
-            const fallbackData = await fallbackRes.json();
-            setVehicle(fallbackData);
-            setLoading(false);
-            return;
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching vehicle details from backend:", err);
-      }
-
-      if (mounted) {
-        setLoading(false);
-      }
-    }
-
-    loadVehicle();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    return () => {
-      mounted = false;
-    };
-  }, [carId]);
-
-  const scrollToSection = (sectionId) => {
-    setActiveSection(sectionId);
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  // Gate the purchase flow behind login — this is what guarantees
-  // clientEmail always matches user.email, so Messages.jsx can find it.
-  const handleOpenPurchaseModal = () => {
-    if (!user?.isLoggedIn) {
-      navigateTo("login");
-      return;
-    }
-    setClientName(user.name || "");
-    setSubmitError("");
-    setIsModalOpen(true);
-  };
-
-  const handlePurchaseSubmit = async (e) => {
-    e.preventDefault();
-    if (!agreedToTerms) return;
-
-    setSubmitError("");
-    try {
-      const response = await fetch(`${API_BASE}/purchase-requests`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          clientName,
-          clientEmail,
-          // Add a fallback for vehicleName so it never sends as undefined!
-          vehicleName: vehicle?.name || "McLaren 750S",
-          carModel: vehicle?.id || "mclaren-750s",
-          deliveryRegion,
-          exteriorColor,
-          additionalNotes,
-          status: "Pending Review",
-        }),
-      });
-
-      if (response.ok) {
-        setSubmitted(true);
-      } else {
-        const data = await response.json().catch(() => ({}));
-        setSubmitError(data.error || "Failed to submit purchase request.");
-      }
-    } catch (err) {
-      console.error("Error saving purchase request:", err);
-      setSubmitError("Could not reach the server.");
-    }
-  };
-
-  const resetModal = () => {
-    setSubmitted(false);
-    setIsModalOpen(false);
-    setClientName("");
-    setDeliveryRegion("North America");
-    setExteriorColor("Signature Papaya Spark");
-    setAdditionalNotes("");
-    setAgreedToTerms(false);
-    setSubmitError("");
-  };
-
-  if (loading || !vehicle) {
-    return (
-      <div className="details-loading">
-        <div className="details-spinner" aria-hidden="true" />
-        <span>LOADING McLAREN SPECIFICATIONS...</span>
-      </div>
-    );
-  }
-
-  const heroRaw =
-    vehicle?.images?.hero || vehicle?.images?.exterior || vehicle?.image;
-  const heroImg = resolveImgUrl(heroRaw);
-  const p = vehicle?.performance || {};
-
-  return (
-    <div className="arch-editorial-page">
-      <section
-        className="arch-hero"
-        style={{ backgroundImage: `url(${heroImg})` }}
-      >
-        <div className="arch-hero-tint" />
-        <div className="arch-hero-text">
-          <span className="brand-prefix">{vehicle.brand || "McLaren"}</span>
-          <h1 className="hero-car-title">{vehicle.name}</h1>
-        </div>
-      </section>
-
-      <nav className="arch-subnav">
-        <div className="subnav-container">
-          <div className="subnav-links">
-            <button
-              className={`subnav-link ${activeSection === "overview" ? "active" : ""}`}
-              onClick={() => scrollToSection("overview")}
-            >
-              OVERVIEW
-            </button>
-            <button
-              className={`subnav-link ${activeSection === "lightness" ? "active" : ""}`}
-              onClick={() => scrollToSection("lightness")}
-            >
-              LIGHTNESS
-            </button>
-            <button
-              className={`subnav-link ${activeSection === "engagement" ? "active" : ""}`}
-              onClick={() => scrollToSection("engagement")}
-            >
-              ENGAGEMENT
-            </button>
-            <button
-              className={`subnav-link ${activeSection === "power" ? "active" : ""}`}
-              onClick={() => scrollToSection("power")}
-            >
-              POWER
-            </button>
-            <button
-              className={`subnav-link ${activeSection === "specification" ? "active" : ""}`}
-              onClick={() => scrollToSection("specification")}
-            >
-              SPECIFICATION
-            </button>
-          </div>
-
-          <button
-            className="single-purchase-btn"
-            onClick={handleOpenPurchaseModal}
-          >
-            PURCHASE REQUEST →
-          </button>
-        </div>
-      </nav>
-
-      <div className="arch-editorial-body">
-        {/* 01 / OVERVIEW */}
-        <section className="arch-section" id="overview">
-          <div className="section-split">
-            <div className="text-col">
-              <span className="section-num">01 / OVERVIEW</span>
-              <h2 className="section-title">
-                {vehicle.overviewHeadline || "BENCHMARK SUPERCAR PERFORMANCE"}
-              </h2>
-              <p className="body-text">
-                {vehicle.overviewText || vehicle.summary}
-              </p>
-              <div className="metric-row">
-                <div className="metric-unit">
-                  <span className="metric-val">{p.horsepower || "750 PS"}</span>
-                  <span className="metric-lbl">Power</span>
-                </div>
-                <div className="metric-unit">
-                  <span className="metric-val">{p.topSpeed || "332 km/h"}</span>
-                  <span className="metric-lbl">Top Speed</span>
-                </div>
-              </div>
-            </div>
-            <div className="media-col">
-              <div className="widescreen-frame">
-                <img
-                  src={resolveImgUrl(vehicle?.images?.overview || heroRaw)}
-                  alt={vehicle.name}
-                />
-                <span className="media-badge">OVERVIEW</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 02 / LIGHTNESS */}
-        <section className="arch-section" id="lightness">
-          <div className="section-split">
-            <div className="text-col">
-              <span className="section-num">02 / LIGHTNESS</span>
-              <h2 className="section-title">
-                {vehicle.lightnessHeadline || "LIGHTWEIGHT COMPOSITE PURSUIT"}
-              </h2>
-              <p className="body-text">
-                {vehicle.lightnessText ||
-                  "Derived from Formula 1 composite technology, providing immense structural rigidity and lightweight agility."}
-              </p>
-              {p.weight && (
-                <div className="metric-row">
-                  <div className="metric-unit">
-                    <span className="metric-val">{p.weight}</span>
-                    <span className="metric-lbl">Dry Weight</span>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="media-col">
-              <div className="widescreen-frame">
-                <img
-                  src={resolveImgUrl(vehicle?.images?.lightness || heroRaw)}
-                  alt="Lightness"
-                />
-                <span className="media-badge">LIGHTWEIGHT</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 03 / ENGAGEMENT */}
-        <section className="arch-section" id="engagement">
-          <div className="section-split">
-            <div className="text-col">
-              <span className="section-num">03 / ENGAGEMENT</span>
-              <h2 className="section-title">
-                {vehicle.engagementHeadline ||
-                  "SURGICAL STEERING & CHASSIS CONTROL"}
-              </h2>
-              <p className="body-text">
-                {vehicle.engagementText ||
-                  "Features electro-hydraulic steering feedback, adaptive dampers, and precision suspension geometry."}
-              </p>
-              {p.chassis && (
-                <div className="metric-row">
-                  <div className="metric-unit">
-                    <span className="metric-val">{p.chassis}</span>
-                    <span className="metric-lbl">Chassis Architecture</span>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="media-col">
-              <div className="widescreen-frame">
-                <img
-                  src={resolveImgUrl(vehicle?.images?.engagement || heroRaw)}
-                  alt="Engagement"
-                />
-                <span className="media-badge">DYNAMICS</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 04 / POWER */}
-        <section className="arch-section" id="power">
-          <div className="section-split">
-            <div className="text-col">
-              <span className="section-num">04 / POWER</span>
-              <h2 className="section-title">
-                {vehicle.powerHeadline || "TWIN-TURBOCHARGED POWERTRAIN"}
-              </h2>
-              <p className="body-text">
-                {vehicle.powerText ||
-                  "Engineered for relentless power delivery, instantaneous throttle response, and screaming exhaust acoustics."}
-              </p>
-              {p.engine && (
-                <div className="metric-row">
-                  <div className="metric-unit">
-                    <span className="metric-val">{p.engine}</span>
-                    <span className="metric-lbl">Powertrain</span>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="media-col">
-              <div className="widescreen-frame">
-                <img
-                  src={resolveImgUrl(vehicle?.images?.power || heroRaw)}
-                  alt="Power"
-                />
-                <span className="media-badge">POWER</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 05 / TECHNICAL SPECIFICATIONS */}
-        <section className="arch-section" id="specification">
-          <span className="section-num">05 / SPECIFICATION</span>
-          <h2 className="section-title">TECHNICAL SPECIFICATIONS</h2>
-
-          <div className="arch-spec-table">
-            {p.horsepower && (
-              <div className="table-line">
-                <span>Maximum Power</span>
-                <strong>{p.horsepower}</strong>
-              </div>
-            )}
-            {p.torque && (
-              <div className="table-line">
-                <span>Maximum Torque</span>
-                <strong>{p.torque}</strong>
-              </div>
-            )}
-            {p.acceleration0100 && (
-              <div className="table-line">
-                <span>0-100 km/h (0-60 mph)</span>
-                <strong>{p.acceleration0100}</strong>
-              </div>
-            )}
-            {p.acceleration0200 && (
-              <div className="table-line">
-                <span>0-200 km/h</span>
-                <strong>{p.acceleration0200}</strong>
-              </div>
-            )}
-            {p.topSpeed && (
-              <div className="table-line">
-                <span>Top Speed</span>
-                <strong>{p.topSpeed}</strong>
-              </div>
-            )}
-            {p.engine && (
-              <div className="table-line">
-                <span>Engine Configuration</span>
-                <strong>{p.engine}</strong>
-              </div>
-            )}
-            {p.transmission && (
-              <div className="table-line">
-                <span>Transmission</span>
-                <strong>{p.transmission}</strong>
-              </div>
-            )}
-            {p.chassis && (
-              <div className="table-line">
-                <span>Chassis Architecture</span>
-                <strong>{p.chassis}</strong>
-              </div>
-            )}
-            {p.weight && (
-              <div className="table-line">
-                <span>DIN Kerb / Dry Weight</span>
-                <strong>{p.weight}</strong>
-              </div>
-            )}
-            {p.brakes && (
-              <div className="table-line">
-                <span>Braking System</span>
-                <strong>{p.brakes}</strong>
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
-
-      {isModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="modal-close-btn"
-              onClick={() => setIsModalOpen(false)}
-              aria-label="Close"
-            >
-              ✕
-            </button>
-
-            <span className="modal-brand">{vehicle.brand || "MCLAREN"}</span>
-            <h2>PURCHASE REQUEST: {vehicle.name}</h2>
-            <p className="modal-subtitle">Starting Price: {vehicle.price}</p>
-
-            {submitted ? (
-              <div className="modal-success">
-                <span className="check-mark">✓</span>
-                <h3>PURCHASE REQUEST RECEIVED</h3>
-                <p>
-                  Thank you, <strong>{clientName}</strong>. A McLaren Specialist
-                  will contact you at <strong>{user.email}</strong>.
-                </p>
-                <p className="modal-subtitle">
-                  Track its status anytime from your Messages page.
-                </p>
-                <div className="modal-success-actions">
-                  <button
-                    className="modal-submit-btn"
-                    onClick={() => {
-                      resetModal();
-                      navigateTo("messages");
-                    }}
-                  >
-                    View in Messages →
-                  </button>
-                  <button className="modal-cancel-btn" onClick={resetModal}>
-                    Close Window
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handlePurchaseSubmit} className="modal-form">
-                {submitError && <p className="auth-error">{submitError}</p>}
-
-                <div className="modal-field">
-                  <label>Full Name *</label>
-                  <input
-                    type="text"
-                    value={clientName}
-                    onChange={(e) => setClientName(e.target.value)}
-                    placeholder="Enter your full name"
-                    required
-                  />
-                </div>
-
-                <div className="modal-field">
-                  <label>Email Address</label>
-                  <input type="email" value={user.email} disabled readOnly />
-                  <span className="modal-field-hint">
-                    Linked to your account — this is how your request shows up
-                    in Messages.
-                  </span>
-                </div>
-
-                <div className="modal-field">
-                  <label>Delivery Region *</label>
-                  <select
-                    value={deliveryRegion}
-                    onChange={(e) => setDeliveryRegion(e.target.value)}
-                  >
-                    <option value="North America">North America</option>
-                    <option value="Europe / UK">Europe / UK</option>
-                    <option value="Middle East">Middle East</option>
-                    <option value="Asia Pacific">Asia Pacific</option>
-                  </select>
-                </div>
-
-                <div className="modal-field">
-                  <label>Exterior Color Preference</label>
-                  <input
-                    type="text"
-                    value={exteriorColor}
-                    onChange={(e) => setExteriorColor(e.target.value)}
-                    placeholder="Signature Papaya Spark"
-                  />
-                </div>
-
-                <div className="modal-field">
-                  <label>Additional Specification Notes</label>
-                  <textarea
-                    rows="3"
-                    value={additionalNotes}
-                    onChange={(e) => setAdditionalNotes(e.target.value)}
-                    placeholder="Specify interior trim, track pack options, etc."
-                  />
-                </div>
-
-                <label className="modal-checkbox-row">
-                  <input
-                    type="checkbox"
-                    checked={agreedToTerms}
-                    onChange={(e) => setAgreedToTerms(e.target.checked)}
-                    required
-                  />
-                  <span>I agree to the Terms &amp; Conditions.</span>
-                </label>
-
-                <button
-                  type="submit"
-                  className="modal-submit-btn"
-                  disabled={!agreedToTerms}
-                >
-                  Submit Purchase Request →
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+app.put("/api/purchase-requests/:id", requireAdmin, async (req, res) => {
+  const updated = await PurchaseRequest.findOneAndUpdate(
+    { id: req.params.id },
+    { $set: req.body },
+    { new: true },
   );
-}
+  if (!updated) return res.status(404).json({ error: "Request not found" });
+  res.json(updated);
+});
+
+app.patch(
+  "/api/purchase-requests/:id/checkout",
+  requireAuth,
+  async (req, res) => {
+    const request = await PurchaseRequest.findOne({ id: req.params.id });
+    if (!request)
+      return res.status(404).json({ error: "Purchase request not found." });
+    if (request.clientEmail?.toLowerCase() !== req.user.email.toLowerCase()) {
+      return res
+        .status(403)
+        .json({ error: "You can only update your own purchase request." });
+    }
+    const { delivery } = req.body;
+    request.hasCheckedOut = true;
+    request.delivery = delivery;
+    await request.save();
+    res.json(request);
+  },
+);
+
+app.get("/api/purchase_requests", handleGetPurchaseRequests);
+app.get("/api/purchase-requests", handleGetPurchaseRequests);
+
+app.post("/api/purchase-requests", async (req, res) => {
+  try {
+    const {
+      clientName,
+      clientEmail,
+      vehicleName,
+      carModel,
+      deliveryRegion,
+      exteriorColor,
+      additionalNotes,
+    } = req.body;
+    if (!clientName || !clientEmail || !vehicleName) {
+      return res.status(400).json({ error: "Missing required fields." });
+    }
+    const newRequest = new PurchaseRequest({
+      id: crypto.randomUUID(),
+      clientName,
+      clientEmail,
+      vehicleName,
+      carModel,
+      deliveryRegion,
+      exteriorColor,
+      additionalNotes: additionalNotes || "",
+      status: "Pending Review",
+      submittedAt: new Date().toISOString(),
+    });
+    await newRequest.save();
+    console.log("[PURCHASE] Saved to MongoDB:", clientEmail);
+    res.status(201).json(newRequest);
+  } catch (error) {
+    console.error("[PURCHASE] Error:", error);
+    res.status(500).json({ error: "Failed to save purchase request." });
+  }
+});
+
+app.delete(
+  "/api/purchase_requests/:id",
+  requireAdmin,
+  handleDeletePurchaseRequest,
+);
+app.delete(
+  "/api/purchase-requests/:id",
+  requireAdmin,
+  handleDeletePurchaseRequest,
+);
+
+/* =========================================================
+   ERROR HANDLERS
+========================================================= */
+
+app.use((req, res) => {
+  res.status(404).json({ error: "API route not found", path: req.originalUrl });
+});
+
+app.use((err, req, res, next) => {
+  console.error("Server error:", err);
+  if (err.message === "Not allowed by CORS") {
+    return res.status(403).json({ error: "CORS policy blocked this request." });
+  }
+  res.status(500).json({ error: "Internal server error" });
+});
+
+app.listen(PORT, () => {
+  console.log(`McLaren Backend API running on port ${PORT}`);
+});

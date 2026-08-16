@@ -1,7 +1,9 @@
 import { useState } from "react";
 import "./Login.css";
 
-const API_BASE = `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api`;
+const API_BASE = `${
+  import.meta.env.VITE_API_URL || "http://localhost:3000"
+}/api`;
 
 function Login({ navigateTo, setUser }) {
   const [email, setEmail] = useState("");
@@ -12,15 +14,22 @@ function Login({ navigateTo, setUser }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+
     setError("");
     setLoading(true);
 
     try {
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
       });
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -28,20 +37,40 @@ function Login({ navigateTo, setUser }) {
         return;
       }
 
+      // -----------------------------
+      // SAVE LOGIN TOKEN
+      // -----------------------------
       localStorage.setItem("token", data.token);
 
+      // -----------------------------
+      // CREATE USER OBJECT
+      // -----------------------------
+      const user = {
+        isLoggedIn: true,
+        uid: data.user.id,
+        name: data.user.name,
+        email: data.user.email,
+        role: data.user.role || "client",
+      };
+
+      // -----------------------------
+      // SAVE USER TO LOCAL STORAGE
+      // -----------------------------
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // -----------------------------
+      // UPDATE REACT STATE
+      // -----------------------------
       if (setUser) {
-        setUser({
-          isLoggedIn: true,
-          uid: data.user.id,
-          name: data.user.name,
-          email: data.user.email,
-          role: data.user.role || "client",
-        });
+        setUser(user);
       }
 
+      // -----------------------------
+      // GO TO HOME
+      // -----------------------------
       navigateTo("home");
-    } catch {
+    } catch (error) {
+      console.error("Login error:", error);
       setError("Could not reach the server. Is the backend running?");
     } finally {
       setLoading(false);
@@ -57,6 +86,7 @@ function Login({ navigateTo, setUser }) {
         aria-label="Close and return home"
       >
         <span>Close</span>
+
         <svg
           width="14"
           height="14"
@@ -71,7 +101,9 @@ function Login({ navigateTo, setUser }) {
 
       <div className="auth-card">
         <span className="auth-eyebrow">Welcome Back</span>
+
         <h1 className="header">Log In</h1>
+
         <p className="auth-subtext">
           Access your saved models, orders, and allocations.
         </p>
@@ -79,8 +111,10 @@ function Login({ navigateTo, setUser }) {
         <form className="auth-form" onSubmit={handleSubmit}>
           {error && <p className="auth-error">{error}</p>}
 
+          {/* EMAIL */}
           <div className="form-group">
             <label htmlFor="email">Email</label>
+
             <input
               id="email"
               type="email"
@@ -91,8 +125,10 @@ function Login({ navigateTo, setUser }) {
             />
           </div>
 
+          {/* PASSWORD */}
           <div className="form-group">
             <label htmlFor="password">Password</label>
+
             <input
               id="password"
               type="password"
@@ -103,6 +139,7 @@ function Login({ navigateTo, setUser }) {
             />
           </div>
 
+          {/* REMEMBER ME */}
           <div className="auth-row">
             <label className="remember-me">
               <input
@@ -122,11 +159,13 @@ function Login({ navigateTo, setUser }) {
             </button>
           </div>
 
+          {/* LOGIN BUTTON */}
           <button type="submit" className="auth-btn" disabled={loading}>
             {loading ? "Logging In..." : "Login"}
           </button>
         </form>
 
+        {/* SIGN UP */}
         <p className="auth-switch">
           Don't have an account?{" "}
           <button

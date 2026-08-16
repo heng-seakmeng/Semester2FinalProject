@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-// import { api } from "./api/client";
+import { useState } from "react";
 
 // Layout Components
 import Header from "./component/Header/Header";
@@ -23,40 +22,18 @@ import "./App.css";
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
-  const [user, setUser] = useState({
-    isLoggedIn: false,
-    uid: null,
-    name: "",
-    email: "",
-  });
-  const [authChecked, setAuthChecked] = useState(false);
 
-  // Restore session from a stored token on first load
-  useEffect(() => {
-    async function restoreSession() {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setAuthChecked(true);
-        return;
-      }
-      try {
-        const me = await api.me();
-        setUser({
-          isLoggedIn: true,
-          uid: me.uid,
-          name: me.name,
-          email: me.email,
-        });
-      } catch {
-        // Token invalid or expired
-        localStorage.removeItem("token");
-        setUser({ isLoggedIn: false, uid: null, name: "", email: "" });
-      } finally {
-        setAuthChecked(true);
-      }
+  // ✅ Restore user from localStorage on refresh — no backend call needed
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      return stored
+        ? JSON.parse(stored)
+        : { isLoggedIn: false, uid: null, name: "", email: "" };
+    } catch {
+      return { isLoggedIn: false, uid: null, name: "", email: "" };
     }
-    restoreSession();
-  }, []);
+  });
 
   const navigateTo = (page, vehicleId = null) => {
     setCurrentPage(page);
@@ -67,12 +44,6 @@ function App() {
   };
 
   const hideFooterPages = ["login", "signup", "forgot-password", "admin"];
-
-  // Wait for the session check before rendering, so the header doesn't
-  // flash "Log In" then immediately swap to "Account"
-  if (!authChecked) {
-    return null; // or a loading spinner if you have one
-  }
 
   return (
     <div className="app-frame">
