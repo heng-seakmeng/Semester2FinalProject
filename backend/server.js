@@ -1,13 +1,44 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const mongoose = require("mongoose");
 
 const app = express();
-
 const PORT = process.env.PORT || 3000;
+
+/* =========================================================
+   MONGODB CONNECTION
+========================================================= */
+
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("[DB] MongoDB connected"))
+  .catch((err) => console.error("[DB] MongoDB connection error:", err));
+
+/* =========================================================
+   MONGODB SCHEMAS
+========================================================= */
+
+const userSchema = new mongoose.Schema({
+  id: String,
+  name: String,
+  email: { type: String, unique: true },
+  passwordHash: String,
+  role: { type: String, default: "client" },
+  createdAt: String,
+});
+
+const sessionSchema = new mongoose.Schema({
+  token: { type: String, unique: true },
+  userId: String,
+});
+
+const User = mongoose.model("User", userSchema);
+const Session = mongoose.model("Session", sessionSchema);
 
 /* =========================================================
    CORS
@@ -42,47 +73,22 @@ app.use(
 app.use(express.json());
 
 /* =========================================================
-   FILE PATHS
+   FILE PATHS (for non-user data)
 ========================================================= */
 
 const DATA_DIR = path.join(__dirname, "data");
-
 const HOME_DATA_PATH = path.join(DATA_DIR, "home.json");
 const CONTACT_DATA_PATH = path.join(DATA_DIR, "contact.json");
 const INQUIRIES_PATH = path.join(DATA_DIR, "contact_inquiries.json");
-const USERS_PATH = path.join(DATA_DIR, "users.json");
 const PURCHASE_REQUESTS_PATH = path.join(DATA_DIR, "purchase_requests.json");
 const VEHICLES_DATA_PATH = path.join(DATA_DIR, "vehicles.json");
 const ABOUT_DATA_PATH = path.join(DATA_DIR, "about.json");
 const SERVICES_DATA_PATH = path.join(DATA_DIR, "services.json");
 const FOOTER_DATA_PATH = path.join(DATA_DIR, "footer.json");
-const SESSIONS_PATH = path.join(DATA_DIR, "sessions.json"); // <-- NEW: Persistent Sessions
 
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
-
-console.log("[STARTUP] Data directory resolved to:", DATA_DIR);
-
-/* =========================================================
-   BASIC & HEALTH CHECK ROUTES
-========================================================= */
-
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "McLaren Backend API is running!",
-  });
-});
-
-app.get("/health", (req, res) => {
-  res.json({
-    success: true,
-    status: "OK",
-    message: "Server is healthy",
-    timestamp: new Date().toISOString(),
-  });
-});
 
 /* =========================================================
    HELPERS
@@ -111,48 +117,44 @@ function writeJSON(filePath, data) {
 }
 
 /* =========================================================
-   PERSISTENT SESSION MANAGEMENT
+   BASIC & HEALTH CHECK ROUTES
 ========================================================= */
-function getSessionUserId(token) {
-  const sessions = readJSON(SESSIONS_PATH, {});
-  return sessions[token];
-}
 
-function setSession(token, userId) {
-  const sessions = readJSON(SESSIONS_PATH, {});
-  sessions[token] = userId;
-  writeJSON(SESSIONS_PATH, sessions);
-}
+app.get("/", (req, res) => {
+  res.json({ success: true, message: "McLaren Backend API is running!" });
+});
 
-function deleteSession(token) {
-  const sessions = readJSON(SESSIONS_PATH, {});
-  if (sessions[token]) {
-    delete sessions[token];
-    writeJSON(SESSIONS_PATH, sessions);
-  }
-}
+app.get("/health", (req, res) => {
+  res.json({
+    success: true,
+    status: "OK",
+    message: "Server is healthy",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 /* =========================================================
-   AUTH & ADMIN MIDDLEWARE
+   AUTH MIDDLEWARE
 ========================================================= */
 
-function requireAuth(req, res, next) {
+async function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.replace("Bearer ", "")
     : null;
 
-  const userId = getSessionUserId(token);
+  if (!token) {
+    return res.status(401).json({ error: "Not authenticated. No token." });
+  }
 
-  if (!token || !userId) {
+  const session = await Session.findOne({ token });
+  if (!session) {
     return res
       .status(401)
       .json({ error: "Not authenticated. Token invalid or expired." });
   }
 
-  const users = readJSON(USERS_PATH, []);
-  const user = users.find((u) => u.id === userId);
-
+  const user = await User.findOne({ id: session.userId });
   if (!user) {
     return res
       .status(401)
@@ -164,28 +166,156 @@ function requireAuth(req, res, next) {
   next();
 }
 
-function requireAdmin(req, res, next) {
-  requireAuth(req, res, () => {
+async function requireAdmin(req, res, next) {
+  await requireAuth(req, res, () => {
     const email = req.user?.email?.toLowerCase();
-
     const isAdmin =
       req.user?.role === "admin" ||
       email === "admin@mclaren.com" ||
       email === "ronalheng832@gmail.com";
 
     if (!isAdmin) {
-      console.log(`[ADMIN BLOCK] Blocked ${email} from accessing Admin route.`);
-      return res.status(403).json({
-        error: "Access denied. Admin privileges required.",
-      });
+      return res
+        .status(403)
+        .json({ error: "Access denied. Admin privileges required." });
     }
-
     next();
   });
 }
 
 /* =========================================================
-   ROUTES
+   AUTH ROUTES
+========================================================= */
+
+app.post("/api/auth/signup", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    console.log("[SIGNUP] Received:", { name, email });
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "Password should be at least 6 characters." });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const existing = await User.findOne({ email: normalizedEmail });
+    if (existing) {
+      return res
+        .status(409)
+        .json({ error: "An account with this email already exists." });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      id: crypto.randomUUID(),
+      name: name.trim(),
+      email: normalizedEmail,
+      passwordHash,
+      role:
+        normalizedEmail === "admin@mclaren.com" ||
+        normalizedEmail === "ronalheng832@gmail.com"
+          ? "admin"
+          : "client",
+      createdAt: new Date().toISOString(),
+    });
+
+    await newUser.save();
+    console.log("[SIGNUP] User saved to MongoDB:", normalizedEmail);
+
+    const token = crypto.randomBytes(24).toString("hex");
+    await Session.create({ token, userId: newUser.id });
+
+    res.status(201).json({
+      token,
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
+  } catch (error) {
+    console.error("[SIGNUP] Fatal error:", error);
+    res.status(500).json({ error: "Failed to create account." });
+  }
+});
+
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log("[LOGIN] Attempt:", email);
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Missing email or password." });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      console.log("[LOGIN] No user found for:", normalizedEmail);
+      return res.status(401).json({ error: "Invalid email or password." });
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+    if (!passwordMatches) {
+      return res.status(401).json({ error: "Invalid email or password." });
+    }
+
+    const token = crypto.randomBytes(24).toString("hex");
+    await Session.create({ token, userId: user.id });
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role || "client",
+      },
+    });
+  } catch (error) {
+    console.error("[LOGIN] Fatal error:", error);
+    res.status(500).json({ error: "Login failed." });
+  }
+});
+
+app.get("/api/auth/me", requireAuth, (req, res) => {
+  const { id, name, email, role } = req.user;
+  res.json({ user: { id, name, email, role: role || "client" } });
+});
+
+app.post("/api/auth/logout", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith("Bearer ")
+    ? authHeader.replace("Bearer ", "")
+    : null;
+  if (token) await Session.deleteOne({ token });
+  res.json({ success: true });
+});
+
+app.post("/api/auth/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({
+    email: (email || "").trim().toLowerCase(),
+  });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ error: "No account registered with this email." });
+  }
+  res.json({
+    success: true,
+    message: "If an account exists, a reset link has been sent.",
+  });
+});
+
+/* =========================================================
+   DATA ROUTES (unchanged — still use JSON files)
 ========================================================= */
 
 app.get("/api/about", (req, res) => {
@@ -239,7 +369,6 @@ app.post("/api/contact/submit", (req, res) => {
   if (!fullName || !email || !subject || !message) {
     return res.status(400).json({ error: "Missing required fields" });
   }
-
   const newInquiry = {
     id: crypto.randomUUID(),
     fullName,
@@ -249,153 +378,10 @@ app.post("/api/contact/submit", (req, res) => {
     message,
     submittedAt: new Date().toISOString(),
   };
-
   const inquiries = readJSON(INQUIRIES_PATH, []);
   inquiries.push(newInquiry);
   writeJSON(INQUIRIES_PATH, inquiries);
   res.status(201).json({ success: true, inquiry: newInquiry });
-});
-
-app.post("/api/auth/signup", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    console.log("[SIGNUP] Received:", { name, email });
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ error: "Password should be at least 6 characters." });
-    }
-
-    const users = readJSON(USERS_PATH, []);
-    console.log("[SIGNUP] Current user count before write:", users.length);
-
-    const normalizedEmail = email.trim().toLowerCase();
-    if (users.find((u) => u.email?.toLowerCase() === normalizedEmail)) {
-      console.log("[SIGNUP] Rejected — email already exists:", normalizedEmail);
-      return res
-        .status(409)
-        .json({ error: "An account with this email already exists." });
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-    const newUser = {
-      id: crypto.randomUUID(),
-      name: name.trim(),
-      email: normalizedEmail,
-      passwordHash,
-      role:
-        normalizedEmail === "admin@mclaren.com" ||
-        normalizedEmail === "ronalheng832@gmail.com"
-          ? "admin"
-          : "client",
-      createdAt: new Date().toISOString(),
-    };
-
-    users.push(newUser);
-    const writeSuccess = writeJSON(USERS_PATH, users);
-    console.log("[SIGNUP] Write success:", writeSuccess, "| Path:", USERS_PATH);
-
-    if (!writeSuccess) {
-      return res
-        .status(500)
-        .json({ error: "Failed to save user — write error." });
-    }
-
-    const token = crypto.randomBytes(24).toString("hex");
-    setSession(token, newUser.id);
-
-    res.status(201).json({
-      token,
-      user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-      },
-    });
-  } catch (error) {
-    console.error("[SIGNUP] Fatal error:", error);
-    res.status(500).json({ error: "Failed to create account." });
-  }
-});
-
-app.post("/api/auth/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    console.log("[LOGIN] Attempt:", email);
-
-    if (!email || !password) {
-      return res.status(400).json({ error: "Missing email or password." });
-    }
-
-    const users = readJSON(USERS_PATH, []);
-    console.log("[LOGIN] Users on file:", users.length, "| Path:", USERS_PATH);
-
-    const normalizedEmail = email.trim().toLowerCase();
-    const user = users.find((u) => u.email?.toLowerCase() === normalizedEmail);
-
-    if (!user) {
-      console.log("[LOGIN] No user found for:", normalizedEmail);
-      return res.status(401).json({ error: "Invalid email or password." });
-    }
-
-    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
-    console.log("[LOGIN] Password match:", passwordMatches);
-
-    if (!passwordMatches) {
-      return res.status(401).json({ error: "Invalid email or password." });
-    }
-
-    const token = crypto.randomBytes(24).toString("hex");
-    setSession(token, user.id);
-
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role || "client",
-      },
-    });
-  } catch (error) {
-    console.error("[LOGIN] Fatal error:", error);
-    res.status(500).json({ error: "Login failed." });
-  }
-});
-
-app.get("/api/auth/me", requireAuth, (req, res) => {
-  const { id, name, email, role } = req.user;
-  res.json({ user: { id, name, email, role: role || "client" } });
-});
-
-app.post("/api/auth/logout", (req, res) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader?.startsWith("Bearer ")
-    ? authHeader.replace("Bearer ", "")
-    : null;
-  if (token) deleteSession(token);
-  res.json({ success: true });
-});
-
-app.post("/api/auth/forgot-password", (req, res) => {
-  const { email } = req.body;
-  const users = readJSON(USERS_PATH, []);
-  const user = users.find(
-    (u) => u.email?.toLowerCase() === (email || "").trim().toLowerCase(),
-  );
-  if (!user)
-    return res
-      .status(404)
-      .json({ error: "No account registered with this email." });
-  res.json({
-    success: true,
-    message: "If an account exists, a reset link has been sent.",
-  });
 });
 
 app.get("/api/services", (req, res) => {
@@ -482,24 +468,20 @@ app.delete("/api/contact_inquiries/:id", requireAdmin, (req, res) => {
   res.json({ success: true });
 });
 
-function getUserFromToken(req) {
+async function getUserFromToken(req) {
   const authHeader = req.headers.authorization;
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.replace("Bearer ", "")
     : null;
-
   if (!token) return null;
-
-  const userId = getSessionUserId(token);
-  if (!userId) return null;
-
-  const users = readJSON(USERS_PATH, []);
-  return users.find((u) => u.id === userId) || null;
+  const session = await Session.findOne({ token });
+  if (!session) return null;
+  return await User.findOne({ id: session.userId });
 }
 
-const handleGetPurchaseRequests = (req, res) => {
+const handleGetPurchaseRequests = async (req, res) => {
   const all = readJSON(PURCHASE_REQUESTS_PATH, []);
-  const user = getUserFromToken(req);
+  const user = await getUserFromToken(req);
   let email = user ? user.email : req.query.email;
 
   if (email) {
@@ -522,6 +504,14 @@ app.get("/api/admin/purchase-requests", requireAdmin, (req, res) => {
   res.json(readJSON(PURCHASE_REQUESTS_PATH, []));
 });
 
+app.get("/api/purchase-requests/:id", (req, res) => {
+  const all = readJSON(PURCHASE_REQUESTS_PATH, []);
+  const found = all.find((r) => String(r.id) === String(req.params.id));
+  if (!found)
+    return res.status(404).json({ error: "Purchase request not found." });
+  res.json(found);
+});
+
 app.put("/api/purchase-requests/:id", requireAdmin, (req, res) => {
   const all = readJSON(PURCHASE_REQUESTS_PATH, []);
   const index = all.findIndex((r) => String(r.id) === String(req.params.id));
@@ -531,35 +521,18 @@ app.put("/api/purchase-requests/:id", requireAdmin, (req, res) => {
   res.json(all[index]);
 });
 
-app.get("/api/purchase-requests/:id", (req, res) => {
-  const all = readJSON(PURCHASE_REQUESTS_PATH, []);
-  const found = all.find((r) => String(r.id) === String(req.params.id));
-  if (!found) {
-    return res.status(404).json({ error: "Purchase request not found." });
-  }
-  res.json(found);
-});
-
 app.patch("/api/purchase-requests/:id/checkout", requireAuth, (req, res) => {
   const all = readJSON(PURCHASE_REQUESTS_PATH, []);
   const index = all.findIndex((r) => String(r.id) === String(req.params.id));
-
-  if (index === -1) {
+  if (index === -1)
     return res.status(404).json({ error: "Purchase request not found." });
-  }
-
   if (all[index].clientEmail?.toLowerCase() !== req.user.email.toLowerCase()) {
     return res
       .status(403)
       .json({ error: "You can only update your own purchase request." });
   }
-
   const { delivery } = req.body;
-  all[index] = {
-    ...all[index],
-    hasCheckedOut: true,
-    delivery,
-  };
+  all[index] = { ...all[index], hasCheckedOut: true, delivery };
   writeJSON(PURCHASE_REQUESTS_PATH, all);
   res.json(all[index]);
 });
@@ -568,8 +541,6 @@ app.get("/api/purchase_requests", handleGetPurchaseRequests);
 app.get("/api/purchase-requests", handleGetPurchaseRequests);
 
 app.post("/api/purchase-requests", (req, res) => {
-  console.log("[PURCHASE REQUEST] Received:", req.body);
-
   const {
     clientName,
     clientEmail,
@@ -579,15 +550,10 @@ app.post("/api/purchase-requests", (req, res) => {
     exteriorColor,
     additionalNotes,
   } = req.body;
-
   if (!clientName || !clientEmail || !vehicleName) {
-    console.log("[PURCHASE REQUEST] Rejected — missing fields");
     return res.status(400).json({ error: "Missing required fields." });
   }
-
   const all = readJSON(PURCHASE_REQUESTS_PATH, []);
-  console.log("[PURCHASE REQUEST] Existing count before write:", all.length);
-
   const newRequest = {
     id: crypto.randomUUID(),
     clientName,
@@ -600,22 +566,8 @@ app.post("/api/purchase-requests", (req, res) => {
     status: "Pending Review",
     submittedAt: new Date().toISOString(),
   };
-
   all.push(newRequest);
-  const writeSuccess = writeJSON(PURCHASE_REQUESTS_PATH, all);
-  console.log(
-    "[PURCHASE REQUEST] Write success:",
-    writeSuccess,
-    "| Path:",
-    PURCHASE_REQUESTS_PATH,
-  );
-
-  if (!writeSuccess) {
-    return res
-      .status(500)
-      .json({ error: "Failed to save purchase request — write error." });
-  }
-
+  writeJSON(PURCHASE_REQUESTS_PATH, all);
   res.status(201).json(newRequest);
 });
 
@@ -631,25 +583,23 @@ app.delete(
 );
 
 app.get("/api/footer", (req, res) => {
-  const footerData = readJSON(FOOTER_DATA_PATH, []);
-  res.json(footerData);
+  res.json(readJSON(FOOTER_DATA_PATH, []));
 });
 
 app.put("/api/footer", requireAdmin, (req, res) => {
   const updatedData = req.body;
-
   if (!Array.isArray(updatedData)) {
     return res.status(400).json({ error: "Footer data must be an array" });
   }
-
   const success = writeJSON(FOOTER_DATA_PATH, updatedData);
-
-  if (!success) {
+  if (!success)
     return res.status(500).json({ error: "Failed to write footer data." });
-  }
-
   res.json({ success: true, footer: updatedData });
 });
+
+/* =========================================================
+   ERROR HANDLERS
+========================================================= */
 
 app.use((req, res) => {
   res.status(404).json({ error: "API route not found", path: req.originalUrl });
