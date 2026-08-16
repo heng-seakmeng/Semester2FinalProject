@@ -38,6 +38,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
+  min-height: 200px; /* fallback floor so it never renders 0px tall */
   overflow: hidden;
   background-color: #000;
 }
@@ -123,11 +124,7 @@
 }
 
 @media (max-width: 480px) {
-  .lineup-section {
-    padding: 4rem 1rem;
-  }
-
-  .showcase-car-name {
-    font-size: 1.2rem;
+  .showcase-img-frame {
+    min-height: 180px;
   }
 }

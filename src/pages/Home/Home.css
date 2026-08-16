@@ -891,36 +891,18 @@ button {
 
 /* 3. Portrait Tablets / Standard iPad (<= 768px) */
 @media (max-width: 768px) {
-  .feature-section,
-  .news-section,
-  .cta-section,
-  .stats-section {
-    padding: 5rem 1.5rem;
-  }
-
-  .home-grid {
-    grid-template-columns: 1fr;
-    margin: 5rem auto;
-  }
-  .home-grid.reverse .grid-info {
-    order: 2;
-  }
-  .home-grid.reverse .grid-media {
-    order: 1;
-  }
-  .grid-media {
-    height: 400px;
-  }
-
-  .testimonials-container {
-    gap: 1.5rem;
-  }
-
-  .footer-columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .footer-column.footer-newsletter {
-    grid-column: span 2;
+  .hero-video-overlay {
+    background:
+      radial-gradient(
+        circle at center,
+        rgba(10, 10, 10, 0.15) 0%,
+        rgba(10, 10, 10, 0.65) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(10, 10, 10, 0.1) 0%,
+        rgba(10, 10, 10, 0.85) 100%
+      );
   }
 }
 
