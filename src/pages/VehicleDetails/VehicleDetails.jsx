@@ -106,7 +106,7 @@ export default function VehicleDetails({ carId, navigateTo, user }) {
 
   const handlePurchaseSubmit = async (e) => {
     e.preventDefault();
-    if (!agreedToTerms || !user?.isLoggedIn) return;
+    if (!agreedToTerms) return;
 
     setSubmitError("");
     try {
@@ -115,9 +115,10 @@ export default function VehicleDetails({ carId, navigateTo, user }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           clientName,
-          clientEmail: user.email, // locked to the logged-in account, not typed
-          vehicleName: vehicle?.name,
-          carModel: vehicle?.id,
+          clientEmail,
+          // Add a fallback for vehicleName so it never sends as undefined!
+          vehicleName: vehicle?.name || "McLaren 750S",
+          carModel: vehicle?.id || "mclaren-750s",
           deliveryRegion,
           exteriorColor,
           additionalNotes,
@@ -133,7 +134,7 @@ export default function VehicleDetails({ carId, navigateTo, user }) {
       }
     } catch (err) {
       console.error("Error saving purchase request:", err);
-      setSubmitError("Could not reach the server. Is it running on port 3000?");
+      setSubmitError("Could not reach the server.");
     }
   };
 

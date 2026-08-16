@@ -33,7 +33,7 @@ app.use(
       console.log("Blocked CORS origin:", origin);
       return callback(new Error("Not allowed by CORS"));
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   }),
@@ -55,11 +55,14 @@ const PURCHASE_REQUESTS_PATH = path.join(DATA_DIR, "purchase_requests.json");
 const VEHICLES_DATA_PATH = path.join(DATA_DIR, "vehicles.json");
 const ABOUT_DATA_PATH = path.join(DATA_DIR, "about.json");
 const SERVICES_DATA_PATH = path.join(DATA_DIR, "services.json");
-const FOOTER_DATA_PATH = path.join(DATA_DIR, "footer.json"); // ✅ Added Footer Path
+const FOOTER_DATA_PATH = path.join(DATA_DIR, "footer.json");
+const SESSIONS_PATH = path.join(DATA_DIR, "sessions.json"); // <-- NEW: Persistent Sessions
 
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
+
+console.log("[STARTUP] Data directory resolved to:", DATA_DIR);
 
 /* =========================================================
    BASIC & HEALTH CHECK ROUTES
@@ -108,10 +111,26 @@ function writeJSON(filePath, data) {
 }
 
 /* =========================================================
-   IN-MEMORY SESSION STORE
+   PERSISTENT SESSION MANAGEMENT
 ========================================================= */
+function getSessionUserId(token) {
+  const sessions = readJSON(SESSIONS_PATH, {});
+  return sessions[token];
+}
 
-const sessions = {};
+function setSession(token, userId) {
+  const sessions = readJSON(SESSIONS_PATH, {});
+  sessions[token] = userId;
+  writeJSON(SESSIONS_PATH, sessions);
+}
+
+function deleteSession(token) {
+  const sessions = readJSON(SESSIONS_PATH, {});
+  if (sessions[token]) {
+    delete sessions[token];
+    writeJSON(SESSIONS_PATH, sessions);
+  }
+}
 
 /* =========================================================
    AUTH & ADMIN MIDDLEWARE
@@ -123,15 +142,21 @@ function requireAuth(req, res, next) {
     ? authHeader.replace("Bearer ", "")
     : null;
 
-  if (!token || !sessions[token]) {
-    return res.status(401).json({ error: "Not authenticated." });
+  const userId = getSessionUserId(token);
+
+  if (!token || !userId) {
+    return res
+      .status(401)
+      .json({ error: "Not authenticated. Token invalid or expired." });
   }
 
   const users = readJSON(USERS_PATH, []);
-  const user = users.find((u) => u.id === sessions[token]);
+  const user = users.find((u) => u.id === userId);
 
   if (!user) {
-    return res.status(401).json({ error: "Not authenticated." });
+    return res
+      .status(401)
+      .json({ error: "Not authenticated. User not found." });
   }
 
   req.user = user;
@@ -142,16 +167,19 @@ function requireAuth(req, res, next) {
 function requireAdmin(req, res, next) {
   requireAuth(req, res, () => {
     const email = req.user?.email?.toLowerCase();
+
     const isAdmin =
       req.user?.role === "admin" ||
       email === "admin@mclaren.com" ||
       email === "ronalheng832@gmail.com";
 
     if (!isAdmin) {
+      console.log(`[ADMIN BLOCK] Blocked ${email} from accessing Admin route.`);
       return res.status(403).json({
         error: "Access denied. Admin privileges required.",
       });
     }
+
     next();
   });
 }
@@ -160,7 +188,6 @@ function requireAdmin(req, res, next) {
    ROUTES
 ========================================================= */
 
-// About
 app.get("/api/about", (req, res) => {
   const data = readJSON(ABOUT_DATA_PATH, null);
   if (!data)
@@ -168,7 +195,6 @@ app.get("/api/about", (req, res) => {
   res.json(data);
 });
 
-// Vehicles
 app.get("/api/vehicles", (req, res) => {
   const data = readJSON(VEHICLES_DATA_PATH, { vehicles: [] });
   res.json(data.vehicles || data);
@@ -182,13 +208,11 @@ app.get("/api/vehicles/:id", (req, res) => {
   res.json(vehicle);
 });
 
-// Pillars
 app.get("/api/pillars", (req, res) => {
   const data = readJSON(VEHICLES_DATA_PATH, { pillars: [] });
   res.json(data.pillars || []);
 });
 
-// Home
 app.get("/api/home", (req, res) => {
   const data = readJSON(HOME_DATA_PATH, null);
   if (!data) return res.status(500).json({ error: "Failed to read home data" });
@@ -203,7 +227,6 @@ app.get("/api/home/:section", (req, res) => {
   res.json(section);
 });
 
-// Contact
 app.get("/api/contact", (req, res) => {
   const data = readJSON(CONTACT_DATA_PATH, null);
   if (!data)
@@ -233,10 +256,11 @@ app.post("/api/contact/submit", (req, res) => {
   res.status(201).json({ success: true, inquiry: newInquiry });
 });
 
-// Auth
 app.post("/api/auth/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    console.log("[SIGNUP] Received:", { name, email });
+
     if (!name || !email || !password) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -247,8 +271,11 @@ app.post("/api/auth/signup", async (req, res) => {
     }
 
     const users = readJSON(USERS_PATH, []);
+    console.log("[SIGNUP] Current user count before write:", users.length);
+
     const normalizedEmail = email.trim().toLowerCase();
     if (users.find((u) => u.email?.toLowerCase() === normalizedEmail)) {
+      console.log("[SIGNUP] Rejected — email already exists:", normalizedEmail);
       return res
         .status(409)
         .json({ error: "An account with this email already exists." });
@@ -260,15 +287,26 @@ app.post("/api/auth/signup", async (req, res) => {
       name: name.trim(),
       email: normalizedEmail,
       passwordHash,
-      role: "client",
+      role:
+        normalizedEmail === "admin@mclaren.com" ||
+        normalizedEmail === "ronalheng832@gmail.com"
+          ? "admin"
+          : "client",
       createdAt: new Date().toISOString(),
     };
 
     users.push(newUser);
-    writeJSON(USERS_PATH, users);
+    const writeSuccess = writeJSON(USERS_PATH, users);
+    console.log("[SIGNUP] Write success:", writeSuccess, "| Path:", USERS_PATH);
+
+    if (!writeSuccess) {
+      return res
+        .status(500)
+        .json({ error: "Failed to save user — write error." });
+    }
 
     const token = crypto.randomBytes(24).toString("hex");
-    sessions[token] = newUser.id;
+    setSession(token, newUser.id);
 
     res.status(201).json({
       token,
@@ -280,7 +318,7 @@ app.post("/api/auth/signup", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Signup error:", error);
+    console.error("[SIGNUP] Fatal error:", error);
     res.status(500).json({ error: "Failed to create account." });
   }
 });
@@ -288,20 +326,32 @@ app.post("/api/auth/signup", async (req, res) => {
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("[LOGIN] Attempt:", email);
+
     if (!email || !password) {
       return res.status(400).json({ error: "Missing email or password." });
     }
 
     const users = readJSON(USERS_PATH, []);
+    console.log("[LOGIN] Users on file:", users.length, "| Path:", USERS_PATH);
+
     const normalizedEmail = email.trim().toLowerCase();
     const user = users.find((u) => u.email?.toLowerCase() === normalizedEmail);
 
-    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+    if (!user) {
+      console.log("[LOGIN] No user found for:", normalizedEmail);
+      return res.status(401).json({ error: "Invalid email or password." });
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+    console.log("[LOGIN] Password match:", passwordMatches);
+
+    if (!passwordMatches) {
       return res.status(401).json({ error: "Invalid email or password." });
     }
 
     const token = crypto.randomBytes(24).toString("hex");
-    sessions[token] = user.id;
+    setSession(token, user.id);
 
     res.json({
       token,
@@ -313,7 +363,7 @@ app.post("/api/auth/login", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("[LOGIN] Fatal error:", error);
     res.status(500).json({ error: "Login failed." });
   }
 });
@@ -328,7 +378,7 @@ app.post("/api/auth/logout", (req, res) => {
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.replace("Bearer ", "")
     : null;
-  if (token) delete sessions[token];
+  if (token) deleteSession(token);
   res.json({ success: true });
 });
 
@@ -348,7 +398,6 @@ app.post("/api/auth/forgot-password", (req, res) => {
   });
 });
 
-// Services CRUD
 app.get("/api/services", (req, res) => {
   res.json(readJSON(SERVICES_DATA_PATH, []));
 });
@@ -379,7 +428,6 @@ app.delete("/api/services/:id", requireAdmin, (req, res) => {
   res.json({ success: true });
 });
 
-// Products / Vehicles CRUD
 app.get("/api/products", (req, res) => {
   const data = readJSON(VEHICLES_DATA_PATH, { vehicles: [] });
   res.json(data.vehicles || data);
@@ -417,7 +465,6 @@ app.delete("/api/products/:id", requireAdmin, (req, res) => {
   res.json({ success: true });
 });
 
-// Inquiries
 app.get("/api/contact_inquiries", requireAdmin, (req, res) => {
   res.json(readJSON(INQUIRIES_PATH, []));
 });
@@ -435,15 +482,19 @@ app.delete("/api/contact_inquiries/:id", requireAdmin, (req, res) => {
   res.json({ success: true });
 });
 
-// Purchase Requests
 function getUserFromToken(req) {
   const authHeader = req.headers.authorization;
   const token = authHeader?.startsWith("Bearer ")
     ? authHeader.replace("Bearer ", "")
     : null;
-  if (!token || !sessions[token]) return null;
+
+  if (!token) return null;
+
+  const userId = getSessionUserId(token);
+  if (!userId) return null;
+
   const users = readJSON(USERS_PATH, []);
-  return users.find((u) => u.id === sessions[token]) || null;
+  return users.find((u) => u.id === userId) || null;
 }
 
 const handleGetPurchaseRequests = (req, res) => {
@@ -480,10 +531,45 @@ app.put("/api/purchase-requests/:id", requireAdmin, (req, res) => {
   res.json(all[index]);
 });
 
+app.get("/api/purchase-requests/:id", (req, res) => {
+  const all = readJSON(PURCHASE_REQUESTS_PATH, []);
+  const found = all.find((r) => String(r.id) === String(req.params.id));
+  if (!found) {
+    return res.status(404).json({ error: "Purchase request not found." });
+  }
+  res.json(found);
+});
+
+app.patch("/api/purchase-requests/:id/checkout", requireAuth, (req, res) => {
+  const all = readJSON(PURCHASE_REQUESTS_PATH, []);
+  const index = all.findIndex((r) => String(r.id) === String(req.params.id));
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Purchase request not found." });
+  }
+
+  if (all[index].clientEmail?.toLowerCase() !== req.user.email.toLowerCase()) {
+    return res
+      .status(403)
+      .json({ error: "You can only update your own purchase request." });
+  }
+
+  const { delivery } = req.body;
+  all[index] = {
+    ...all[index],
+    hasCheckedOut: true,
+    delivery,
+  };
+  writeJSON(PURCHASE_REQUESTS_PATH, all);
+  res.json(all[index]);
+});
+
 app.get("/api/purchase_requests", handleGetPurchaseRequests);
 app.get("/api/purchase-requests", handleGetPurchaseRequests);
 
 app.post("/api/purchase-requests", (req, res) => {
+  console.log("[PURCHASE REQUEST] Received:", req.body);
+
   const {
     clientName,
     clientEmail,
@@ -493,11 +579,15 @@ app.post("/api/purchase-requests", (req, res) => {
     exteriorColor,
     additionalNotes,
   } = req.body;
+
   if (!clientName || !clientEmail || !vehicleName) {
+    console.log("[PURCHASE REQUEST] Rejected — missing fields");
     return res.status(400).json({ error: "Missing required fields." });
   }
 
   const all = readJSON(PURCHASE_REQUESTS_PATH, []);
+  console.log("[PURCHASE REQUEST] Existing count before write:", all.length);
+
   const newRequest = {
     id: crypto.randomUUID(),
     clientName,
@@ -512,7 +602,20 @@ app.post("/api/purchase-requests", (req, res) => {
   };
 
   all.push(newRequest);
-  writeJSON(PURCHASE_REQUESTS_PATH, all);
+  const writeSuccess = writeJSON(PURCHASE_REQUESTS_PATH, all);
+  console.log(
+    "[PURCHASE REQUEST] Write success:",
+    writeSuccess,
+    "| Path:",
+    PURCHASE_REQUESTS_PATH,
+  );
+
+  if (!writeSuccess) {
+    return res
+      .status(500)
+      .json({ error: "Failed to save purchase request — write error." });
+  }
+
   res.status(201).json(newRequest);
 });
 
@@ -527,17 +630,11 @@ app.delete(
   handleDeletePurchaseRequest,
 );
 
-/* =========================================================
-   FOOTER ROUTES
-========================================================= */
-
-// 1. GET footer data
 app.get("/api/footer", (req, res) => {
   const footerData = readJSON(FOOTER_DATA_PATH, []);
   res.json(footerData);
 });
 
-// 2. UPDATE / WRITE footer data (Admin only)
 app.put("/api/footer", requireAdmin, (req, res) => {
   const updatedData = req.body;
 
@@ -554,10 +651,6 @@ app.put("/api/footer", requireAdmin, (req, res) => {
   res.json({ success: true, footer: updatedData });
 });
 
-/* =========================================================
-   404 & ERROR HANDLER
-========================================================= */
-
 app.use((req, res) => {
   res.status(404).json({ error: "API route not found", path: req.originalUrl });
 });
@@ -569,10 +662,6 @@ app.use((err, req, res, next) => {
   }
   res.status(500).json({ error: "Internal server error" });
 });
-
-/* =========================================================
-   START SERVER
-========================================================= */
 
 app.listen(PORT, () => {
   console.log(`McLaren Backend API running on port ${PORT}`);
