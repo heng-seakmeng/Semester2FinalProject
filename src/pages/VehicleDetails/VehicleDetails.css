@@ -630,9 +630,6 @@
 /* ==========================================================================
    RESPONSIVE LAYOUTS
    ========================================================================== */
-/* ==========================================================================
-   RESPONSIVE FIX — replace existing @media blocks in showroom CSS
-   ========================================================================== */
 
 html,
 body,
@@ -669,9 +666,12 @@ body,
      doesn't clip the top of large letters like "ARTURA" */
   .arch-hero {
     height: auto;
-    min-height: 60vh;
-    padding: 7rem 1.25rem 3rem; /* extra top padding clears the logo bar */
-    align-items: flex-start; /* text isn't jammed to the very bottom edge */
+    min-height: unset;
+    aspect-ratio: 4/3; /* frame sized to fit the whole image instead of a viewport-height crop */
+    background-size: contain;
+    background-color: #0a0a0a; /* fills the letterbox bars left by "contain" */
+    padding: 1.5rem 1.25rem 2rem;
+    align-items: flex-end;
   }
 
   .hero-car-title {
@@ -710,6 +710,51 @@ body,
     width: 100%;
     text-align: center;
     padding: 0.85rem 1rem;
+  }
+
+  /* --- FIX: stack each section (text + image) into a single column --- */
+  .arch-editorial-body {
+    padding: 3.5rem 1.25rem 5rem;
+    gap: 4rem;
+  }
+
+  .arch-section {
+    padding-bottom: 3.5rem;
+  }
+
+  .section-split {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .media-col {
+    order: -1; /* image appears above the text; remove this line to put text first */
+  }
+
+  .widescreen-frame {
+    height: 220px;
+  }
+
+  .body-text {
+    max-width: 100%;
+  }
+
+  .metric-row {
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .arch-spec-table {
+    max-width: 100%;
+  }
+
+  .table-line {
+    padding: 1.1rem 0;
+    font-size: 0.85rem;
+  }
+
+  .modal-container {
+    padding: 2.5rem 1.5rem 2rem;
   }
 }
 

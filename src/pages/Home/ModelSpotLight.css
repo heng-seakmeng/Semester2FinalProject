@@ -88,18 +88,23 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  min-width: 0;
 }
 
 .showcase-car-name {
-  font-size: 1.4rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+  font-size: 1.15rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
   color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .showcase-car-price {
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 500;
   color: var(--color-accent);
   letter-spacing: 0.5px;
 }
@@ -123,8 +128,47 @@
   }
 }
 
+@media (max-width: 600px) {
+  .lineup-section {
+    padding: 3.5rem 1.25rem;
+  }
+
+  .lineup-container {
+    gap: 1.5rem;
+  }
+
+  .showcase-card-footer {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .showcase-car-name {
+    font-size: 1rem;
+  }
+
+  .showcase-car-price {
+    font-size: 0.78rem;
+  }
+
+  .showcase-series-tag {
+    font-size: 0.6rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
 @media (max-width: 480px) {
   .showcase-img-frame {
     min-height: 180px;
+  }
+
+  .showcase-card-footer {
+    padding: 1.1rem 1.25rem;
+  }
+
+  .showcase-car-name {
+    font-size: 0.95rem;
+  }
+
+  .showcase-car-price {
+    font-size: 0.75rem;
   }
 }

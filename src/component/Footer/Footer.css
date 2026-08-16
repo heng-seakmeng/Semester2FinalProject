@@ -151,34 +151,75 @@
 /* 4. Large Mobile / Phablets (<= 600px) */
 @media (max-width: 600px) {
   .site-footer {
-    padding: 4rem 1.5rem 2rem;
+    padding: 3.5rem 1.5rem 2rem;
   }
 
+  /* Professional mobile treatment: centered columns, each headed by
+     a thin accent rule, tighter link spacing so the section reads as
+     a compact block instead of a sparse left-hung list */
   .footer-columns {
     grid-template-columns: 1fr;
-    max-width: 100%;
-    gap: 2.5rem;
-    margin-bottom: 3rem;
-    justify-items: start;
+    max-width: 340px;
+    gap: 0;
+    margin: 0 auto 3rem;
+    justify-items: center;
   }
 
   .footer-column {
+    align-items: center;
     max-width: 100%;
+    width: 100%;
+    text-align: center;
+    padding: 1.75rem 0;
+    border-bottom: 1px solid rgba(247, 246, 243, 0.08);
+  }
+
+  .footer-column:first-child {
+    padding-top: 0;
   }
 
   .footer-column:last-child {
     grid-column: span 1;
+    border-bottom: none;
+    padding-bottom: 0;
   }
 
   .footer-column h4 {
+    position: relative;
     margin-bottom: 1.25rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .footer-column h4::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 2px;
+    background-color: #ff5500;
+  }
+
+  .footer-column ul {
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .footer-column button,
+  .footer-column a {
+    text-align: center;
   }
 }
 
 /* 5. Standard Mobile / Small Phones (<= 480px) */
 @media (max-width: 480px) {
   .site-footer {
-    padding: 3.5rem 1.25rem 2rem;
+    padding: 3rem 1.25rem 2rem;
+  }
+
+  .footer-columns {
+    max-width: 280px;
   }
 
   .footer-copyright {

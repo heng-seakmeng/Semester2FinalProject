@@ -39,9 +39,6 @@
   padding: 0;
 }
 
-/* html needs the overflow guard too — on some mobile browsers,
-   overflow-x: hidden on body alone doesn't fully suppress horizontal
-   scroll caused by a descendant that's wider than the viewport */
 html {
   overflow-x: hidden;
   width: 100%;
@@ -75,7 +72,6 @@ button {
 }
 
 .first-intro h3 {
-  /* Luxury Eyebrow - McLaren Orange */
   color: var(--color-accent);
   font-size: 0.68rem;
   font-weight: 600;
@@ -595,9 +591,6 @@ button {
 }
 
 .news-row-thumb {
-  /* width now tracks the grid column instead of a hardcoded 160px —
-     previously this stayed 160px even when the 1024px breakpoint
-     narrowed the column to 120px, overflowing the row by 40px */
   width: 100%;
   height: 100px;
   border-radius: var(--radius-sm);
@@ -904,6 +897,63 @@ button {
         rgba(10, 10, 10, 0.85) 100%
       );
   }
+
+  /* Show the full poster/video frame uncropped instead of "cover"
+     slicing off the sides or top/bottom of the car on narrow screens */
+  .hero-banner {
+    height: auto;
+    min-height: unset;
+    aspect-ratio: 4/3;
+    background-color: #0a0a0a;
+  }
+
+  .hero-video {
+    object-fit: contain;
+  }
+
+  /* Racing Heritage / Airflow rows: stack and CENTER like the rest of
+     the mobile page — previously stayed left-aligned in a narrow ragged
+     column with oversized headings that wrapped mid-word */
+  .home-grid,
+  .home-grid.reverse {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin: 4rem auto;
+    text-align: center;
+  }
+
+  .home-grid .grid-info,
+  .home-grid.reverse .grid-info {
+    order: 1;
+  }
+  .home-grid .grid-media,
+  .home-grid.reverse .grid-media {
+    order: 2;
+  }
+
+  .grid-info h2 {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+
+  .grid-info p {
+    font-size: 0.92rem;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .grid-media {
+    height: 300px;
+  }
+
+  .milestone-row {
+    text-align: center;
+  }
+
+  .btn-main {
+    font-size: 0.68rem;
+    padding: 0.85rem 1.75rem;
+  }
 }
 
 /* 4. Large Mobile / Phablets (<= 600px) */
@@ -927,6 +977,43 @@ button {
     width: 100%;
     height: 220px;
   }
+
+  .first-intro h2 {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+  .first-intro p {
+    font-size: 0.92rem;
+  }
+
+  .banner-tint h1 {
+    font-size: clamp(1.9rem, 8vw, 2.6rem);
+  }
+  .banner-tint p {
+    font-size: 0.9rem;
+  }
+
+  .stat-value {
+    font-size: clamp(1.7rem, 7vw, 2.4rem);
+  }
+
+  .feature-box h3 {
+    font-size: 1.05rem;
+  }
+  .feature-box p {
+    font-size: 0.88rem;
+  }
+
+  .testimonial-text {
+    font-size: 0.92rem;
+  }
+
+  .news-row-title {
+    font-size: 1.05rem;
+  }
+
+  .cta-card {
+    font-size: 0.85rem;
+  }
 }
 
 /* 5. Standard Mobile / Small Phones (<= 480px) */
@@ -937,6 +1024,7 @@ button {
   .banner-ctas {
     flex-direction: column;
     gap: 1rem;
+    width: 100%;
   }
   .btn-main {
     width: 100%;
@@ -947,13 +1035,16 @@ button {
     gap: 2.5rem;
   }
   .grid-media {
-    height: 300px;
+    height: 240px;
   }
 
   .milestone-row {
     grid-template-columns: 1fr;
     gap: 1.5rem;
     text-align: center;
+  }
+  .milestone-value {
+    font-size: 1.8rem;
   }
 
   .footer-columns {
@@ -980,5 +1071,9 @@ button {
   }
   .footer-socials {
     justify-content: center;
+  }
+
+  .grid-info h2 {
+    font-size: 1.5rem;
   }
 }

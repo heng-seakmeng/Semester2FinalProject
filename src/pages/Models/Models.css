@@ -26,7 +26,7 @@
   justify-content: center;
   gap: 1.5rem;
   color: var(--color-accent, #ff5500);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 4px;
   text-transform: uppercase;
@@ -62,7 +62,7 @@
 .brand-label {
   display: inline-block;
   color: var(--color-accent, #ff5500);
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 600;
   letter-spacing: 6px;
   text-transform: uppercase;
@@ -70,17 +70,17 @@
 }
 
 .showroom-header h1 {
-  font-size: clamp(2.75rem, 6.5vw, 5.25rem);
+  font-size: clamp(2.25rem, 5vw, 4rem);
   font-weight: 200;
-  letter-spacing: 3px;
-  line-height: 1;
+  letter-spacing: 2px;
+  line-height: 1.05;
   text-transform: uppercase;
   margin-bottom: 1.5rem;
 }
 
 .showroom-header p {
   color: var(--color-text-secondary, #94a3b8);
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-weight: 300;
   line-height: 1.9;
   max-width: 60ch;
@@ -108,9 +108,9 @@
 
 .tab-btn {
   padding: 0.55rem 1.15rem;
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--color-text-secondary, #94a3b8);
   border-radius: var(--radius-sm, 4px);
@@ -142,7 +142,7 @@
   border-radius: var(--radius-sm, 4px);
   padding: 0.65rem 2rem 0.65rem 0.85rem;
   color: #fff;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 300;
   letter-spacing: 0.5px;
   outline: none;
@@ -244,7 +244,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0.4rem 0.9rem;
   border-radius: var(--radius-sm, 4px);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -257,7 +257,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0.4rem 0.9rem;
   border-radius: var(--radius-sm, 4px);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 1.5px;
   color: var(--color-text-muted, #64748b);
@@ -277,22 +277,22 @@
 }
 
 .model-name {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
   font-weight: 200;
   letter-spacing: 1px;
-  line-height: 1;
+  line-height: 1.1;
   text-transform: uppercase;
 }
 
 .price-tag {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 200;
   letter-spacing: 0.5px;
   color: var(--color-accent, #ff5500);
 }
 
 .model-summary {
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-weight: 300;
   color: var(--color-text-secondary, #94a3b8);
   line-height: 1.9;
@@ -302,8 +302,8 @@
 
 .showcase-specs-strip {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.9rem 2.5rem;
   background-color: var(--color-bg-surface, #0f1117);
   padding: 1.75rem 1.5rem;
   border-radius: var(--radius-md, 8px);
@@ -313,25 +313,36 @@
 
 .spec-item {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
+  gap: 0.6rem;
   min-width: 0;
-}
-
-.spec-val {
-  font-size: 1.55rem;
-  font-weight: 200;
-  color: #fff;
-  line-height: 1;
-  margin-bottom: 0.4rem;
-  letter-spacing: 0.5px;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
 }
 
 .spec-lbl {
-  font-size: 0.65rem;
+  order: 1;
+  flex: 0 0 auto;
+  font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--color-text-muted, #64748b);
+}
+
+.spec-lbl::after {
+  content: ":";
+}
+
+.spec-val {
+  order: 2;
+  flex: 1 1 auto;
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.35;
+  letter-spacing: 0.2px;
+  text-align: right;
 }
 
 .showcase-actions {
@@ -342,7 +353,7 @@
 
 .showroom-btn {
   padding: 0.7rem 1.6rem;
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -384,7 +395,7 @@
 }
 
 .track-title {
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 3px;
   color: var(--color-text-muted, #64748b);
@@ -445,14 +456,14 @@
 }
 
 .thumb-name {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 300;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: #fff;
 }
 .thumb-series {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -472,7 +483,7 @@
 
 .catalog-header h3 {
   color: var(--color-accent, #ff5500);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -480,7 +491,7 @@
 }
 
 .catalog-header h2 {
-  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
   font-weight: 300;
   letter-spacing: 0.5px;
   line-height: 1.3;
@@ -533,7 +544,7 @@
 }
 
 .catalog-series {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 600;
   color: var(--color-accent, #ff5500);
   text-transform: uppercase;
@@ -543,15 +554,15 @@
 }
 
 .catalog-name {
-  font-size: 1.4rem;
-  font-weight: 300;
-  letter-spacing: 0.5px;
+  font-size: 1.15rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
   margin-bottom: 0.5rem;
 }
 
 .catalog-summary {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 300;
   line-height: 1.8;
   color: var(--color-text-secondary, #94a3b8);
@@ -562,7 +573,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 300;
   color: var(--color-text-secondary, #94a3b8);
 }
@@ -570,7 +581,7 @@
 .catalog-specs-col strong {
   color: #fff;
   font-weight: 500;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .catalog-actions-col {
@@ -582,15 +593,15 @@
 }
 
 .catalog-price {
-  font-size: 1.35rem;
-  font-weight: 200;
-  letter-spacing: 0.5px;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
   color: var(--color-accent, #ff5500);
 }
 
 .showroom-btn.sm {
   padding: 0.6rem 1.2rem;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
 }
 
 /* SECTION 3: ENGINEERING PILLARS */
@@ -606,14 +617,14 @@
 }
 .pillars-header h3 {
   color: var(--color-accent, #ff5500);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
   margin-bottom: 1rem;
 }
 .pillars-header h2 {
-  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
   font-weight: 300;
   letter-spacing: 0.5px;
   line-height: 1.3;
@@ -634,16 +645,16 @@
 }
 
 .pillar-card h3 {
-  font-size: 1.25rem;
-  font-weight: 300;
-  letter-spacing: 0.5px;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
   margin-bottom: 1rem;
 }
 
 .pillar-card p {
   color: var(--color-text-secondary, #94a3b8);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 300;
   line-height: 1.9;
 }
@@ -715,29 +726,45 @@ body,
   }
 
   .showroom-header h1 {
-    font-size: clamp(2rem, 10vw, 3rem);
+    font-size: clamp(1.7rem, 7vw, 2.4rem);
     word-break: break-word;
   }
 
+  .showroom-header p {
+    font-size: 0.85rem;
+  }
+
   .showcase-photo-frame {
-    height: 240px;
+    height: 220px;
   }
   .showcase-under-details {
     padding: 1.25rem 1rem;
     box-sizing: border-box;
   }
 
+  /* Specs strip: single column of label:value rows on mobile so long
+     values like "M840T 4.0L Twin-Turbocharged V8" get the full row
+     width instead of wrapping inside a cramped half-width cell */
   .showcase-specs-strip {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
-    padding: 1.25rem 1rem;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 1.1rem 1rem;
+  }
+
+  .spec-item {
+    padding-bottom: 0.75rem;
+    gap: 1rem;
   }
 
   .spec-val {
-    font-size: 1.15rem;
-    line-height: 1.3;
+    font-size: 0.85rem;
+    line-height: 1.35;
     word-break: normal;
     white-space: normal;
+  }
+
+  .spec-lbl {
+    font-size: 0.56rem;
   }
 
   .title-price-row {
@@ -746,8 +773,16 @@ body,
     gap: 0.4rem;
   }
   .model-name {
-    font-size: clamp(1.5rem, 8vw, 2.25rem);
+    font-size: clamp(1.25rem, 6vw, 1.6rem);
     word-break: break-word;
+  }
+
+  .price-tag {
+    font-size: 1.1rem;
+  }
+
+  .model-summary {
+    font-size: 0.85rem;
   }
 
   .showcase-actions {
@@ -757,6 +792,7 @@ body,
   .showroom-btn {
     width: 100%;
     text-align: center;
+    font-size: 0.62rem;
   }
   .stage-arrow {
     width: 36px;
@@ -785,6 +821,9 @@ body,
   .thumb-card {
     min-width: 180px;
   }
+  .thumb-name {
+    font-size: 0.75rem;
+  }
 
   /* Catalog rows: stack cleanly, image on top */
   .catalog-row {
@@ -799,10 +838,10 @@ body,
   }
 
   .catalog-name {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
   .catalog-summary {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 
   /* Fix: specs go back to column layout (Output / 0-60 MPH stacked)
@@ -811,7 +850,11 @@ body,
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .catalog-price {
+    font-size: 1rem;
   }
 
   .catalog-actions-col {
@@ -829,27 +872,38 @@ body,
   .pillar-card {
     padding: 2rem 1.25rem;
   }
+  .pillar-card h3 {
+    font-size: 1rem;
+  }
+  .pillar-card p {
+    font-size: 0.82rem;
+  }
 }
 
 @media (max-width: 400px) {
   .showroom-header h1 {
-    font-size: 1.9rem;
+    font-size: 1.6rem;
     letter-spacing: 1px;
   }
+
   .showcase-specs-strip {
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
   }
   .spec-val {
-    font-size: 1.05rem;
+    font-size: 0.8rem;
   }
+  .spec-lbl {
+    font-size: 0.54rem;
+  }
+
   .model-name {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
   .price-tag {
-    font-size: 1.4rem;
+    font-size: 1rem;
   }
   .catalog-name {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
   }
 }

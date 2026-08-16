@@ -17,34 +17,42 @@
   overflow-x: hidden;
 }
 
-/* HERO */
+/* ==========================================================================
+   HERO — mirrors showcase-photo-frame from Showroom, image in CSS
+   ========================================================================== */
+
 .ct-hero {
   position: relative;
-  height: 50vh;
-  min-height: 420px;
-  display: flex;
-  align-items: flex-end;
-  padding: 0 6vw 4rem;
+  width: 100%;
+  height: 600px;
   overflow: hidden;
 }
 
-/* Background image now set via inline style in JSX — only position/z-index here */
 .ct-hero-bg {
   position: absolute;
   inset: 0;
-  z-index: 0;
-  background:
+  background-image:
     linear-gradient(
       to bottom,
-      rgba(10, 10, 10, 0.2) 0%,
-      rgba(10, 10, 10, 0.95) 100%
+      rgba(10, 10, 10, 0.1) 0%,
+      rgba(10, 10, 10, 0.15) 50%,
+      rgba(10, 10, 10, 0.82) 100%
     ),
-    url("/images/mclarenW1/Overview.jpg") center/cover no-repeat;
+    url("/images/mclarenW1/back.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   filter: grayscale(0.15) contrast(1.05);
+  z-index: 0;
 }
+
 .ct-hero-content {
-  position: relative;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 1;
+  padding: 0 6vw 4rem;
   max-width: 1320px;
   width: 100%;
   margin: 0 auto;
@@ -563,7 +571,10 @@
   border-color: #ff5500;
 }
 
-/* RESPONSIVE */
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
 @media (max-width: 1200px) {
   .ct-main-grid {
     gap: 4rem;
@@ -598,7 +609,6 @@
   }
 
   .ct-service-media {
-    min-height: 300px;
     height: 300px;
   }
 
@@ -609,8 +619,11 @@
 
 @media (max-width: 768px) {
   .ct-hero {
-    padding: 0 1.5rem 3.5rem;
-    min-height: 380px;
+    height: 360px;
+  }
+
+  .ct-hero-content {
+    padding: 0 1.5rem 2.5rem;
   }
 
   .ct-main-section,
@@ -633,6 +646,12 @@
     padding-top: 4rem;
     padding-bottom: 2rem;
   }
+  .ct-hero-bg,
+  .ct-service-media {
+    background-size: contain;
+    background-position: center;
+    background-color: #0a0a0a; /* fills the letterbox bars left by "contain" */
+  }
 }
 
 @media (max-width: 600px) {
@@ -652,7 +671,6 @@
   }
 
   .ct-service-media {
-    min-height: 240px;
     height: 240px;
   }
 
@@ -664,12 +682,15 @@
 
 @media (max-width: 480px) {
   .ct-hero {
-    min-height: 320px;
-    padding-bottom: 2.5rem;
+    height: 260px;
+  }
+
+  .ct-hero-content {
+    padding: 0 1.25rem 2rem;
   }
 
   .ct-hero-content h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
 
   .ct-success {

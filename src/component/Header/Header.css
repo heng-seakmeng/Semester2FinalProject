@@ -8,7 +8,7 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(247, 246, 243, 0.08);
-  position: sticky;
+  position: static;
   top: 0;
   z-index: 1000;
   padding: 0 6vw; /* Aligned with global page margins */

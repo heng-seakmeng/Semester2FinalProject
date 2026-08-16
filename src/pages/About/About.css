@@ -38,7 +38,7 @@
       rgba(10, 10, 10, 0.3) 0%,
       rgba(10, 10, 10, 0.95) 100%
     ),
-    url("./images/mclaren720s/Mclaren720sHero.jpg") center/cover no-repeat; /* <-- Removed the dot (.) */
+    url("./images/mclaren720s/Mclaren720sHero.jpg") center/cover no-repeat;
   z-index: 0;
   filter: grayscale(0.15) contrast(1.05); /* Architectural Filter */
 }
@@ -49,7 +49,6 @@
 }
 
 .ab-est {
-  /* Luxury Typography Applied: Eyebrow */
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 6px;
@@ -60,7 +59,6 @@
 }
 
 .ab-hero-title {
-  /* Luxury Typography Applied: Hero */
   font-size: clamp(3.5rem, 9vw, 7rem);
   font-weight: 200;
   line-height: 1;
@@ -95,7 +93,7 @@
   padding: 8rem 6vw;
   border-top: 1px solid rgba(247, 246, 243, 0.08);
   border-bottom: 1px solid rgba(247, 246, 243, 0.08);
-  background: #141414; /* Synced to global surface */
+  background: #141414;
 }
 
 .ab-quote-inner {
@@ -103,7 +101,7 @@
   margin: 0 auto;
   position: relative;
   padding-left: 3rem;
-  border-left: 1px solid #ff5500; /* McLaren Accent */
+  border-left: 1px solid #ff5500;
 }
 
 .ab-quote-mark {
@@ -118,7 +116,6 @@
 }
 
 .ab-quote-text {
-  /* Luxury Typography Applied: Pull Quote */
   font-size: clamp(1.5rem, 3vw, 2.5rem);
   font-weight: 300;
   font-style: italic;
@@ -176,7 +173,7 @@
   height: 100%;
   object-fit: cover;
   object-position: top;
-  filter: grayscale(0.15) contrast(1.05); /* Synced Editorial Filter */
+  filter: grayscale(0.15) contrast(1.05);
 }
 
 .ab-founder-label {
@@ -498,7 +495,11 @@
     gap: 3rem;
   }
   .ab-founder-image {
-    aspect-ratio: 16/9; /* Switches to landscape for better tablet flow */
+    aspect-ratio: 4/5; /* portrait frame as soon as the layout stacks, so the face has room instead of being squeezed into a wide strip */
+  }
+
+  .ab-founder-image img {
+    object-position: center 15%;
   }
   .ab-timeline-scroll {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -510,7 +511,6 @@
 
 /* 3. Portrait Tablets / Standard iPad (<= 768px) */
 @media (max-width: 768px) {
-  /* Reduce excessive padding globally for tablets */
   .ab-quote-section,
   .ab-founder-section,
   .ab-timeline-section,
@@ -521,12 +521,24 @@
   }
 
   .ab-hero {
-    min-height: 500px;
-    padding-bottom: 5rem;
+    height: auto;
+    min-height: unset;
+    aspect-ratio: 4/3; /* frame sized to the image instead of a fixed viewport-height crop */
+    padding: 0 1.5rem 2.5rem;
+  }
+
+  .ab-hero-bg {
+    background-size: contain;
+    background-position: center;
+    background-color: #0a0a0a; /* fills the letterbox bars left by "contain" */
+  }
+
+  .ab-hero-scroll {
+    display: none;
   }
 
   .ab-quote-text {
-    font-size: clamp(1.2rem, 3vw, 1.8rem); /* Scale down pull quote */
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
   }
 
   .ab-philosophy-item {
@@ -537,7 +549,12 @@
 /* 4. Large Mobile / Phablets (<= 600px) */
 @media (max-width: 600px) {
   .ab-hero {
-    padding: 0 1.5rem 4rem;
+    aspect-ratio: 3/4; /* slightly taller ratio at the narrowest widths so text still has room below the image */
+    padding: 0 1.5rem 2rem;
+  }
+
+  .ab-hero-title {
+    font-size: clamp(2.25rem, 11vw, 3.25rem);
   }
 
   .ab-quote-section,
@@ -551,10 +568,6 @@
 
   .ab-quote-inner {
     padding-left: 2rem;
-  }
-
-  .ab-founder-image {
-    aspect-ratio: 1/1; /* Square on mobile */
   }
 
   .ab-philosophy-item {
@@ -577,9 +590,19 @@
     grid-template-columns: 1fr;
   }
   .ab-fullwidth-image {
-    height: 40vh; /* Shorter full-width break image */
+    height: 40vh;
   }
   .ab-cta-btn {
-    width: 100%; /* Full width CTA */
+    width: 100%;
+  }
+
+  /* Slightly taller crop still needed at the narrowest widths so the
+     jaw/mouth stay in frame under the name/date label overlay */
+  .ab-founder-image {
+    aspect-ratio: 3/4;
+  }
+
+  .ab-founder-image img {
+    object-position: center 15%;
   }
 }
