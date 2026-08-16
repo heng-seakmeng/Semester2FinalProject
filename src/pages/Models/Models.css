@@ -689,6 +689,13 @@ body,
     gap: 1.5rem;
   }
 
+  /* fix: thumb was still fixed at 180px, overflowing the 140px column
+     and overlapping the text next to it */
+  .catalog-thumb {
+    width: 100%;
+    height: 100px;
+  }
+
   .catalog-specs-col,
   .catalog-actions-col {
     grid-column: span 2;
