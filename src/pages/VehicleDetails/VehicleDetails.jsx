@@ -24,6 +24,7 @@ export default function VehicleDetails({ carId, navigateTo, user }) {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clientName, setClientName] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
   const [deliveryRegion, setDeliveryRegion] = useState("North America");
   const [exteriorColor, setExteriorColor] = useState("Signature Papaya Spark");
   const [additionalNotes, setAdditionalNotes] = useState("");
@@ -95,6 +96,7 @@ export default function VehicleDetails({ carId, navigateTo, user }) {
   // Opens the purchase request form directly.
   const handleOpenPurchaseModal = () => {
     setClientName(user?.name || "");
+    setClientEmail(user?.email || "");
     setSubmitError("");
     setIsModalOpen(true);
   };
@@ -120,7 +122,7 @@ export default function VehicleDetails({ carId, navigateTo, user }) {
         headers,
         body: JSON.stringify({
           clientName,
-          clientEmail: user?.email,
+          clientEmail,
           vehicleName: vehicle?.name || "McLaren 750S",
           carModel: vehicle?.id || "mclaren-750s",
           deliveryRegion,
@@ -146,6 +148,7 @@ export default function VehicleDetails({ carId, navigateTo, user }) {
     setSubmitted(false);
     setIsModalOpen(false);
     setClientName("");
+    setClientEmail("");
     setDeliveryRegion("North America");
     setExteriorColor("Signature Papaya Spark");
     setAdditionalNotes("");
@@ -450,7 +453,7 @@ export default function VehicleDetails({ carId, navigateTo, user }) {
                 <h3>PURCHASE REQUEST RECEIVED</h3>
                 <p>
                   Thank you, <strong>{clientName}</strong>. A McLaren Specialist
-                  will contact you at <strong>{user?.email}</strong>.
+                  will contact you at <strong>{clientEmail}</strong>.
                 </p>
                 <p className="modal-subtitle">
                   Track its status anytime from your Messages page.
@@ -486,17 +489,14 @@ export default function VehicleDetails({ carId, navigateTo, user }) {
                 </div>
 
                 <div className="modal-field">
-                  <label>Email Address</label>
+                  <label>Email Address *</label>
                   <input
                     type="email"
-                    value={user?.email || ""}
-                    disabled
-                    readOnly
+                    value={clientEmail}
+                    onChange={(e) => setClientEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    required
                   />
-                  <span className="modal-field-hint">
-                    Linked to your account — this is how your request shows up
-                    in Messages.
-                  </span>
                 </div>
 
                 <div className="modal-field">
