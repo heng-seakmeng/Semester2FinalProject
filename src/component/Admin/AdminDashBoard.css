@@ -394,6 +394,79 @@
   flex-wrap: wrap;
 }
 
+/* EXISTING ADMIN REPLY ON AN INQUIRY */
+.inquiry-reply-existing {
+  background: rgba(255, 85, 0, 0.04);
+  border: 1px solid rgba(255, 85, 0, 0.2);
+  border-left: 2px solid #ff5500;
+  border-radius: 0;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inquiry-reply-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #ff5500;
+}
+
+.inquiry-reply-existing p {
+  font-size: 0.9rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: #f7f6f3;
+  word-break: break-word;
+}
+
+/* REPLY COMPOSER */
+.inquiry-reply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.inquiry-reply-form textarea {
+  background: transparent;
+  border: 1px solid rgba(247, 246, 243, 0.15);
+  border-radius: 0;
+  padding: 0.85rem 1rem;
+  color: #f7f6f3;
+  font-size: 0.9rem;
+  font-weight: 300;
+  font-family: inherit;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.25s ease;
+  width: 100%;
+}
+
+.inquiry-reply-form textarea:focus {
+  border-color: #ff5500;
+}
+
+.inquiry-reply-form textarea::placeholder {
+  color: #666;
+}
+
+.inquiry-reply-form .btn-edit {
+  align-self: flex-end;
+}
+
+.inquiry-reply-form .btn-edit:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.inquiry-reply-form .btn-edit:disabled:hover {
+  color: #8c8c88;
+  border-color: rgba(247, 246, 243, 0.15);
+}
+
 /* MODAL OVERLAY */
 .modal-overlay {
   position: fixed;
@@ -509,6 +582,24 @@
 .form-group select:focus,
 .form-group textarea:focus {
   border-color: #ff5500;
+}
+
+/* Divider + section labels used inside the vehicle (product) form, to
+   break up the hero/overview/lightness/engagement/power image+text
+   groups so the form doesn't read as one long undifferentiated list. */
+.admin-form hr {
+  border: none;
+  border-top: 1px solid rgba(247, 246, 243, 0.08);
+  margin: 0.25rem 0;
+}
+
+.form-section-note {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #ff5500;
+  margin: 0;
 }
 
 .modal-actions {
@@ -674,6 +765,10 @@
   .inquiry-footer {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .inquiry-reply-form .btn-edit {
+    align-self: stretch;
   }
 }
 

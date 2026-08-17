@@ -17,6 +17,30 @@ const resolveImgUrl = (src) => {
   return `${import.meta.env.BASE_URL}${cleanPath}`;
 };
 
+const emptyProductForm = {
+  title: "",
+  subtitle: "",
+  price: "",
+  category: "Supercars",
+  acceleration: "2.8s",
+  topSpeed: "341 km/h",
+  power: "720 PS",
+  summary: "",
+  // One image + one description per detail-page section. Each falls
+  // back to the hero image on the detail page if left blank, but
+  // filling these in is what lets every section show a different
+  // photo and its own writeup instead of repeating the hero image.
+  heroImage: "",
+  overviewImage: "",
+  overviewText: "",
+  lightnessImage: "",
+  lightnessText: "",
+  engagementImage: "",
+  engagementText: "",
+  powerImage: "",
+  powerText: "",
+};
+
 export default function AdminDashboard({ navigateTo }) {
   const [activeTab, setActiveTab] = useState("purchaseRequests");
 
@@ -39,17 +63,12 @@ export default function AdminDashboard({ navigateTo }) {
     image: "",
   });
 
-  const [productForm, setProductForm] = useState({
-    title: "",
-    subtitle: "",
-    price: "",
-    category: "Supercars",
-    acceleration: "2.8s",
-    topSpeed: "341 km/h",
-    power: "720 PS",
-    image: "",
-    description: "",
-  });
+  const [productForm, setProductForm] = useState(emptyProductForm);
+
+  // Draft reply text per inquiry id, keyed so multiple cards can be
+  // mid-reply at once without clobbering each other.
+  const [replyDrafts, setReplyDrafts] = useState({});
+  const [replyLoadingId, setReplyLoadingId] = useState(null);
 
   useEffect(() => {
     fetchAllData();
@@ -106,8 +125,6 @@ export default function AdminDashboard({ navigateTo }) {
           ),
         );
       } else {
-        // Surface failures instead of silently doing nothing —
-        // e.g. a 403 if you're not logged in with an admin account.
         const data = await res.json().catch(() => ({}));
         alert(
           data.error || "Failed to update status. Are you logged in as admin?",
@@ -223,32 +240,33 @@ export default function AdminDashboard({ navigateTo }) {
   /* ---------------- PRODUCTS CRUD ---------------- */
   const handleOpenProductModal = (item = null) => {
     if (item) {
+      const perf = item.performance || {};
+      const images = item.images || {};
+      const fallbackHero = images.hero || images.exterior || item.image || "";
+
       setEditingId(item.id);
       setProductForm({
-        title: item.title || item.name || "",
-        subtitle: item.subtitle || item.series || "",
+        title: item.name || item.title || "",
+        subtitle: item.brand || item.subtitle || "",
         price: item.price || "",
-        category: item.category || item.series || "Supercars",
-        acceleration:
-          item.acceleration || item.performance?.acceleration || "2.8s",
-        topSpeed: item.topSpeed || item.performance?.topSpeed || "341 km/h",
-        power: item.power || item.performance?.horsepower || "720 PS",
-        image: item.image || item.images?.exterior || "",
-        description: item.description || item.summary || "",
+        category: item.series || item.category || "Supercars",
+        acceleration: perf.acceleration0100 || item.acceleration || "2.8s",
+        topSpeed: perf.topSpeed || item.topSpeed || "341 km/h",
+        power: perf.horsepower || item.power || "720 PS",
+        summary: item.summary || item.description || "",
+        heroImage: fallbackHero,
+        overviewImage: images.overview || "",
+        overviewText: item.overviewText || "",
+        lightnessImage: images.lightness || "",
+        lightnessText: item.lightnessText || "",
+        engagementImage: images.engagement || "",
+        engagementText: item.engagementText || "",
+        powerImage: images.power || "",
+        powerText: item.powerText || "",
       });
     } else {
       setEditingId(null);
-      setProductForm({
-        title: "",
-        subtitle: "",
-        price: "",
-        category: "Supercars",
-        acceleration: "2.8s",
-        topSpeed: "341 km/h",
-        power: "720 PS",
-        image: "",
-        description: "",
-      });
+      setProductForm(emptyProductForm);
     }
     setIsModalOpen(true);
   };
@@ -257,14 +275,42 @@ export default function AdminDashboard({ navigateTo }) {
     e.preventDefault();
     setActionLoading(true);
     try {
+      const f = productForm;
+
+      // Every section falls back to the hero image/summary if left
+      // blank, so admins aren't forced to fill in all five images —
+      // but filling them in is what makes each section distinct.
       const payload = {
-        ...productForm,
-        name: productForm.title,
-        series: productForm.category,
+        name: f.title,
+        title: f.title,
+        brand: f.subtitle || "McLaren",
+        subtitle: f.subtitle,
+        series: f.category,
+        category: f.category,
         price:
-          typeof productForm.price === "number"
-            ? `$${productForm.price.toLocaleString()}`
-            : productForm.price,
+          typeof f.price === "number"
+            ? `$${f.price.toLocaleString()}`
+            : f.price,
+        summary: f.summary,
+        description: f.summary,
+        performance: {
+          horsepower: f.power,
+          topSpeed: f.topSpeed,
+          acceleration0100: f.acceleration,
+        },
+        images: {
+          hero: f.heroImage,
+          exterior: f.heroImage,
+          overview: f.overviewImage || f.heroImage,
+          lightness: f.lightnessImage || f.heroImage,
+          engagement: f.engagementImage || f.heroImage,
+          power: f.powerImage || f.heroImage,
+        },
+        image: f.heroImage,
+        overviewText: f.overviewText,
+        lightnessText: f.lightnessText,
+        engagementText: f.engagementText,
+        powerText: f.powerText,
       };
 
       const url = editingId
@@ -331,6 +377,40 @@ export default function AdminDashboard({ navigateTo }) {
       }
     } catch (err) {
       console.error("Error deleting inquiry:", err);
+    }
+  };
+
+  const handleReplyDraftChange = (id, value) => {
+    setReplyDrafts((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSendReply = async (inq) => {
+    const draft = (replyDrafts[inq.id] ?? "").trim();
+    if (!draft) return;
+
+    setReplyLoadingId(inq.id);
+    try {
+      const res = await fetch(`${API_BASE}/contact_inquiries/${inq.id}/reply`, {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ reply: draft }),
+      });
+
+      if (res.ok) {
+        const updated = await res.json();
+        setInquiries((prev) =>
+          prev.map((item) => (item.id === inq.id ? updated : item)),
+        );
+        setReplyDrafts((prev) => ({ ...prev, [inq.id]: "" }));
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to send reply.");
+      }
+    } catch (err) {
+      console.error("Error sending reply:", err);
+      alert("Could not reach the server.");
+    } finally {
+      setReplyLoadingId(null);
     }
   };
 
@@ -616,6 +696,7 @@ export default function AdminDashboard({ navigateTo }) {
                               src={resolveImgUrl(
                                 car.image ||
                                   car.images?.exterior ||
+                                  car.images?.hero ||
                                   "cars/mclaren-1.jpg",
                               )}
                               alt={car.title || car.name}
@@ -689,6 +770,49 @@ export default function AdminDashboard({ navigateTo }) {
                         <span className="inquiry-subject">{inq.subject}</span>
                       </div>
                       <p className="inquiry-body">{inq.message}</p>
+
+                      {inq.reply && (
+                        <div className="inquiry-reply-existing">
+                          <span className="inquiry-reply-label">
+                            Your reply
+                            {inq.repliedAt
+                              ? ` — ${new Date(inq.repliedAt).toLocaleString()}`
+                              : ""}
+                            :
+                          </span>
+                          <p>{inq.reply}</p>
+                        </div>
+                      )}
+
+                      <div className="inquiry-reply-form">
+                        <textarea
+                          rows={3}
+                          placeholder={
+                            inq.reply
+                              ? "Send a follow-up reply..."
+                              : "Write a reply to this client..."
+                          }
+                          value={replyDrafts[inq.id] ?? ""}
+                          onChange={(e) =>
+                            handleReplyDraftChange(inq.id, e.target.value)
+                          }
+                        />
+                        <button
+                          className="btn-edit"
+                          disabled={
+                            replyLoadingId === inq.id ||
+                            !(replyDrafts[inq.id] ?? "").trim()
+                          }
+                          onClick={() => handleSendReply(inq)}
+                        >
+                          {replyLoadingId === inq.id
+                            ? "Sending..."
+                            : inq.reply
+                              ? "Send Follow-up"
+                              : "Send Reply"}
+                        </button>
+                      </div>
+
                       <div className="inquiry-footer">
                         <span>Phone: {inq.phone || "N/A"}</span>
                         <button
@@ -898,15 +1022,193 @@ export default function AdminDashboard({ navigateTo }) {
                   </div>
                 </div>
 
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Top Speed</label>
+                    <input
+                      type="text"
+                      value={productForm.topSpeed}
+                      onChange={(e) =>
+                        setProductForm({
+                          ...productForm,
+                          topSpeed: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Power (Horsepower)</label>
+                    <input
+                      type="text"
+                      value={productForm.power}
+                      onChange={(e) =>
+                        setProductForm({
+                          ...productForm,
+                          power: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
                 <div className="form-group">
-                  <label>Image Path</label>
-                  <input
-                    type="text"
-                    value={productForm.image}
+                  <label>Overview Summary</label>
+                  <textarea
+                    rows={3}
+                    placeholder="Short summary shown on the model card / overview intro"
+                    value={productForm.summary}
                     onChange={(e) =>
                       setProductForm({
                         ...productForm,
-                        image: e.target.value,
+                        summary: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <hr />
+                <p className="form-section-note">
+                  Hero Image — used as the top banner and as the fallback for
+                  any section left blank below.
+                </p>
+                <div className="form-group">
+                  <label>Hero Image Path *</label>
+                  <input
+                    type="text"
+                    required
+                    value={productForm.heroImage}
+                    onChange={(e) =>
+                      setProductForm({
+                        ...productForm,
+                        heroImage: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <hr />
+                <p className="form-section-note">01 / Overview Section</p>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Overview Image Path</label>
+                    <input
+                      type="text"
+                      placeholder="Leave blank to reuse hero image"
+                      value={productForm.overviewImage}
+                      onChange={(e) =>
+                        setProductForm({
+                          ...productForm,
+                          overviewImage: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Overview Description</label>
+                  <textarea
+                    rows={3}
+                    value={productForm.overviewText}
+                    onChange={(e) =>
+                      setProductForm({
+                        ...productForm,
+                        overviewText: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <hr />
+                <p className="form-section-note">02 / Lightness Section</p>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Lightness Image Path</label>
+                    <input
+                      type="text"
+                      placeholder="Leave blank to reuse hero image"
+                      value={productForm.lightnessImage}
+                      onChange={(e) =>
+                        setProductForm({
+                          ...productForm,
+                          lightnessImage: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Lightness Description</label>
+                  <textarea
+                    rows={3}
+                    value={productForm.lightnessText}
+                    onChange={(e) =>
+                      setProductForm({
+                        ...productForm,
+                        lightnessText: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <hr />
+                <p className="form-section-note">03 / Engagement Section</p>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Engagement Image Path</label>
+                    <input
+                      type="text"
+                      placeholder="Leave blank to reuse hero image"
+                      value={productForm.engagementImage}
+                      onChange={(e) =>
+                        setProductForm({
+                          ...productForm,
+                          engagementImage: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Engagement Description</label>
+                  <textarea
+                    rows={3}
+                    value={productForm.engagementText}
+                    onChange={(e) =>
+                      setProductForm({
+                        ...productForm,
+                        engagementText: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <hr />
+                <p className="form-section-note">04 / Power Section</p>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Power Image Path</label>
+                    <input
+                      type="text"
+                      placeholder="Leave blank to reuse hero image"
+                      value={productForm.powerImage}
+                      onChange={(e) =>
+                        setProductForm({
+                          ...productForm,
+                          powerImage: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Power Description</label>
+                  <textarea
+                    rows={3}
+                    value={productForm.powerText}
+                    onChange={(e) =>
+                      setProductForm({
+                        ...productForm,
+                        powerText: e.target.value,
                       })
                     }
                   />
